@@ -1,37 +1,38 @@
-project "Core"
-kind "StaticLib"
+project "Editor"
 language "C++"
 cppdialect "C++20"
 targetdir "Binaries/%{cfg.buildcfg}"
 staticruntime "off"
 
-pchheader "pch.h"
-pchsource "Source/Raito/pch.cpp"
+files {"Source/**.h", "Source/**.cpp"}
 
-files {"Source/**.h", "Source/**.hpp", "Source/**.c", "Source/**.cpp"}
+includedirs {"Source", -- Include Core
+"../Core/Source"}
 
-includedirs {"Source", "Source/Raito"}
-links{"d3d12.lib","dxgi.lib", "d3dcompiler.lib"}
+links {"Core"}
 
 targetdir("../Binaries/" .. OutputDir .. "/%{prj.name}")
 objdir("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
 
 filter "system:windows"
 systemversion "latest"
-defines {}
+defines {"WINDOWS"}
 
 filter "configurations:Debug"
+kind "ConsoleApp"
 defines {"DEBUG"}
 runtime "Debug"
 symbols "On"
 
 filter "configurations:Release"
+kind "ConsoleApp"
 defines {"RELEASE"}
 runtime "Release"
 optimize "On"
 symbols "On"
 
 filter "configurations:Dist"
+kind "WindowedApp"
 defines {"DIST"}
 runtime "Release"
 optimize "On"

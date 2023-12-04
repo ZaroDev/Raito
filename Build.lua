@@ -1,8 +1,8 @@
 -- premake5.lua
-workspace "New Project"
+workspace "Raito"
    architecture "x64"
    configurations { "Debug", "Release", "Dist" }
-   startproject "App"
+   startproject "Editor"
 
    -- Workspace-wide build options for MSVC
    filter "system:windows"
@@ -14,4 +14,4 @@ group "Core"
 	include "Core/Build-Core.lua"
 group ""
 
-include "App/Build-App.lua"
+include "Editor/Build-App.lua"
