@@ -10,8 +10,8 @@ pchsource "Source/Raito/pch.cpp"
 
 files {"Source/**.h", "Source/**.hpp", "Source/**.c", "Source/**.cpp"}
 
-includedirs {"Source", "Source/Raito"}
-links{"d3d12.lib","dxgi.lib", "d3dcompiler.lib"}
+includedirs {"Source", "Source/Raito",  "Vendor/GLFW/include"}
+links{"d3d12.lib","dxgi.lib", "d3dcompiler.lib", "GLFW"}
 
 targetdir("../Binaries/" .. OutputDir .. "/%{prj.name}")
 objdir("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")

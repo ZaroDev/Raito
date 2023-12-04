@@ -1,0 +1,3 @@
+[submodule "Core/Vendor/GLFW"]
+	path = Core/Vendor/GLFW
+	url = https://github.com/ZaroDev/glfw.git
