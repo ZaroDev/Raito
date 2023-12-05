@@ -27,6 +27,8 @@ namespace Raito
 		{
 			GLFWwindow* win = (GLFWwindow*)window->WindowHandle;
 			glfwDestroyWindow(win);
+			Windows.erase(Windows.begin() + window->ID);
+
 		}
 	}
 
@@ -50,12 +52,7 @@ namespace Raito
 			glfwWindowHint(GLFW_NO_API, GLFW_TRUE);
 
 			MainWindow = CreateNewWindow(defaultInfo);
-			CreateNewWindow({.Title = "1", .Height = 500, .Width = 500});
-			CreateNewWindow({ .Title = "2", .Height = 500, .Width = 500 });
-			CreateNewWindow({ .Title = "3", .Height = 500, .Width = 500 });
-			CreateNewWindow({ .Title = "4", .Height = 500, .Width = 500 });
-
-
+			
 			Initialized = true;
 
 			return true;
@@ -63,15 +60,17 @@ namespace Raito
 
 		bool Update()
 		{
+
 			for (u32 i = 0; i < Windows.size(); i++)
 			{
-				if (!Windows[i].IsAlive)
+				if (Windows[i].IsAlive)
 				{
-					DestroyWindow(&Windows[i]);
+					glfwPollEvents();
+					continue;
 				}
+				DestroyWindow(&Windows[i]);
 			}
 
-			glfwPollEvents();
 			return true;
 		}
 

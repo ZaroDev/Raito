@@ -13,8 +13,8 @@ files {"Source/**.h", "Source/**.hpp", "Source/**.c", "Source/**.cpp"}
 includedirs {"Source", "Source/Raito",  "Vendor/GLFW/include"}
 links{"d3d12.lib","dxgi.lib", "d3dcompiler.lib", "GLFW"}
 
-targetdir("../Binaries/" .. OutputDir .. "/%{prj.name}")
-objdir("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+targetdir("../Binaries/" .. outputdir .. "/%{prj.name}")
+objdir("../Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")
 
 filter "system:windows"
 systemversion "latest"

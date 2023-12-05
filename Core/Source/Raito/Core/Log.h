@@ -9,9 +9,6 @@ namespace Raito::Core
 	void Log(const std::string& title, const std::string& msg);
 	void LogWarning(const std::string& title, const std::string& msg);
 	void LogError(const std::string& title, const std::string& msg);
-
-
-
 }
 
 #define FMT(...) std::format(__VA_ARGS__)

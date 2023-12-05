@@ -22,3 +22,7 @@ constexpr u8    U8_MAX = UINT8_MAX;
 constexpr u16   U16_MAX = UINT16_MAX;
 constexpr u32   U32_MAX = UINT32_MAX;
 constexpr u64   U64_MAX = UINT64_MAX;
+
+// Floating pointer
+
+using f32 = float;
