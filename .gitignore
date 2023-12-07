@@ -1,6 +1,10 @@
 # Directories
 .vs/
 Binaries/
+Docs/
+Editor/Logs
+html
+latex
 
 # Files
 *.vcxproj
@@ -9,6 +13,8 @@ Binaries/
 *.sln
 *.log
 Makefile
-
+*.licenseheader
+*.html
+*.latex
 # Exclude
 !Vendor/Binaries

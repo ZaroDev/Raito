@@ -5,27 +5,45 @@
 #include <cstdarg>
 #include <filesystem>
 #include <sstream>
+#include <fstream>
 
-namespace  Raito::Core
+namespace Raito::Core::Debug
 {
 	namespace
 	{
+		std::stringstream Buffer{};
 		struct DebugStats
 		{
+			std::filesystem::path SinkPath = "Logs/log-dump.txt";
 
-		};
+			DebugStats() = default;
+			~DebugStats()
+			{
+				if (g_DumpLogs)
+				{
+					if (!std::filesystem::exists("Logs"))
+						std::filesystem::create_directory("Logs");
+
+					std::ofstream dumpLog(SinkPath);
+
+					dumpLog.write(Buffer.str().c_str(), Buffer.str().size());
+					
+					dumpLog.close();
+				}
+			}
+		} DebugStats{};
 	}
 
 	void Log(const std::string& title, const std::string& msg)
 	{
-		std::cout << "[Info]" << title << " - " << msg << std::endl;
+		Buffer << "[Info]" << title << " - " << msg << std::endl;
 	}
 	void LogWarning(const std::string& title, const std::string& msg)
 	{
-		std::cout << "[Warn]" << title << " - " << msg << std::endl;
+		Buffer << "[Warn]" << title << " - " << msg << std::endl;
 	}
 	void LogError(const std::string& title, const std::string& msg)
 	{
-		std::cout << "[Error]" << title << " - " << msg << std::endl;
+		Buffer << "[Error]" << title << " - " << msg << std::endl;
 	}
 }

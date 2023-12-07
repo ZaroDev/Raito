@@ -24,20 +24,32 @@ SOFTWARE.
 
 #pragma once
 
-#ifndef NOMINMAX
-// See github.com/skypjack/entt/wiki/Frequently-Asked-Questions#warning-c4003-the-min-the-max-and-the-macro
-#define NOMINMAX
-#endif
+namespace Raito {
 
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <filesystem>
+	class UUID
+	{
+	public:
+		UUID();
+		UUID(u64 uuid);
+		UUID(const UUID&) = default;
 
-#include <Raito/Core/BasicTypes.h>
-#include <Raito/Core/Log.h>
-#include <Raito/Core/Assert.h>
+		operator uint64_t() const { return m_UUID; }
+	private:
+		uint64_t m_UUID;
+	};
 
+}
 
-#include <Windows.h>
+namespace std {
+	template <typename T> struct hash;
+
+	template<>
+	struct hash<Raito::UUID>
+	{
+		std::size_t operator()(const Raito::UUID& uuid) const
+		{
+			return (u64)uuid;
+		}
+	};
+
+}

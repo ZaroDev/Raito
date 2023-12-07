@@ -24,20 +24,49 @@ SOFTWARE.
 
 #pragma once
 
-#ifndef NOMINMAX
-// See github.com/skypjack/entt/wiki/Frequently-Asked-Questions#warning-c4003-the-min-the-max-and-the-macro
-#define NOMINMAX
-#endif
+namespace Raito
+{
+	struct WindowInfo
+	{
+		std::string Title{};
+		u32 Height{};
+		u32 Width{};
+		bool Fullscreen = false;
+		bool VSync = false;
+	};
 
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <filesystem>
+	struct SysWindow
+	{
+		void* WindowHandle = nullptr;
+		void* Window = nullptr;
+		
+		WindowInfo Info;
 
-#include <Raito/Core/BasicTypes.h>
-#include <Raito/Core/Log.h>
-#include <Raito/Core/Assert.h>
+		std::string Name{};
 
+		u32 ID{};
 
-#include <Windows.h>
+		bool IsAlive = false;
+	};
+
+	
+
+	namespace Window
+	{
+		bool Initialize(WindowInfo defaultInfo = {});
+		bool Update();
+		void Shutdown();
+
+		/// <summary>
+		/// Creates a window and returns the id
+		/// </summary>
+		u32 CreateNewWindow(WindowInfo info);
+
+		/// <summary>
+		/// Returns the window with a given ID
+		/// </summary>
+		SysWindow& GetWindow(u32 id);
+	}
+	
+
+}

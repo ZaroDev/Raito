@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Application.h"
-#include "Log.h"
+
+#include "Window/Window.h"
+
 #include "Time/ScopedTimer.h"
 
 namespace Raito::Core
@@ -10,24 +12,27 @@ namespace Raito::Core
 		m_Running = true;
 
 		// TODO: Init all modules
+		Window::Initialize({.Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen});
+		OnInit();
 
 		return m_Running;
 	}
 	bool Application::Update()
 	{
-		ScopedTimer timer("Update");
+		//ScopedTimer timer("Update");
 
 		// TODO: Module Update
 
-		OnUpdate();
-		OnRenderGUI();
+		Window::Update();
 
 		return m_Running;
 	}
 	void Application::Shutdown()
 	{
+		OnShutdown();
 	}
-	int RunApp(Application app, ApplicationInfo info)
+
+	int RunApp(Application& app, ApplicationInfo info, int argc, char** argv)
 	{
 		if (Application::s_Application)
 		{

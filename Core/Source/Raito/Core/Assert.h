@@ -23,21 +23,17 @@ SOFTWARE.
 */
 
 #pragma once
+#include <assert.h>
 
-#ifndef NOMINMAX
-// See github.com/skypjack/entt/wiki/Frequently-Asked-Questions#warning-c4003-the-min-the-max-and-the-macro
-#define NOMINMAX
+#ifndef DIST
+	#define ENABLE_ASSERTS
+#else
+	#undef ENABLE_ASSERTS
 #endif
 
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <filesystem>
-
-#include <Raito/Core/BasicTypes.h>
-#include <Raito/Core/Log.h>
-#include <Raito/Core/Assert.h>
-
-
-#include <Windows.h>
+#ifdef ENABLE_ASSERTS
+	//! Assertion macro
+	#define ASSERT(x) assert(x)
+#else
+	#define ASSERT(x)
+#endif

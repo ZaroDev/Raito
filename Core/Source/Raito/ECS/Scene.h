@@ -23,21 +23,43 @@ SOFTWARE.
 */
 
 #pragma once
-
-#ifndef NOMINMAX
-// See github.com/skypjack/entt/wiki/Frequently-Asked-Questions#warning-c4003-the-min-the-max-and-the-macro
-#define NOMINMAX
-#endif
-
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <filesystem>
-
-#include <Raito/Core/BasicTypes.h>
-#include <Raito/Core/Log.h>
-#include <Raito/Core/Assert.h>
+#include "Core/UUID.h"
+#include "Entt/entt.hpp"
 
 
-#include <Windows.h>
+namespace Raito::ECS
+{
+	class Entity;
+
+	class Scene
+	{
+	public:
+		Scene();
+		~Scene();
+
+		Entity CreateEntity(const std::string& name);
+		void DestroyEntity(Entity entity);
+
+		Entity DuplicateEntity(Entity entity);
+
+		Entity FindEntityByName(std::string_view name);
+		Entity GetEntityByUUID(UUID uuid);
+
+		Entity GetPrimaryCameraEntity();
+
+		template<typename... Components>
+		auto GetAllEntitiesWith()
+		{
+			return m_Registry.view<Components...>();
+		}
+	private:
+		template<typename T>
+		void OnComponentAdded(Entity entity, T& component);
+
+	private:
+		entt::registry m_Registry;
+		std::unordered_map<UUID, entt::entity> m_Entities{};
+
+		friend class Entity;
+	};
+}

@@ -24,20 +24,18 @@ SOFTWARE.
 
 #pragma once
 
-#ifndef NOMINMAX
-// See github.com/skypjack/entt/wiki/Frequently-Asked-Questions#warning-c4003-the-min-the-max-and-the-macro
-#define NOMINMAX
-#endif
+#include "Math/MathTypes.h"
 
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <filesystem>
+namespace Raito::Math
+{
+	inline matrix CreateTransform(const v3& translation, const v4& rotation, const v3& scale)
+    {
+        vector quaternion = DirectX::XMLoadFloat4(&rotation);
 
-#include <Raito/Core/BasicTypes.h>
-#include <Raito/Core/Log.h>
-#include <Raito/Core/Assert.h>
+       matrix rotationMatrix = DirectX::XMMatrixRotationQuaternion(quaternion);
+       matrix translationMatrix = DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
+       matrix scaleMatrix = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 
-
-#include <Windows.h>
+       return translationMatrix * rotationMatrix * scaleMatrix;
+	}
+}
