@@ -5,6 +5,7 @@ Docs/
 Editor/Logs
 html
 latex
+rtf
 
 # Files
 *.vcxproj
