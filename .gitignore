@@ -3,6 +3,8 @@
 Binaries/
 Docs/
 Editor/Logs
+html
+latex
 
 # Files
 *.vcxproj
@@ -12,6 +14,7 @@ Editor/Logs
 *.log
 Makefile
 *.licenseheader
-
+*.html
+*.latex
 # Exclude
 !Vendor/Binaries
