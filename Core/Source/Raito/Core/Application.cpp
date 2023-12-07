@@ -12,18 +12,16 @@ namespace Raito::Core
 		m_Running = true;
 
 		// TODO: Init all modules
-		m_Running &= Window::Initialize({.Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen});
+		Window::Initialize({.Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen});
+		OnInit();
 
 		return m_Running;
 	}
 	bool Application::Update()
 	{
-		ScopedTimer timer("Update");
+		//ScopedTimer timer("Update");
 
 		// TODO: Module Update
-
-		OnUpdate();
-		OnRenderGUI();
 
 		Window::Update();
 
@@ -31,8 +29,10 @@ namespace Raito::Core
 	}
 	void Application::Shutdown()
 	{
+		OnShutdown();
 	}
-	int RunApp(Application app, ApplicationInfo info, int argc, char** argv)
+
+	int RunApp(Application& app, ApplicationInfo info, int argc, char** argv)
 	{
 		if (Application::s_Application)
 		{

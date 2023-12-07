@@ -9,8 +9,13 @@ namespace Editor
 		App();
 
 	protected:
+		bool OnInit() override;
 		bool OnUpdate() override;
 		bool OnRenderGUI() override;
+		void OnShutdown() override;
 
+	private:
+		// Test scene
+		Raito::ECS::Scene m_Scene{};
 	};
 }
