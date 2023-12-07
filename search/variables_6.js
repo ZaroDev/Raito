@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['name_0',['Name',['../structRaito_1_1Core_1_1ApplicationInfo.html#a73ab64b2f47a136639eacf741653e19e',1,'Raito::Core::ApplicationInfo']]]
+  ['pi_0',['Pi',['../namespaceRaito.html#a707f284a7649838af34a761e0369375e',1,'Raito']]]
 ];

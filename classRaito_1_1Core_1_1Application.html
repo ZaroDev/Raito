@@ -9,6 +9,10 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -21,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Raito
+   <div id="projectname">Raito<span id="projectnumber">&#160;0.1</span>
    </div>
   </td>
  </tr>
@@ -46,6 +50,23 @@ $(function() {
 /* @license-end */
 </script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(document).ready(function(){initNavTree('classRaito_1_1Core_1_1Application.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -67,11 +88,6 @@ $(function() {
 </div>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><b>Raito</b></li><li class="navelem"><b>Core</b></li><li class="navelem"><a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
@@ -88,21 +104,11 @@ $(function() {
  <a href="classRaito_1_1Core_1_1Application.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Application_8h_source.html">Application.h</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for Raito::Core::Application:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classRaito_1_1Core_1_1Application.png" usemap="#Raito::Core::Application_map" alt=""/>
-  <map id="Raito::Core::Application_map" name="Raito::Core::Application_map">
-<area href="classEditor_1_1App.html" alt="Editor::App" shape="rect" coords="0,56,143,80"/>
-  </map>
-</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aeca080fe3130f1ae764e77a4c2a4009c" id="r_aeca080fe3130f1ae764e77a4c2a4009c"><td class="memItemLeft" align="right" valign="top"><a id="aeca080fe3130f1ae764e77a4c2a4009c" name="aeca080fe3130f1ae764e77a4c2a4009c"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~Application</b> ()</td></tr>
-<tr class="memdesc:aeca080fe3130f1ae764e77a4c2a4009c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor. <br /></td></tr>
+<tr class="memitem:aeca080fe3130f1ae764e77a4c2a4009c" id="r_aeca080fe3130f1ae764e77a4c2a4009c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#aeca080fe3130f1ae764e77a4c2a4009c">~Application</a> ()</td></tr>
+<tr class="memdesc:aeca080fe3130f1ae764e77a4c2a4009c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor.  <br /></td></tr>
 <tr class="separator:aeca080fe3130f1ae764e77a4c2a4009c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af010f6b34808f5e61a592917c743df49" id="r_af010f6b34808f5e61a592917c743df49"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#af010f6b34808f5e61a592917c743df49">Initialize</a> ()</td></tr>
 <tr class="memdesc:af010f6b34808f5e61a592917c743df49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization function.  <br /></td></tr>
@@ -113,49 +119,150 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~Application</b> (
 <tr class="memitem:a19ffd726898f19a93fdcc55c2eb522de" id="r_a19ffd726898f19a93fdcc55c2eb522de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a19ffd726898f19a93fdcc55c2eb522de">Shutdown</a> ()</td></tr>
 <tr class="memdesc:a19ffd726898f19a93fdcc55c2eb522de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown function.  <br /></td></tr>
 <tr class="separator:a19ffd726898f19a93fdcc55c2eb522de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d1e69f91cbeb17f43820edd0ffcc5e9" id="r_a4d1e69f91cbeb17f43820edd0ffcc5e9"><td class="memItemLeft" align="right" valign="top"><a id="a4d1e69f91cbeb17f43820edd0ffcc5e9" name="a4d1e69f91cbeb17f43820edd0ffcc5e9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Close</b> ()</td></tr>
-<tr class="memdesc:a4d1e69f91cbeb17f43820edd0ffcc5e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close function. <br /></td></tr>
+<tr class="memitem:a4d1e69f91cbeb17f43820edd0ffcc5e9" id="r_a4d1e69f91cbeb17f43820edd0ffcc5e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a4d1e69f91cbeb17f43820edd0ffcc5e9">Close</a> ()</td></tr>
+<tr class="memdesc:a4d1e69f91cbeb17f43820edd0ffcc5e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close function.  <br /></td></tr>
 <tr class="separator:a4d1e69f91cbeb17f43820edd0ffcc5e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a3d4beab99c8e1061a08dbde71647359a" id="r_a3d4beab99c8e1061a08dbde71647359a"><td class="memItemLeft" align="right" valign="top"><a id="a3d4beab99c8e1061a08dbde71647359a" name="a3d4beab99c8e1061a08dbde71647359a"></a>
-static <a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Get</b> ()</td></tr>
-<tr class="memdesc:a3d4beab99c8e1061a08dbde71647359a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classRaito_1_1Core_1_1Application.html" title="Application base class.">Application</a> getter. <br /></td></tr>
+<tr class="memitem:a3d4beab99c8e1061a08dbde71647359a" id="r_a3d4beab99c8e1061a08dbde71647359a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a3d4beab99c8e1061a08dbde71647359a">Get</a> ()</td></tr>
+<tr class="memdesc:a3d4beab99c8e1061a08dbde71647359a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classRaito_1_1Core_1_1Application.html" title="Application base class.">Application</a> getter.  <br /></td></tr>
 <tr class="separator:a3d4beab99c8e1061a08dbde71647359a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a93349d3bcb92f94f62ed3c6439fed57d" id="r_a93349d3bcb92f94f62ed3c6439fed57d"><td class="memItemLeft" align="right" valign="top"><a id="a93349d3bcb92f94f62ed3c6439fed57d" name="a93349d3bcb92f94f62ed3c6439fed57d"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>OnInit</b> ()</td></tr>
+<tr class="memitem:a93349d3bcb92f94f62ed3c6439fed57d" id="r_a93349d3bcb92f94f62ed3c6439fed57d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a93349d3bcb92f94f62ed3c6439fed57d">OnInit</a> ()</td></tr>
 <tr class="separator:a93349d3bcb92f94f62ed3c6439fed57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9fd537dc68dff92837976141f404af1" id="r_af9fd537dc68dff92837976141f404af1"><td class="memItemLeft" align="right" valign="top"><a id="af9fd537dc68dff92837976141f404af1" name="af9fd537dc68dff92837976141f404af1"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>OnRenderGUI</b> ()</td></tr>
+<tr class="memitem:af9fd537dc68dff92837976141f404af1" id="r_af9fd537dc68dff92837976141f404af1"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#af9fd537dc68dff92837976141f404af1">OnRenderGUI</a> ()</td></tr>
 <tr class="separator:af9fd537dc68dff92837976141f404af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a096e255b47a252fb6b1774d83fb174aa" id="r_a096e255b47a252fb6b1774d83fb174aa"><td class="memItemLeft" align="right" valign="top"><a id="a096e255b47a252fb6b1774d83fb174aa" name="a096e255b47a252fb6b1774d83fb174aa"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>OnUpdate</b> ()</td></tr>
+<tr class="memitem:a096e255b47a252fb6b1774d83fb174aa" id="r_a096e255b47a252fb6b1774d83fb174aa"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a096e255b47a252fb6b1774d83fb174aa">OnUpdate</a> ()</td></tr>
 <tr class="separator:a096e255b47a252fb6b1774d83fb174aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a786ef45c297b4f9ca14ac31b30237783" id="r_a786ef45c297b4f9ca14ac31b30237783"><td class="memItemLeft" align="right" valign="top"><a id="a786ef45c297b4f9ca14ac31b30237783" name="a786ef45c297b4f9ca14ac31b30237783"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnShutdown</b> ()</td></tr>
+<tr class="memitem:a786ef45c297b4f9ca14ac31b30237783" id="r_a786ef45c297b4f9ca14ac31b30237783"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a786ef45c297b4f9ca14ac31b30237783">OnShutdown</a> ()</td></tr>
 <tr class="separator:a786ef45c297b4f9ca14ac31b30237783"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a728fe71b6ff295463dddb87532f26d98" id="r_a728fe71b6ff295463dddb87532f26d98"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a728fe71b6ff295463dddb87532f26d98">Application</a> ()</td></tr>
+<tr class="separator:a728fe71b6ff295463dddb87532f26d98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a7efc6f00c8c8acc329a403d2528a2412" id="r_a7efc6f00c8c8acc329a403d2528a2412"><td class="memItemLeft" align="right" valign="top"><a id="a7efc6f00c8c8acc329a403d2528a2412" name="a7efc6f00c8c8acc329a403d2528a2412"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_Running</b> = false</td></tr>
+<tr class="memitem:a7efc6f00c8c8acc329a403d2528a2412" id="r_a7efc6f00c8c8acc329a403d2528a2412"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a7efc6f00c8c8acc329a403d2528a2412">m_Running</a> = false</td></tr>
 <tr class="separator:a7efc6f00c8c8acc329a403d2528a2412"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a4f8d9338a766a662f8110b5e506a9e05" id="r_a4f8d9338a766a662f8110b5e506a9e05"><td class="memItemLeft" align="right" valign="top"><a id="a4f8d9338a766a662f8110b5e506a9e05" name="a4f8d9338a766a662f8110b5e506a9e05"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>RunApp</b> (<a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a> &amp;app, <a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html">ApplicationInfo</a> info, int argc, char **argv)</td></tr>
+<tr class="memitem:a4f8d9338a766a662f8110b5e506a9e05" id="r_a4f8d9338a766a662f8110b5e506a9e05"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRaito_1_1Core_1_1Application.html#a4f8d9338a766a662f8110b5e506a9e05">RunApp</a> (<a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a> &amp;app, <a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html">ApplicationInfo</a> info, int argc, char **argv)</td></tr>
 <tr class="separator:a4f8d9338a766a662f8110b5e506a9e05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classRaito_1_1Core_1_1Application.html" title="Application base class.">Application</a> base class. </p>
 <p>The base class for an application to inherit from, it handles all the modules execution. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aeca080fe3130f1ae764e77a4c2a4009c" name="aeca080fe3130f1ae764e77a4c2a4009c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeca080fe3130f1ae764e77a4c2a4009c">&#9670;&#160;</a></span>~Application()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual Raito::Core::Application::~Application </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Virtual destructor. </p>
+
+</div>
+</div>
+<a id="a728fe71b6ff295463dddb87532f26d98" name="a728fe71b6ff295463dddb87532f26d98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a728fe71b6ff295463dddb87532f26d98">&#9670;&#160;</a></span>Application()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Raito::Core::Application::Application </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4d1e69f91cbeb17f43820edd0ffcc5e9" name="a4d1e69f91cbeb17f43820edd0ffcc5e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d1e69f91cbeb17f43820edd0ffcc5e9">&#9670;&#160;</a></span>Close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Raito::Core::Application::Close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Close function. </p>
+
+</div>
+</div>
+<a id="a3d4beab99c8e1061a08dbde71647359a" name="a3d4beab99c8e1061a08dbde71647359a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d4beab99c8e1061a08dbde71647359a">&#9670;&#160;</a></span>Get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a> &amp; Raito::Core::Application::Get </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classRaito_1_1Core_1_1Application.html" title="Application base class.">Application</a> getter. </p>
+
+</div>
+</div>
 <a id="af010f6b34808f5e61a592917c743df49" name="af010f6b34808f5e61a592917c743df49"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af010f6b34808f5e61a592917c743df49">&#9670;&#160;</a></span>Initialize()</h2>
 
@@ -173,6 +280,106 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>RunApp</b> (<a class="
 
 <p>Initialization function. </p>
 <p>Initializes all the modules and calls OnInit at the end if all succed. </p>
+
+</div>
+</div>
+<a id="a93349d3bcb92f94f62ed3c6439fed57d" name="a93349d3bcb92f94f62ed3c6439fed57d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93349d3bcb92f94f62ed3c6439fed57d">&#9670;&#160;</a></span>OnInit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Raito::Core::Application::OnInit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af9fd537dc68dff92837976141f404af1" name="af9fd537dc68dff92837976141f404af1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9fd537dc68dff92837976141f404af1">&#9670;&#160;</a></span>OnRenderGUI()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Raito::Core::Application::OnRenderGUI </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a786ef45c297b4f9ca14ac31b30237783" name="a786ef45c297b4f9ca14ac31b30237783"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a786ef45c297b4f9ca14ac31b30237783">&#9670;&#160;</a></span>OnShutdown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Raito::Core::Application::OnShutdown </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a096e255b47a252fb6b1774d83fb174aa" name="a096e255b47a252fb6b1774d83fb174aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a096e255b47a252fb6b1774d83fb174aa">&#9670;&#160;</a></span>OnUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Raito::Core::Application::OnUpdate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -212,18 +419,94 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>RunApp</b> (<a class="
 </div><div class="memdoc">
 
 <p>Update function. </p>
-<p>Main update loop, runs every module update function and calls OnUpdate() and OnRenderGUI() with this order. </p>
+<p>Main update loop, runs every module update function and calls <a class="el" href="classRaito_1_1Core_1_1Application.html#a096e255b47a252fb6b1774d83fb174aa">OnUpdate()</a> and <a class="el" href="classRaito_1_1Core_1_1Application.html#af9fd537dc68dff92837976141f404af1">OnRenderGUI()</a> with this order. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a4f8d9338a766a662f8110b5e506a9e05" name="a4f8d9338a766a662f8110b5e506a9e05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f8d9338a766a662f8110b5e506a9e05">&#9670;&#160;</a></span>RunApp</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int RunApp </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a> &amp;&#160;</td>
+          <td class="paramname"><em>app</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html">ApplicationInfo</a>&#160;</td>
+          <td class="paramname"><em>info</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>argc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>argv</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a7efc6f00c8c8acc329a403d2528a2412" name="a7efc6f00c8c8acc329a403d2528a2412"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7efc6f00c8c8acc329a403d2528a2412">&#9670;&#160;</a></span>m_Running</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Raito::Core::Application::m_Running = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Core/Source/Raito/Core/<a class="el" href="Application_8h_source.html">Application.h</a></li>
-<li>Core/Source/Raito/Core/<b>Application.cpp</b></li>
+<li>Core/Source/Raito/Core/<a class="el" href="Application_8cpp.html">Application.cpp</a></li>
 </ul>
 </div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="namespaceRaito.html">Raito</a></li><li class="navelem"><a class="el" href="namespaceRaito_1_1Core.html">Core</a></li><li class="navelem"><a class="el" href="classRaito_1_1Core_1_1Application.html">Application</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+  </ul>
+</div>
 </body>
 </html>

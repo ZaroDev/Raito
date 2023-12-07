@@ -1,13 +1,6 @@
 var searchData=
 [
-  ['delegate_3c_20ret_28args_2e_2e_2e_29_3e_0',['delegate&lt; Ret(Args...)&gt;',['../classentt_1_1delegate_3_01Ret_07Args_8_8_8_08_4.html',1,'entt']]],
-  ['dense_5fmap_1',['dense_map',['../classentt_1_1dense__map.html',1,'entt']]],
-  ['dense_5fmap_3c_20id_5ftype_2c_20internal_3a_3ameta_5fprop_5fnode_2c_20identity_20_3e_2',['dense_map&lt; id_type, internal::meta_prop_node, identity &gt;',['../classentt_1_1dense__map.html',1,'entt']]],
-  ['dense_5fmap_3c_20id_5ftype_2c_20ro_5frw_5fcontainer_5ftype_2c_20identity_2c_20std_3a_3aequal_5fto_3c_20id_5ftype_20_3e_2c_20typename_20alloc_5ftraits_3a_3atemplate_20rebind_5falloc_3c_20std_3a_3apair_3c_20const_20id_5ftype_2c_20ro_5frw_5fcontainer_5ftype_20_3e_20_3e_20_3e_3',['dense_map&lt; id_type, ro_rw_container_type, identity, std::equal_to&lt; id_type &gt;, typename alloc_traits::template rebind_alloc&lt; std::pair&lt; const id_type, ro_rw_container_type &gt; &gt; &gt;',['../classentt_1_1dense__map.html',1,'entt']]],
-  ['dense_5fmap_3c_20id_5ftype_2c_20std_3a_3ashared_5fptr_3c_20base_5ftype_20_3e_2c_20identity_2c_20std_3a_3aequal_5fto_3c_20id_5ftype_20_3e_2c_20typename_20alloc_5ftraits_3a_3atemplate_20rebind_5falloc_3c_20std_3a_3apair_3c_20const_20id_5ftype_2c_20std_3a_3ashared_5fptr_3c_20base_5ftype_20_3e_20_3e_20_3e_20_3e_4',['dense_map&lt; id_type, std::shared_ptr&lt; base_type &gt;, identity, std::equal_to&lt; id_type &gt;, typename alloc_traits::template rebind_alloc&lt; std::pair&lt; const id_type, std::shared_ptr&lt; base_type &gt; &gt; &gt; &gt;',['../classentt_1_1dense__map.html',1,'entt']]],
-  ['dense_5fmap_3c_20id_5ftype_2c_20std_3a_3ashared_5fptr_3c_20internal_3a_3agroup_5fdescriptor_20_3e_2c_20identity_2c_20std_3a_3aequal_5fto_3c_20id_5ftype_20_3e_2c_20typename_20alloc_5ftraits_3a_3atemplate_20rebind_5falloc_3c_20std_3a_3apair_3c_20const_20id_5ftype_2c_20std_3a_3ashared_5fptr_3c_20internal_3a_3agroup_5fdescriptor_20_3e_20_3e_20_3e_20_3e_5',['dense_map&lt; id_type, std::shared_ptr&lt; internal::group_descriptor &gt;, identity, std::equal_to&lt; id_type &gt;, typename alloc_traits::template rebind_alloc&lt; std::pair&lt; const id_type, std::shared_ptr&lt; internal::group_descriptor &gt; &gt; &gt; &gt;',['../classentt_1_1dense__map.html',1,'entt']]],
-  ['dense_5fmap_3c_20typename_20traits_5ftype_3a_3aentity_5ftype_2c_20std_3a_3apair_3c_20entity_5ftype_2c_20entity_5ftype_20_3e_20_3e_6',['dense_map&lt; typename traits_type::entity_type, std::pair&lt; entity_type, entity_type &gt; &gt;',['../classentt_1_1dense__map.html',1,'entt']]],
-  ['dense_5fset_7',['dense_set',['../classentt_1_1dense__set.html',1,'entt']]],
-  ['dense_5fset_3c_20id_5ftype_2c_20identity_2c_20std_3a_3aequal_5fto_3c_20id_5ftype_20_3e_2c_20typename_20alloc_5ftraits_3a_3atemplate_20rebind_5falloc_3c_20id_5ftype_20_3e_20_3e_8',['dense_set&lt; id_type, identity, std::equal_to&lt; id_type &gt;, typename alloc_traits::template rebind_alloc&lt; id_type &gt; &gt;',['../classentt_1_1dense__set.html',1,'entt']]],
-  ['directed_5ftag_9',['directed_tag',['../structentt_1_1directed__tag.html',1,'entt']]]
+  ['scene_0',['Scene',['../classRaito_1_1ECS_1_1Scene.html',1,'Raito::ECS']]],
+  ['scopedtimer_1',['ScopedTimer',['../classRaito_1_1ScopedTimer.html',1,'Raito']]],
+  ['syswindow_2',['SysWindow',['../structRaito_1_1SysWindow.html',1,'Raito']]]
 ];

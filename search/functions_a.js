@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['load_5ffactor_0',['load_factor',['../classentt_1_1dense__map.html#a0ebd2095ae61e1908572efa33dc3df56',1,'entt::dense_map::load_factor()'],['../classentt_1_1dense__set.html#abceb56d6788f953e79b6d6924bfcbfe2',1,'entt::dense_set::load_factor()']]]
+  ['removecomponent_0',['RemoveComponent',['../classRaito_1_1ECS_1_1Entity.html#a222397783457af80e40859dd5d4b32ec',1,'Raito::ECS::Entity']]],
+  ['runapp_1',['RunApp',['../namespaceRaito_1_1Core.html#a7c6c5e65a8934357fff180b367c9e348',1,'Raito::Core']]]
 ];

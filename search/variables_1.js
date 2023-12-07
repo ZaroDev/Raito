@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['entity_5fmask_0',['entity_mask',['../classentt_1_1basic__entt__traits.html#a6b93920c3b3347171c485fdbdead14ec',1,'entt::basic_entt_traits']]]
+  ['fullscreen_0',['fullscreen',['../structRaito_1_1Core_1_1ApplicationInfo.html#a947c5ac5be85fe9fb1ab2a40e19f43c9',1,'Raito::Core::ApplicationInfo::Fullscreen'],['../structRaito_1_1WindowInfo.html#a045308caf55f76f417ad3fe1974d7c32',1,'Raito::WindowInfo::Fullscreen']]]
 ];

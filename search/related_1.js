@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['poly_5fbase_3c_20basic_5fpoly_20_3e_0',['poly_base&lt; basic_poly &gt;',['../classentt_1_1basic__poly.html#a4f532417307014ab3c9eb0070beaf7fc',1,'entt::basic_poly']]]
+  ['runapp_0',['RunApp',['../classRaito_1_1Core_1_1Application.html#a4f8d9338a766a662f8110b5e506a9e05',1,'Raito::Core::Application']]]
 ];

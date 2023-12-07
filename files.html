@@ -9,6 +9,10 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -21,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Raito
+   <div id="projectname">Raito<span id="projectnumber">&#160;0.1</span>
    </div>
   </td>
  </tr>
@@ -47,6 +51,22 @@ $(function() {
 </script>
 <div id="main-nav"></div>
 </div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(document).ready(function(){initNavTree('files.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -72,42 +92,49 @@ $(function() {
   <div class="headertitle"><div class="title">File List</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented files with brief descriptions:</div><div class="directory">
+<div class="textblock">Here is a list of all files with brief descriptions:</div><div class="directory">
 <div class="levels">[detail level <span onclick="javascript:toggleLevel(1);">1</span><span onclick="javascript:toggleLevel(2);">2</span><span onclick="javascript:toggleLevel(3);">3</span><span onclick="javascript:toggleLevel(4);">4</span><span onclick="javascript:toggleLevel(5);">5</span>]</div><table class="directory">
 <tr id="row_0_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_0_" class="arrow" onclick="toggleFolder('0_')">&#9660;</span><span id="img_0_" class="iconfopen" onclick="toggleFolder('0_')">&#160;</span><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html" target="_self">Core</a></td><td class="desc"></td></tr>
 <tr id="row_0_0_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_0_0_" class="arrow" onclick="toggleFolder('0_0_')">&#9660;</span><span id="img_0_0_" class="iconfopen" onclick="toggleFolder('0_0_')">&#160;</span><a class="el" href="dir_a4cb02fe4f7b73e09a7c4d547d8e5b78.html" target="_self">Source</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_0_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span id="arr_0_0_0_" class="arrow" onclick="toggleFolder('0_0_0_')">&#9660;</span><span id="img_0_0_0_" class="iconfopen" onclick="toggleFolder('0_0_0_')">&#160;</span><a class="el" href="dir_6d6e0ca9c2630192e4f28097a8e0c646.html" target="_self">Entt</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_0_0_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a href="entt_8hpp_source.html"><span class="icondoc"></span></a><b>entt.hpp</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span id="arr_0_0_1_" class="arrow" onclick="toggleFolder('0_0_1_')">&#9660;</span><span id="img_0_0_1_" class="iconfopen" onclick="toggleFolder('0_0_1_')">&#160;</span><a class="el" href="dir_b1b4beeafbebbe5f4ae1a9c26190a2cd.html" target="_self">Raito</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_0_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_1_0_" class="arrow" onclick="toggleFolder('0_0_1_0_')">&#9660;</span><span id="img_0_0_1_0_" class="iconfopen" onclick="toggleFolder('0_0_1_0_')">&#160;</span><a class="el" href="dir_680309b3c89fdab445539a4447509695.html" target="_self">Core</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_0_0_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Application_8h_source.html"><span class="icondoc"></span></a><b>Application.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_0_1_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Assert_8h_source.html"><span class="icondoc"></span></a><b>Assert.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_0_2_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="BasicTypes_8h_source.html"><span class="icondoc"></span></a><b>BasicTypes.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_0_3_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Log_8h_source.html"><span class="icondoc"></span></a><b>Log.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_0_4_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="UUID_8h_source.html"><span class="icondoc"></span></a><b>UUID.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_1_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_1_1_" class="arrow" onclick="toggleFolder('0_0_1_1_')">&#9660;</span><span id="img_0_0_1_1_" class="iconfopen" onclick="toggleFolder('0_0_1_1_')">&#160;</span><a class="el" href="dir_96674d09dd060373fed83a40ca3a5655.html" target="_self">ECS</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_1_0_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Components_8h_source.html"><span class="icondoc"></span></a><b>Components.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_1_1_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Entity_8h_source.html"><span class="icondoc"></span></a><b>Entity.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_1_2_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Scene_8h_source.html"><span class="icondoc"></span></a><b>Scene.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_2_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_1_2_" class="arrow" onclick="toggleFolder('0_0_1_2_')">&#9660;</span><span id="img_0_0_1_2_" class="iconfopen" onclick="toggleFolder('0_0_1_2_')">&#160;</span><a class="el" href="dir_785efb89e314c43ada293c91eb75b18e.html" target="_self">Math</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_2_0_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Math_8h_source.html"><span class="icondoc"></span></a><b>Math.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_2_1_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="MathTypes_8h_source.html"><span class="icondoc"></span></a><b>MathTypes.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_3_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_1_3_" class="arrow" onclick="toggleFolder('0_0_1_3_')">&#9660;</span><span id="img_0_0_1_3_" class="iconfopen" onclick="toggleFolder('0_0_1_3_')">&#160;</span><a class="el" href="dir_ee25937a4fd29070cbbac9ee8ae1f4ac.html" target="_self">Time</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_3_0_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="ScopedTimer_8h_source.html"><span class="icondoc"></span></a><b>ScopedTimer.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_3_1_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Time_8h_source.html"><span class="icondoc"></span></a><b>Time.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_4_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_1_4_" class="arrow" onclick="toggleFolder('0_0_1_4_')">&#9660;</span><span id="img_0_0_1_4_" class="iconfopen" onclick="toggleFolder('0_0_1_4_')">&#160;</span><a class="el" href="dir_44f7c5c0ee9be42246194a76caa106fe.html" target="_self">Window</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_4_0_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Window_8h_source.html"><span class="icondoc"></span></a><b>Window.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_5_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a href="pch_8h_source.html"><span class="icondoc"></span></a><b>pch.h</b></td><td class="desc"></td></tr>
-<tr id="row_0_0_1_6_" class="even"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a href="Raito_8h_source.html"><span class="icondoc"></span></a><b>Raito.h</b></td><td class="desc"></td></tr>
-<tr id="row_1_" class="odd"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_1_" class="arrow" onclick="toggleFolder('1_')">&#9660;</span><span id="img_1_" class="iconfopen" onclick="toggleFolder('1_')">&#160;</span><a class="el" href="dir_14eca4e58e6d71e3a9859288c1bd2735.html" target="_self">Editor</a></td><td class="desc"></td></tr>
-<tr id="row_1_0_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_1_0_" class="arrow" onclick="toggleFolder('1_0_')">&#9660;</span><span id="img_1_0_" class="iconfopen" onclick="toggleFolder('1_0_')">&#160;</span><a class="el" href="dir_1d889092cf564a659f938a3205d5dd5c.html" target="_self">Source</a></td><td class="desc"></td></tr>
-<tr id="row_1_0_0_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a href="App_8h_source.html"><span class="icondoc"></span></a><b>App.h</b></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span id="arr_0_0_0_" class="arrow" onclick="toggleFolder('0_0_0_')">&#9660;</span><span id="img_0_0_0_" class="iconfopen" onclick="toggleFolder('0_0_0_')">&#160;</span><a class="el" href="dir_b1b4beeafbebbe5f4ae1a9c26190a2cd.html" target="_self">Raito</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_0_0_" class="arrow" onclick="toggleFolder('0_0_0_0_')">&#9660;</span><span id="img_0_0_0_0_" class="iconfopen" onclick="toggleFolder('0_0_0_0_')">&#160;</span><a class="el" href="dir_680309b3c89fdab445539a4447509695.html" target="_self">Core</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_0_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="Application_8cpp.html" target="_self">Application.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_1_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Application_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Application_8h.html" target="_self">Application.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_2_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Assert_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Assert_8h.html" target="_self">Assert.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_3_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="BasicTypes_8h_source.html"><span class="icondoc"></span></a><a class="el" href="BasicTypes_8h.html" target="_self">BasicTypes.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_4_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="Log_8cpp.html" target="_self">Log.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_5_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Log_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Log_8h.html" target="_self">Log.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_6_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="UUID_8cpp.html" target="_self">UUID.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_7_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="UUID_8h_source.html"><span class="icondoc"></span></a><a class="el" href="UUID_8h.html" target="_self">UUID.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_1_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_0_1_" class="arrow" onclick="toggleFolder('0_0_0_1_')">&#9660;</span><span id="img_0_0_0_1_" class="iconfopen" onclick="toggleFolder('0_0_0_1_')">&#160;</span><a class="el" href="dir_96674d09dd060373fed83a40ca3a5655.html" target="_self">ECS</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_1_0_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Components_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Components_8h.html" target="_self">Components.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_1_1_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="Entity_8cpp.html" target="_self">Entity.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_1_2_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Entity_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Entity_8h.html" target="_self">Entity.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_1_3_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="Scene_8cpp.html" target="_self">Scene.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_1_4_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Scene_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Scene_8h.html" target="_self">Scene.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_2_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_0_2_" class="arrow" onclick="toggleFolder('0_0_0_2_')">&#9660;</span><span id="img_0_0_0_2_" class="iconfopen" onclick="toggleFolder('0_0_0_2_')">&#160;</span><a class="el" href="dir_785efb89e314c43ada293c91eb75b18e.html" target="_self">Math</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_2_0_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Math_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Math_8h.html" target="_self">Math.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_2_1_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="MathTypes_8h_source.html"><span class="icondoc"></span></a><a class="el" href="MathTypes_8h.html" target="_self">MathTypes.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_3_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_0_3_" class="arrow" onclick="toggleFolder('0_0_0_3_')">&#9660;</span><span id="img_0_0_0_3_" class="iconfopen" onclick="toggleFolder('0_0_0_3_')">&#160;</span><a class="el" href="dir_ee25937a4fd29070cbbac9ee8ae1f4ac.html" target="_self">Time</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_3_0_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="ScopedTimer_8cpp.html" target="_self">ScopedTimer.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_3_1_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="ScopedTimer_8h_source.html"><span class="icondoc"></span></a><a class="el" href="ScopedTimer_8h.html" target="_self">ScopedTimer.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_3_2_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="Time_8cpp.html" target="_self">Time.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_3_3_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Time_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Time_8h.html" target="_self">Time.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_4_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_0_0_0_4_" class="arrow" onclick="toggleFolder('0_0_0_4_')">&#9660;</span><span id="img_0_0_0_4_" class="iconfopen" onclick="toggleFolder('0_0_0_4_')">&#160;</span><a class="el" href="dir_44f7c5c0ee9be42246194a76caa106fe.html" target="_self">Window</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_4_0_" class="odd"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="Window_8cpp.html" target="_self">Window.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_4_1_" class="even"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><a href="Window_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Window_8h.html" target="_self">Window.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_5_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="pch_8cpp.html" target="_self">pch.cpp</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_6_" class="even"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a href="pch_8h_source.html"><span class="icondoc"></span></a><a class="el" href="pch_8h.html" target="_self">pch.h</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_7_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a href="Raito_8h_source.html"><span class="icondoc"></span></a><a class="el" href="Raito_8h.html" target="_self">Raito.h</a></td><td class="desc"></td></tr>
 </table>
 </div><!-- directory -->
 </div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+  </ul>
+</div>
 </body>
 </html>

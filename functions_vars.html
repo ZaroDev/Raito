@@ -9,6 +9,10 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -21,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Raito
+   <div id="projectname">Raito<span id="projectnumber">&#160;0.1</span>
    </div>
   </td>
  </tr>
@@ -47,6 +51,22 @@ $(function() {
 </script>
 <div id="main-nav"></div>
 </div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(document).ready(function(){initNavTree('functions_vars.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -69,26 +89,31 @@ $(function() {
 </div>
 
 <div class="contents">
-<div class="textblock">Here is a list of all documented variables with links to the class documentation for each member:</div><ul>
-<li>alignment&#160;:&#160;<a class="el" href="classentt_1_1basic__any.html#a8248e8443c6208077db312079a05fd96">entt::basic_any&lt; Len, Align &gt;</a></li>
-<li>entity_mask&#160;:&#160;<a class="el" href="classentt_1_1basic__entt__traits.html#a6b93920c3b3347171c485fdbdead14ec">entt::basic_entt_traits&lt; Traits &gt;</a></li>
-<li>Fullscreen&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a947c5ac5be85fe9fb1ab2a40e19f43c9">Raito::Core::ApplicationInfo</a></li>
-<li>Height&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a5c1790d049fefcfd940df50c2ee56632">Raito::Core::ApplicationInfo</a></li>
-<li>in_place_delete&#160;:&#160;<a class="el" href="structentt_1_1component__traits.html#ac3efe50eb183fe2a31b642ade474017f">entt::component_traits&lt; Type, typename &gt;</a></li>
-<li>is_const&#160;:&#160;<a class="el" href="structentt_1_1meta__function__descriptor__traits.html#abb5a7b79fcad9c6d6483be10e3aaeb3a">entt::meta_function_descriptor_traits&lt; Ret, Args, Static, Const &gt;</a></li>
-<li>is_static&#160;:&#160;<a class="el" href="structentt_1_1meta__function__descriptor__traits.html#a109cf5434966e6ff7ba8dc20045d52cb">entt::meta_function_descriptor_traits&lt; Ret, Args, Static, Const &gt;</a></li>
-<li>length&#160;:&#160;<a class="el" href="classentt_1_1basic__any.html#a5fbc1fb99c934c59524af552ae2a33c3">entt::basic_any&lt; Len, Align &gt;</a></li>
-<li>Name&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a73ab64b2f47a136639eacf741653e19e">Raito::Core::ApplicationInfo</a></li>
-<li>page_size&#160;:&#160;<a class="el" href="structentt_1_1component__traits.html#a8fa4acd0fc9b0c554ea805961a5b6f8b">entt::component_traits&lt; Type, typename &gt;</a>, <a class="el" href="structentt_1_1entt__traits.html#a187c362626da03111928aff88f43bb83">entt::entt_traits&lt; Type &gt;</a></li>
-<li>size&#160;:&#160;<a class="el" href="structentt_1_1type__list.html#a430c0675bdbcbb40be9b8f13f7259484">entt::type_list&lt; Type &gt;</a>, <a class="el" href="structentt_1_1value__list.html#a26bdc12c949cf22068f1bd411acf6cc7">entt::value_list&lt; Value &gt;</a></li>
-<li>value&#160;:&#160;<a class="el" href="classentt_1_1family.html#af152fe50da07a8f99af91dfc4c8cd914">entt::family&lt;... &gt;</a>, <a class="el" href="classentt_1_1ident.html#abbe6e44a907fc596f65ee29d3cb67b6d">entt::ident&lt; Type &gt;</a>, <a class="el" href="structentt_1_1type__list__index_3_01Type_00_01type__list_3_01First_00_01Other_8_8_8_01_4_01_4.html#a975ead78ef99682644975a540c448c95">entt::type_list_index&lt; Type, type_list&lt; First, Other... &gt; &gt;</a>, <a class="el" href="structentt_1_1type__list__index_3_01Type_00_01type__list_3_01Type_00_01Other_8_8_8_01_4_01_4.html#a20d11ed6bf1a574c6c56bcb72a93c6c2">entt::type_list_index&lt; Type, type_list&lt; Type, Other... &gt; &gt;</a>, <a class="el" href="structentt_1_1type__list__index_3_01Type_00_01type__list_3_4_01_4.html#a565dda95f4cd3a8d23a32a07e6588819">entt::type_list_index&lt; Type, type_list&lt;&gt; &gt;</a>, <a class="el" href="structentt_1_1value__list__element_3_010u_00_01value__list_3_01Value_00_01Other_8_8_8_01_4_01_4.html#a7525593fea1bece0b7e43d2ea7a69411">entt::value_list_element&lt; 0u, value_list&lt; Value, Other... &gt; &gt;</a>, <a class="el" href="structentt_1_1value__list__index_3_01Value_00_01value__list_3_01First_00_01Other_8_8_8_01_4_01_4.html#a05188eb2190c4c0636589e33c661138f">entt::value_list_index&lt; Value, value_list&lt; First, Other... &gt; &gt;</a>, <a class="el" href="structentt_1_1value__list__index_3_01Value_00_01value__list_3_01Value_00_01Other_8_8_8_01_4_01_4.html#a63d73ef4532aa1fd7ba4881b910e37ee">entt::value_list_index&lt; Value, value_list&lt; Value, Other... &gt; &gt;</a>, <a class="el" href="structentt_1_1value__list__index_3_01Value_00_01value__list_3_4_01_4.html#ac295fcba272af7b37fe380b457e414ad">entt::value_list_index&lt; Value, value_list&lt;&gt; &gt;</a></li>
-<li>version_mask&#160;:&#160;<a class="el" href="classentt_1_1basic__entt__traits.html#a0bd49c229b049ac5dc0fb21195b4bcc3">entt::basic_entt_traits&lt; Traits &gt;</a></li>
-<li>Width&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a95afb7fda42a04155a1e17be6581a924">Raito::Core::ApplicationInfo</a></li>
+<div class="textblock">Here is a list of all variables with links to the classes they belong to:</div><ul>
+<li>Fullscreen&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a947c5ac5be85fe9fb1ab2a40e19f43c9">Raito::Core::ApplicationInfo</a>, <a class="el" href="structRaito_1_1WindowInfo.html#a045308caf55f76f417ad3fe1974d7c32">Raito::WindowInfo</a></li>
+<li>Height&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a5c1790d049fefcfd940df50c2ee56632">Raito::Core::ApplicationInfo</a>, <a class="el" href="structRaito_1_1WindowInfo.html#a01a10b3d7620c4af388b2330a74421d5">Raito::WindowInfo</a></li>
+<li>ID&#160;:&#160;<a class="el" href="structRaito_1_1ECS_1_1IDComponent.html#a991048e4b89529f387aeaf50698ed259">Raito::ECS::IDComponent</a>, <a class="el" href="structRaito_1_1SysWindow.html#a6cfa31a3d5874ef996afe05e2eca72ec">Raito::SysWindow</a></li>
+<li>Info&#160;:&#160;<a class="el" href="structRaito_1_1SysWindow.html#a91743a47007effd5341ec975a8a1126d">Raito::SysWindow</a></li>
+<li>IsAlive&#160;:&#160;<a class="el" href="structRaito_1_1SysWindow.html#a134aa986151f435a2dd03eac34dd983d">Raito::SysWindow</a></li>
+<li>m_Running&#160;:&#160;<a class="el" href="classRaito_1_1Core_1_1Application.html#a7efc6f00c8c8acc329a403d2528a2412">Raito::Core::Application</a></li>
+<li>Name&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a73ab64b2f47a136639eacf741653e19e">Raito::Core::ApplicationInfo</a>, <a class="el" href="structRaito_1_1SysWindow.html#a9f03d952b4a94f09ee60ab4e8a534154">Raito::SysWindow</a></li>
+<li>Rotation&#160;:&#160;<a class="el" href="structRaito_1_1ECS_1_1TransformComponent.html#a94097e1f4e1e2d605f293c3ea461c5fb">Raito::ECS::TransformComponent</a></li>
+<li>Scale&#160;:&#160;<a class="el" href="structRaito_1_1ECS_1_1TransformComponent.html#acb9bc121110e0ffa3ace6d7784532d1e">Raito::ECS::TransformComponent</a></li>
+<li>Tag&#160;:&#160;<a class="el" href="structRaito_1_1ECS_1_1TagComponent.html#a3d5f4a27100494cd954ad3b29753ae6b">Raito::ECS::TagComponent</a></li>
+<li>Title&#160;:&#160;<a class="el" href="structRaito_1_1WindowInfo.html#ad05d15f34c0f61abe143bf1218a46ddc">Raito::WindowInfo</a></li>
+<li>Translation&#160;:&#160;<a class="el" href="structRaito_1_1ECS_1_1TransformComponent.html#a1988a8be5399ae2cb153f8c126fbccc0">Raito::ECS::TransformComponent</a></li>
+<li>VSync&#160;:&#160;<a class="el" href="structRaito_1_1WindowInfo.html#a8c8db2ddd0f7371260ddc00ea61868c3">Raito::WindowInfo</a></li>
+<li>Width&#160;:&#160;<a class="el" href="structRaito_1_1Core_1_1ApplicationInfo.html#a95afb7fda42a04155a1e17be6581a924">Raito::Core::ApplicationInfo</a>, <a class="el" href="structRaito_1_1WindowInfo.html#a7394399802733f4f8e131786d98d0412">Raito::WindowInfo</a></li>
+<li>Window&#160;:&#160;<a class="el" href="structRaito_1_1SysWindow.html#a896b87652960c6963f9d3fcb4ca4afa9">Raito::SysWindow</a></li>
+<li>WindowHandle&#160;:&#160;<a class="el" href="structRaito_1_1SysWindow.html#a24f603561213dc626f912729f4106bc3">Raito::SysWindow</a></li>
 </ul>
 </div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+  </ul>
+</div>
 </body>
 </html>

@@ -1,27 +1,4 @@
 var searchData=
 [
-  ['basic_5fany_0',['basic_any',['../classentt_1_1basic__any.html',1,'entt']]],
-  ['basic_5fany_3c_3e_1',['basic_any&lt;&gt;',['../classentt_1_1basic__any.html',1,'entt']]],
-  ['basic_5fcontinuous_5floader_2',['basic_continuous_loader',['../classentt_1_1basic__continuous__loader.html',1,'entt']]],
-  ['basic_5fentt_5ftraits_3',['basic_entt_traits',['../classentt_1_1basic__entt__traits.html',1,'entt']]],
-  ['basic_5fentt_5ftraits_3c_20internal_3a_3aentt_5ftraits_3c_20type_20_3e_20_3e_4',['basic_entt_traits&lt; internal::entt_traits&lt; Type &gt; &gt;',['../classentt_1_1basic__entt__traits.html',1,'entt']]],
-  ['basic_5fflow_5',['basic_flow',['../classentt_1_1basic__flow.html',1,'entt']]],
-  ['basic_5fflow_3c_3e_6',['basic_flow&lt;&gt;',['../classentt_1_1basic__flow.html',1,'entt']]],
-  ['basic_5fgroup_7',['basic_group',['../classentt_1_1basic__group.html',1,'entt']]],
-  ['basic_5fhandle_8',['basic_handle',['../structentt_1_1basic__handle.html',1,'entt']]],
-  ['basic_5fhashed_5fstring_9',['basic_hashed_string',['../classentt_1_1basic__hashed__string.html',1,'entt']]],
-  ['basic_5fobserver_10',['basic_observer',['../classentt_1_1basic__observer.html',1,'entt']]],
-  ['basic_5forganizer_11',['basic_organizer',['../classentt_1_1basic__organizer.html',1,'entt']]],
-  ['basic_5fpoly_12',['basic_poly',['../classentt_1_1basic__poly.html',1,'entt']]],
-  ['basic_5fregistry_13',['basic_registry',['../classentt_1_1basic__registry.html',1,'entt']]],
-  ['basic_5fruntime_5fview_14',['basic_runtime_view',['../classentt_1_1basic__runtime__view.html',1,'entt']]],
-  ['basic_5fscheduler_15',['basic_scheduler',['../classentt_1_1basic__scheduler.html',1,'entt']]],
-  ['basic_5fsnapshot_16',['basic_snapshot',['../classentt_1_1basic__snapshot.html',1,'entt']]],
-  ['basic_5fsnapshot_5floader_17',['basic_snapshot_loader',['../classentt_1_1basic__snapshot__loader.html',1,'entt']]],
-  ['basic_5fsparse_5fset_18',['basic_sparse_set',['../classentt_1_1basic__sparse__set.html',1,'entt']]],
-  ['basic_5fsparse_5fset_3c_20entity_2c_20std_3a_3aallocator_5ftraits_3c_20allocator_20_3e_3a_3atemplate_20rebind_5falloc_3c_20entity_20_3e_20_3e_19',['basic_sparse_set&lt; Entity, std::allocator_traits&lt; Allocator &gt;::template rebind_alloc&lt; Entity &gt; &gt;',['../classentt_1_1basic__sparse__set.html',1,'entt']]],
-  ['basic_5fsparse_5fset_3c_20registry_3a_3aentity_5ftype_2c_20std_3a_3aallocator_5ftraits_3c_20allocator_20_3e_3a_3atemplate_20rebind_5falloc_3c_20registry_3a_3aentity_5ftype_20_3e_20_3e_20',['basic_sparse_set&lt; Registry::entity_type, std::allocator_traits&lt; Allocator &gt;::template rebind_alloc&lt; Registry::entity_type &gt; &gt;',['../classentt_1_1basic__sparse__set.html',1,'entt']]],
-  ['basic_5fstorage_21',['basic_storage',['../classentt_1_1basic__storage.html',1,'entt']]],
-  ['basic_5fstorage_3c_20mask_2c_20registry_3a_3aentity_5ftype_2c_20allocator_20_3e_22',['basic_storage&lt; Mask, Registry::entity_type, Allocator &gt;',['../classentt_1_1basic__storage.html',1,'entt']]],
-  ['basic_5fview_23',['basic_view',['../classentt_1_1basic__view.html',1,'entt']]]
+  ['entity_0',['Entity',['../classRaito_1_1ECS_1_1Entity.html',1,'Raito::ECS']]]
 ];
