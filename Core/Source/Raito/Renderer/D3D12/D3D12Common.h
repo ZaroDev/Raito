@@ -22,46 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#include "Raito/Core/BasicTypes.h"
+#include "Raito/Core/Assert.h"
+#include "Raito/Renderer/Renderer.h"
 
-namespace Raito {
-	//! Universal Unique Identifier class
-	//! Creates a randomly generated UUID with a 64 bit lenght
-	class UUID
-	{
-	public:
-		//! Default constructor
-		UUID();
+#include <dxgi1_6.h>
+#include <d3d12.h>
 
-		//! Asign constructor
-		//! @param uuid The UUID to be asigned
-		UUID(u64 uuid);
+// Contains ComPtr (a.k.a Windows smart ptr)
+#include <wrl.h>
 
-		//! Copy constructor
-		//! @param other UUID to copy from
-		UUID(const UUID& other) = default;
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d12.lib")
 
-		//! UUID Operator
-		//! Returns the UUID value as an unsigned 64 bit integer
-		operator u64() const { return m_UUID; }
-	private:
-		u64 m_UUID;
-	};
-
-}
-
-namespace std {
-	template <typename T> struct hash;
-	//! STD Hash UUID implementation
-	template<>
-	struct hash<Raito::UUID>
-	{
-		//! Asign operator
-		//! Implementation for the STD library to hash the UUID value
-		//! @param uuid UUID to hash
-		std::size_t operator()(const Raito::UUID& uuid) const
-		{
-			return (u64)uuid;
-		}
-	};
-
+namespace Raito::Renderer::D3D12
+{
+	constexpr u32 FrameBufferCount = 3;
 }

@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 #include <string>
 #include "BasicTypes.h"
@@ -77,12 +76,18 @@ namespace Raito::Core
 		void Close() { m_Running = false; }
 
 	protected:
-		//!
+		//! Initilization event function
 		virtual bool OnInit() { return true; }
+		//! ImGui rendering event function
+		//! Note: Called after OnUpdate()
 		virtual bool OnRenderGUI() { return true; }
+		//! Update event function
+		//! Note: Called before OnRenderGUI()
 		virtual bool OnUpdate() { return true; }
+		//! Shutdown event function
 		virtual void OnShutdown() {}
 
+		//! Application constructor
 		Application() {}
 
 	protected:

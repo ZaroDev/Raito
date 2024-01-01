@@ -21,21 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
 #include "Math/MathTypes.h"
 
 namespace Raito::Math
 {
-	inline matrix CreateTransform(const v3& translation, const v4& rotation, const v3& scale)
-    {
-        vector quaternion = DirectX::XMLoadFloat4(&rotation);
-
-       matrix rotationMatrix = DirectX::XMMatrixRotationQuaternion(quaternion);
-       matrix translationMatrix = DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
-       matrix scaleMatrix = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
-
-       return translationMatrix * rotationMatrix * scaleMatrix;
-	}
+	
+	//! Creates a transform matrix from each component
+	//! @param translation Translation component
+	//! @param rotation Rotation component 
+	//! @param scale Scale component
+	//! @return Transfomation matrix
+	Matrix CreateTransform(const v3& translation, const Quaternion& rotation, const v3& scale);
 }

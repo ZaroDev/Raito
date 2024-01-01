@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 #include <string>
 #include <format>
@@ -31,10 +30,21 @@ namespace Raito::Core::Debug
 	inline static bool g_DumpLogs = true; /**< Logging flag. Enables/Disables log dumping to a file when the program ends */
 
 	//! Information loggin function
+	//! //! Format [Info] title - msg
+	//! @param title Title for the log 
+	//! @param msg Message of the log
 	void Log(const std::string& title, const std::string& msg);
+
 	//! Warning logging function
+	//! Format [Warning] title - msg
+	//! @param title Title for the log 
+	//! @param msg Message of the log
 	void LogWarning(const std::string& title, const std::string& msg);
+
 	//! Error logging function
+	//! Format [Error] title - msg
+	//! @param title Title for the log 
+	//! @param msg Message of the log
 	void LogError(const std::string& title, const std::string& msg);
 }
 //! Formating macro
@@ -44,26 +54,29 @@ namespace Raito::Core::Debug
 
 	//! Information logging macro where the title is specified
 	//! @param x Title for the log
-	//! @params ...Variable arguments to log as a message
+	//! @param ... Variable arguments to log as a message
 	#define LOG(x, ...)		Raito::Core::Debug::Log(x, FMT(__VA_ARGS__))
+
 	//! Information logging macro where the title is the function caller name
-	//! @params ...Variable arguments to log as a message
+	//! @param ... Variable arguments to log as a message
 	#define F_LOG(...)		Raito::Core::Debug::Log(__FUNCTION__, FMT(__VA__ARGS__))
 	
 	//! Warning logging macro where the title is specified
 	//! @param x Title for the log
-	//! @params ...Variable arguments to log as a message
+	//! @param ... Variable arguments to log as a message
 	#define WARN(x, ...)	Raito::Core::Debug::LogWarning(x, FMT(__VA_ARGS__))
+
 	//! Warning logging macro where the title is the function caller name
-	//! @params ...Variable arguments to log as a message
+	//! @params ... Variable arguments to log as a message
 	#define F_WARN(...)		Raito::Core::Debug::LogWarning(__FUNCTION__, FMT(__VA_ARGS__))
 	
 	//! Error logging macro where the title is specified
 	//! @param x Title for the log
-	//! @params ...Variable arguments to log as a message
+	//! @param ... Variable arguments to log as a message
 	#define ERR(x, ...)		Raito::Core::Debug::LogError(x, FMT(__VA_ARGS__))
+
 	//! Error logging macro where the title is the function caller name
-	//! @params ...Variable arguments to log as a message
+	//! @param ... Variable arguments to log as a message
 	#define F_ERR(...)		Raito::Core::Debug::LogError(__FUNCTION__, FMT(__VA_ARGS__))
 
 #else

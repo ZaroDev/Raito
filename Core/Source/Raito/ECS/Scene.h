@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 #include "Core/UUID.h"
 #include "Entt/entt.hpp"
@@ -30,35 +29,56 @@ SOFTWARE.
 namespace Raito::ECS
 {
 	class Entity;
-
+	//! Scene class
+	/*
+	* Holds all the entities and manages them
+	*/
 	class Scene
 	{
 	public:
-		Scene();
-		~Scene();
+		//! Default constructor
+		Scene() = default;
 
+		//! Default destructor
+		~Scene() = default;
+
+		//! Entity creation function
+		//! @param name Name of the created entity
+		//! @return The created entity
 		Entity CreateEntity(const std::string& name);
+
+		//! Entity desctruction function
+		//! @param entity The entity beeing destroyed
 		void DestroyEntity(Entity entity);
 
+		//! Duplicate entity function
+		//! @param entity The entity to duplicate
+		//! @return The duplicated entity
 		Entity DuplicateEntity(Entity entity);
 
+		//
 		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID uuid);
 
 		Entity GetPrimaryCameraEntity();
 
+		//! Templated function for all the entities with the components given
+		//! @return A view of all the entities with the given components
 		template<typename... Components>
 		auto GetAllEntitiesWith()
 		{
 			return m_Registry.view<Components...>();
 		}
 	private:
+		//! Entity component added templated callback
+		//! @param entity Entity that recived the component
+		//! @param component The component added
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 
 	private:
-		entt::registry m_Registry;
-		std::unordered_map<UUID, entt::entity> m_Entities{};
+		entt::registry m_Registry; /**< Scene entity registry */
+		std::unordered_map<UUID, entt::entity> m_Entities{}; /**< Registred entities map */
 
 		friend class Entity;
 	};

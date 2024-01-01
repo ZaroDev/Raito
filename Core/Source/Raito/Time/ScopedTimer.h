@@ -21,23 +21,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 #include <chrono>
 
 
 namespace Raito
 {
+	//! Scoped timer class
+	/*
+	*	Meant to ouput the time that it took for a function to be ran
+	*	It does output the time when destroyed
+	*/
 	class ScopedTimer
 	{
 	public:
+		//! Constructor
+		//! @param name Name of the timer
 		ScopedTimer(const char* name);
+		//! Destructor
+		//! Logs the time that the timer took to destroy
 		~ScopedTimer();
 
 	private:
-		std::string m_Name{};
-		std::chrono::time_point<std::chrono::steady_clock> m_Start{}, m_End{};
-		std::chrono::duration<float> m_Duration{};
+		std::string m_Name{}; /**< Name of the timer */
+		std::chrono::time_point<std::chrono::steady_clock> m_Start{} /**< Starting time */, m_End{} /**< Ending time */;
+		std::chrono::duration<float> m_Duration{} /**< Lifespan duration in ms */;
 	};
 }
 
