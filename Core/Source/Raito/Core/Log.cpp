@@ -40,7 +40,7 @@ namespace Raito::Core::Debug
 	}
 	void LogWarning(const std::string& title, const std::string& msg)
 	{
-		Buffer << "[Warn]" << title << " - " << msg << std::endl;
+		Buffer << "[Warning]" << title << " - " << msg << std::endl;
 	}
 	void LogError(const std::string& title, const std::string& msg)
 	{

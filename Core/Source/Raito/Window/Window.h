@@ -21,52 +21,61 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 
 namespace Raito
 {
+	//! Window info structure
 	struct WindowInfo
 	{
-		std::string Title{};
-		u32 Height{};
-		u32 Width{};
-		bool Fullscreen = false;
-		bool VSync = false;
+		std::string Title{}; /**< Title of the window*/
+
+		u32 Height{}; /**< Height of the window in pixels */
+		u32 Width{}; /**< Width of the window in pixels */
+		
+		bool Fullscreen = false; /**< Flag for fullscreen mode */
+		bool VSync = false; /**< Flag for VSync mode */
 	};
 
+	//! System window structure
 	struct SysWindow
 	{
-		void* WindowHandle = nullptr;
-		void* Window = nullptr;
-		
-		WindowInfo Info;
+		WindowInfo Info; /**< Information about the window */
 
-		std::string Name{};
+		void* WindowHandle = nullptr; /**< OS window handle */
+		void* Window = nullptr; /**< Internal window pointer */
 
-		u32 ID{};
+		u32 ID{}; /**< ID of the window */
 
-		bool IsAlive = false;
+		bool IsAlive = false; /**< Flag to delete the window on the next update loop */
 	};
 
 	
 
 	namespace Window
 	{
+		//! Initialization function for the window module
+		//! @param defaultInfo Window information for the main window
+		//! @return Boolean indicating sucess value
 		bool Initialize(WindowInfo defaultInfo = {});
+
+		//! Update function for the window module
+		//! Polls the events for all the windows
+		//! @return Boolean indicating sucess value
 		bool Update();
+
+		//! Shudown function for the window module
+		//! Deletes all the created windows
 		void Shutdown();
 
-		/// <summary>
-		/// Creates a window and returns the id
-		/// </summary>
+		//! Creates a window and returns the id
+		//! @param info The information for the window to be created
+		//! @return ID of the created window
 		u32 CreateNewWindow(WindowInfo info);
 
-		/// <summary>
-		/// Returns the window with a given ID
-		/// </summary>
+		//! Returns the window with a given ID
+		//! @param id ID of the window to get returned
+		//! @return Window of the given ID
 		SysWindow& GetWindow(u32 id);
 	}
-	
-
 }

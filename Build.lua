@@ -10,6 +10,8 @@ workspace "Raito"
 
 outputdir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
+include "Dependencies.lua"
+
 group "Core"
 	include "Core/Build-Core.lua"
 group ""

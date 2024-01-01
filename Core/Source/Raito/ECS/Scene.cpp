@@ -7,12 +7,6 @@
 
 namespace Raito::ECS
 {
-	Scene::Scene()
-	{
-	}
-	Scene::~Scene()
-	{
-	}
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		UUID uuid{};

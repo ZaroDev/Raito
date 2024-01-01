@@ -1,18 +1,39 @@
 #include "pch.h"
 #include "Application.h"
 
+
+// Modules
 #include "Window/Window.h"
+#include "Renderer/Renderer.h"
 
 #include "Time/ScopedTimer.h"
 
 namespace Raito::Core
 {
+	namespace
+	{
+		bool Failed(const char* msg)
+		{
+			//LOG("Application", msg);
+			Application::Get().Close();
+			return false;
+		}
+	}
+
 	bool Application::Initialize()
 	{
 		m_Running = true;
 
-		// TODO: Init all modules
-		Window::Initialize({.Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen});
+		// Init all modules
+		if (!Window::Initialize({ .Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen }))
+		{
+			return Failed("Failed to initialize window module");
+		}
+		if (!Renderer::Initialize())
+		{
+			return Failed("Failed to initialize renderer module");
+		}
+
 		OnInit();
 
 		return m_Running;

@@ -6,6 +6,7 @@ Editor/Logs
 html
 latex
 rtf
+packages/
 
 # Files
 *.vcxproj
@@ -17,5 +18,7 @@ Makefile
 *.licenseheader
 *.html
 *.latex
+packages.config
+
 # Exclude
 !Vendor/Binaries

@@ -23,45 +23,19 @@ SOFTWARE.
 */
 #pragma once
 
-namespace Raito {
-	//! Universal Unique Identifier class
-	//! Creates a randomly generated UUID with a 64 bit lenght
-	class UUID
+
+namespace Raito::Assets
+{
+	class Mesh;
+	class Model
 	{
 	public:
-		//! Default constructor
-		UUID();
+		Model();
+		~Model();
 
-		//! Asign constructor
-		//! @param uuid The UUID to be asigned
-		UUID(u64 uuid);
-
-		//! Copy constructor
-		//! @param other UUID to copy from
-		UUID(const UUID& other) = default;
-
-		//! UUID Operator
-		//! Returns the UUID value as an unsigned 64 bit integer
-		operator u64() const { return m_UUID; }
 	private:
-		u64 m_UUID;
+		std::vector<std::shared_ptr<Mesh>> m_Meshes{};
+
+		friend u32 ImportModel(const std::filesystem::path& filePath);
 	};
-
-}
-
-namespace std {
-	template <typename T> struct hash;
-	//! STD Hash UUID implementation
-	template<>
-	struct hash<Raito::UUID>
-	{
-		//! Asign operator
-		//! Implementation for the STD library to hash the UUID value
-		//! @param uuid UUID to hash
-		std::size_t operator()(const Raito::UUID& uuid) const
-		{
-			return (u64)uuid;
-		}
-	};
-
 }

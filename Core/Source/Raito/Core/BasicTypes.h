@@ -21,12 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 #pragma once
 #include <stdint.h>
 
 //! Signed byte type
-typedef signed char byte;
+typedef signed char ibyte;
 //! Unsigned byte type
 typedef unsigned char ubyte;
 
