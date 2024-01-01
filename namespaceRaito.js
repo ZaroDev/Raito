@@ -1,10 +1,12 @@
 var namespaceRaito =
 [
+    [ "Assets", "namespaceRaito_1_1Assets.html", "namespaceRaito_1_1Assets" ],
     [ "Core", "namespaceRaito_1_1Core.html", "namespaceRaito_1_1Core" ],
     [ "ECS", "namespaceRaito_1_1ECS.html", "namespaceRaito_1_1ECS" ],
     [ "Math", "namespaceRaito_1_1Math.html", [
-      [ "CreateTransform", "namespaceRaito_1_1Math.html#a8cb7d961b657676e0a7680f173bb0a95", null ]
+      [ "CreateTransform", "namespaceRaito_1_1Math.html#a1fa79e77bedc63254d2c30337db9ebaf", null ]
     ] ],
+    [ "Renderer", "namespaceRaito_1_1Renderer.html", "namespaceRaito_1_1Renderer" ],
     [ "Window", "namespaceRaito_1_1Window.html", [
       [ "CreateNewWindow", "namespaceRaito_1_1Window.html#ab9757e41eef21d445eb74c5ccc4ccd85", null ],
       [ "GetWindow", "namespaceRaito_1_1Window.html#abb398d5e60c895d74f6efa9e928ce4a2", null ],

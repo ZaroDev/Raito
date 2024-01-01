@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['uuid_0',['UUID',['../classRaito_1_1UUID.html',1,'Raito']]]
+  ['rhi_0',['RHI',['../structRaito_1_1Renderer_1_1RHI.html',1,'Raito::Renderer']]]
 ];

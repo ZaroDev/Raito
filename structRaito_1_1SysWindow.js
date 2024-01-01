@@ -3,7 +3,6 @@ var structRaito_1_1SysWindow =
     [ "ID", "structRaito_1_1SysWindow.html#a6cfa31a3d5874ef996afe05e2eca72ec", null ],
     [ "Info", "structRaito_1_1SysWindow.html#a91743a47007effd5341ec975a8a1126d", null ],
     [ "IsAlive", "structRaito_1_1SysWindow.html#a134aa986151f435a2dd03eac34dd983d", null ],
-    [ "Name", "structRaito_1_1SysWindow.html#a9f03d952b4a94f09ee60ab4e8a534154", null ],
     [ "Window", "structRaito_1_1SysWindow.html#a896b87652960c6963f9d3fcb4ca4afa9", null ],
     [ "WindowHandle", "structRaito_1_1SysWindow.html#a24f603561213dc626f912729f4106bc3", null ]
 ];

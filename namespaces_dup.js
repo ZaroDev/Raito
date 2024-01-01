@@ -1,5 +1,5 @@
 var namespaces_dup =
 [
     [ "Raito", "namespaceRaito.html", "namespaceRaito" ],
-    [ "std", "namespacestd.html", null ]
+    [ "std", "namespacestd.html", "namespacestd" ]
 ];

@@ -1,12 +1,12 @@
 var BasicTypes_8h =
 [
-    [ "byte", "BasicTypes_8h.html#a331be856ee819bee7ec068d1236a3007", null ],
     [ "f32", "BasicTypes_8h.html#a5f6906312a689f27d70e9d086649d3fd", null ],
     [ "f64", "BasicTypes_8h.html#a94dab5770726ccbef8c7d026cfbdf8e5", null ],
     [ "i16", "BasicTypes_8h.html#a31132e0f32b7556b897bc1999af25674", null ],
     [ "i32", "BasicTypes_8h.html#af822872730491651ff6e354cf9bb8bfd", null ],
     [ "i64", "BasicTypes_8h.html#ad5a9feabc23cb10188945263a58e8b4f", null ],
     [ "i8", "BasicTypes_8h.html#adaa91ab4c99a4cb4a7bb4708efa80579", null ],
+    [ "ibyte", "BasicTypes_8h.html#aa28ef5c3159626f1942b55333aab7296", null ],
     [ "u16", "BasicTypes_8h.html#ac8008e9f99a9e3bdd6649ba6fe685975", null ],
     [ "u32", "BasicTypes_8h.html#a60534f57ab6a58fdf5c2e618645182e3", null ],
     [ "u64", "BasicTypes_8h.html#ab20682c4bd54e71fed5f159e4a0da9c9", null ],

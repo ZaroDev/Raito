@@ -30,7 +30,8 @@ var NAVTREE =
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
-        [ "Variables", "namespacemembers_vars.html", null ]
+        [ "Variables", "namespacemembers_vars.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
       ] ]
     ] ],
     [ "Classes", "annotated.html", [
@@ -59,7 +60,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "Application_8cpp.html",
-"structRaito_1_1ECS_1_1IDComponent.html#a271f047721a60b1ec8f467f28385147c"
+"classRaito_1_1UUID.html#a46bf0cd74c8867e9f6fb479cf1256cf7"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
