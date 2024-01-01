@@ -20,15 +20,18 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-        
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+          
     - name: Doxygen Action
       uses: mattnotmitt/doxygen-action@v1.1.0
       with:
         # Path to Doxyfile
         doxyfile-path: "Docs/Doxyfile"
         # Working directory
-        working-directory: "Docs/"
+        working-directory: "./"
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
