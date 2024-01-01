@@ -24,6 +24,10 @@ jobs:
       uses: actions/checkout@v2
       with:
           submodules: recursive
+
+    - name: List contents of the directory
+      run: ls -R
+          
     - name: Doxygen Action
       uses: mattnotmitt/doxygen-action@v1.1.0
       with:
