@@ -1,11 +1,11 @@
 # Directories
 .vs/
 Binaries/
-Docs/
+Docs/html
+Docs/latex
+Docs/rtf
+
 Editor/Logs
-html
-latex
-rtf
 packages/
 
 # Files
