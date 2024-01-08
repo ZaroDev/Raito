@@ -40,10 +40,10 @@ typedef signed __int32 i32;
 //! Singed integer 64 bit type
 typedef signed __int64 i64;
 
-constexpr i8    I8_MAX = INT8_MAX;		/**< Maximun value for a signed 8 bit integer */
-constexpr i16   I16_MAX = INT16_MAX;	/**< Maximun value for a signed 16 bit integer */
-constexpr i32   I32_MAX = INT32_MAX;	/**< Maximun value for a signed 32 bit integer */
-constexpr i64   I64_MAX = INT64_MAX;	/**< Maximun value for a signed 64 bit integer */
+constexpr i8    I8_MAX = INT8_MAX;		/**< Maximum value for a signed 8 bit integer */
+constexpr i16   I16_MAX = INT16_MAX;	/**< Maximum value for a signed 16 bit integer */
+constexpr i32   I32_MAX = INT32_MAX;	/**< Maximum value for a signed 32 bit integer */
+constexpr i64   I64_MAX = INT64_MAX;	/**< Maximum value for a signed 64 bit integer */
 
 // Unsigned
 //! Unsigned integer 8 bit type
@@ -55,10 +55,10 @@ typedef unsigned __int32    u32;
 //! Unsigned integer 64 bit type
 typedef unsigned __int64    u64;
 
-constexpr u8    U8_MAX = UINT8_MAX;		/**< Maximun value for an unsigned 8 bit integer */
-constexpr u16   U16_MAX = UINT16_MAX;	/**< Maximun value for an unsigned 16 bit integer */
-constexpr u32   U32_MAX = UINT32_MAX;	/**< Maximun value for an unsigned 32 bit integer */
-constexpr u64   U64_MAX = UINT64_MAX;	/**< Maximun value for an unsigned 64 bit integer */
+constexpr u8    U8_MAX = UINT8_MAX;		/**< Maximum value for an unsigned 8 bit integer */
+constexpr u16   U16_MAX = UINT16_MAX;	/**< Maximum value for an unsigned 16 bit integer */
+constexpr u32   U32_MAX = UINT32_MAX;	/**< Maximum value for an unsigned 32 bit integer */
+constexpr u64   U64_MAX = UINT64_MAX;	/**< Maximum value for an unsigned 64 bit integer */
 
 // Floating pointer type
 

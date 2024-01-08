@@ -1,16 +1,12 @@
 #include "App.h"
 
-#include <iostream>
 namespace Editor
 {
-	App::App()
-	{
-	}
 
 	bool App::OnInit()
 	{
-		Raito::ECS::Entity entt = m_Scene.CreateEntity("Test entity");
-		std::cout << "Created entt" << std::endl;
+		Raito::ECS::Entity entity = m_Scene.CreateEntity("Test entity");
+		
 		return true;
 	}
 
@@ -28,4 +24,4 @@ namespace Editor
 	}
 }
 
-CREATE_AND_RUN(Editor::App, CreateInfo("Editor"))
+CREATE_AND_RUN(Editor::App, Raito::Core::ApplicationInfo( "Editor", 1280, 720, false ))

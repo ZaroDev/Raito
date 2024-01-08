@@ -3,10 +3,10 @@
 
 namespace Editor
 {
-	class App : public Raito::Core::Application
+	class App final : public Raito::Core::Application
 	{
 	public:
-		App();
+		App() = default;
 
 	protected:
 		bool OnInit() override;

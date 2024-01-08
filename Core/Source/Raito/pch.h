@@ -37,6 +37,6 @@ SOFTWARE.
 #include <Raito/Core/BasicTypes.h>
 #include <Raito/Core/Log.h>
 #include <Raito/Core/Assert.h>
-
+#include <Raito/Core/Common.h>
 
 #include <Windows.h>

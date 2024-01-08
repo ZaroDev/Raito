@@ -35,10 +35,6 @@ namespace Raito::ECS
 	{
 		return Entity();
 	}
-	Entity Scene::GetPrimaryCameraEntity()
-	{
-		return Entity();
-	}
 
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)

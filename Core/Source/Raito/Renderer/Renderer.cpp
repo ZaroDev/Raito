@@ -16,7 +16,9 @@ namespace Raito::Renderer
 			switch (GraphicsAPI)
 			{
 			case API::NONE: ASSERT(false); return false;
-			case API::D3D12: D3D12::GetPlatformInterface(GraphicsContext);
+			case API::D3D12: D3D12::GetPlatformInterface(GraphicsContext); break;
+			case API::VULKAN: ASSERT(false); return false;
+			case API::OPENGL: ASSERT(false); return false;
 			}
 			return true;
 		}
@@ -24,6 +26,7 @@ namespace Raito::Renderer
 
 	bool Initialize(API api)
 	{
+		ASSERT(api != API::NONE && api != API::COUNT);
 		LOG("Renderer", "Initializing Renderer");
 		GraphicsAPI = api;
 		return SetPlatformInterface() && GraphicsContext.Initialize();

@@ -8,10 +8,10 @@ staticruntime "off"
 pchheader "pch.h"
 pchsource "Source/Raito/pch.cpp"
 
-files { "Source/**.h", "Source/**.hpp", "Source/**.c", "Source/**.cpp"}
+files {"Source/**.h", "Source/**.hpp", "Source/**.c", "Source/**.cpp", "Source/**.cc"}
 
-includedirs {"Source", "Source/Raito",  "%{IncludeDir.GLFW}", "%{IncludeDir.DX12TK}" }
-links{ "GLFW" }
+includedirs {"Source", "Source/Raito", "%{IncludeDir.GLFW}", "%{IncludeDir.DX12TK}", "%{IncludeDir.spdlog}"}
+links {"GLFW"}
 
 targetdir("../Binaries/" .. outputdir .. "/%{prj.name}")
 objdir("../Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")

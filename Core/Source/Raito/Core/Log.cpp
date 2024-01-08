@@ -1,49 +1,47 @@
 #include "pch.h"
 #include "Log.h"
 
-#include <iostream>
-#include <cstdarg>
-#include <filesystem>
-#include <sstream>
-#include <fstream>
+
+
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace Raito::Core::Debug
 {
 	namespace
 	{
-		std::stringstream Buffer{};
-		struct DebugStats
+		static std::shared_ptr<spdlog::logger> s_Logger;
+	}
+
+	bool Initialize(bool logDumps)
+	{
+		std::vector<spdlog::sink_ptr> logSinks;
+		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		if (logDumps)
 		{
-			std::filesystem::path SinkPath = "Logs/log-dump.txt";
+			logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("raito.log", true));
+			logSinks[1]->set_pattern("[%T] [%l] %n: %v");
+		}
 
-			DebugStats() = default;
-			~DebugStats()
-			{
-				if (g_DumpLogs)
-				{
-					if (!std::filesystem::exists("Logs"))
-						std::filesystem::create_directory("Logs");
+		s_Logger = std::make_shared<spdlog::logger>("Raito", begin(logSinks), end(logSinks));
+		spdlog::register_logger(s_Logger);
+		s_Logger->set_level(spdlog::level::trace);
+		s_Logger->flush_on(spdlog::level::trace);
 
-					std::ofstream dumpLog(SinkPath);
-
-					dumpLog.write(Buffer.str().c_str(), Buffer.str().size());
-					
-					dumpLog.close();
-				}
-			}
-		} DebugStats{};
+		return true;
 	}
 
 	void Log(const std::string& title, const std::string& msg)
 	{
-		Buffer << "[Info]" << title << " - " << msg << std::endl;
+		s_Logger->trace("{} - {}", title, msg);
 	}
 	void LogWarning(const std::string& title, const std::string& msg)
 	{
-		Buffer << "[Warning]" << title << " - " << msg << std::endl;
+		s_Logger->warn("{} - {}", title, msg);
 	}
 	void LogError(const std::string& title, const std::string& msg)
 	{
-		Buffer << "[Error]" << title << " - " << msg << std::endl;
+		s_Logger->error("{} - {}", title, msg);
 	}
 }

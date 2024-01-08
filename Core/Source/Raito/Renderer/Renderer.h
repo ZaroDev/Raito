@@ -25,14 +25,21 @@ SOFTWARE.
 
 namespace Raito::Renderer
 {
+	//! Renderer Api enumerator
 	enum class API : u8
 	{
 		NONE = 0,
 		D3D12,
-
+		OPENGL,
+		VULKAN,
 		COUNT
 	};
-
+	//! Renderer initialization function
+	//! @param api The desired api to be used 
+	//! @returns the success
 	bool Initialize(API api = API::D3D12);
+
+	//! Renderer shutdown function
+	//! Releases all renderer objects
 	void Shutdown();
 }
