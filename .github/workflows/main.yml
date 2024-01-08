@@ -31,7 +31,10 @@ jobs:
         # Path to Doxyfile
         doxyfile-path: "Docs/Doxyfile"
         # Working directory
-        working-directory: "."
+        working-directory: "./"
+    
+    - name: List contents of the directory
+      run: ls -R
     
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
