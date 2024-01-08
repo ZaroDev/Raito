@@ -42,13 +42,15 @@ namespace Raito::ECS
 		//! Default destructor
 		~Scene() = default;
 
+		DEFAULT_MOVE_AND_COPY(Scene)
+
 		//! Entity creation function
 		//! @param name Name of the created entity
 		//! @return The created entity
 		Entity CreateEntity(const std::string& name);
 
-		//! Entity desctruction function
-		//! @param entity The entity beeing destroyed
+		//! Entity destruction function
+		//! @param entity The entity being destroyed
 		void DestroyEntity(Entity entity);
 
 		//! Duplicate entity function
@@ -60,8 +62,6 @@ namespace Raito::ECS
 		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID uuid);
 
-		Entity GetPrimaryCameraEntity();
-
 		//! Templated function for all the entities with the components given
 		//! @return A view of all the entities with the given components
 		template<typename... Components>
@@ -71,14 +71,14 @@ namespace Raito::ECS
 		}
 	private:
 		//! Entity component added templated callback
-		//! @param entity Entity that recived the component
+		//! @param entity Entity that received the component
 		//! @param component The component added
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 
 	private:
 		entt::registry m_Registry; /**< Scene entity registry */
-		std::unordered_map<UUID, entt::entity> m_Entities{}; /**< Registred entities map */
+		std::unordered_map<UUID, entt::entity> m_Entities{}; /**< Registered entities map */
 
 		friend class Entity;
 	};

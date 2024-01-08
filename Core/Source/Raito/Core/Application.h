@@ -22,18 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-#include <string>
-#include "BasicTypes.h"
 
 namespace Raito::Core 
 {
 	//! Application info struct
+	//! Defines the initialization values for the application
 	struct ApplicationInfo
 	{
-		std::string Name{}; /**< Name of the application */
+		std::string Name = "Raito - App"; /**< Name of the application */
 		
-		u32 Width{}; /**< Starting screen width */
-		u32 Height{}; /**< Starting screen height */
+		u32 Width = 1280; /**< Starting screen width */
+		u32 Height = 720; /**< Starting screen height */
 
 		bool Fullscreen = false; /**< Flag for the application starting screen mode */
 	};
@@ -49,11 +48,13 @@ namespace Raito::Core
 		static Application& Get() { return *s_Application; }
 
 		//! Virtual destructor
-		virtual ~Application() {}
+		virtual ~Application() = default;
+
+		DISABLE_MOVE_AND_COPY(Application)
 
 		//! Initialization function
 		/*!
-		* Initializes all the modules and calls OnInit at the end if all succed.
+		* Initializes all the modules and calls OnInit at the end if all succeed.
 		*/
 		bool Initialize();
 		//! Update function
@@ -71,40 +72,46 @@ namespace Raito::Core
 		//! Close function
 		/*
 		*  Puts a flag for the application to be call Shutdown() 
-		*  Reminder: It always compleates the Update() call before shutting down the application
+		*  Reminder: It always completes the Update() call before shutting down the application
 		*/
 		void Close() { m_Running = false; }
 
 	protected:
-		//! Initilization event function
+
+		//! Initialization event function
 		virtual bool OnInit() { return true; }
+
 		//! ImGui rendering event function
 		//! Note: Called after OnUpdate()
 		virtual bool OnRenderGUI() { return true; }
+
 		//! Update event function
 		//! Note: Called before OnRenderGUI()
 		virtual bool OnUpdate() { return true; }
+
 		//! Shutdown event function
 		virtual void OnShutdown() {}
 
 		//! Application constructor
-		Application() {}
+		Application() = default;
 
-	protected:
-		bool m_Running = false;
-
-
+		bool m_Running = false; /**< Flag for the application loop to be ran */
 	private:
-		inline static Application* s_Application = nullptr;
-		ApplicationInfo m_Info{};
+
+		inline static Application* s_Application = nullptr; /**< Static pointer to the instance of the application */
+		ApplicationInfo m_Info{}; /**< Info of the current application */
 
 		friend int RunApp(Application& app, ApplicationInfo info, int argc, char** argv);
 	};
-	int RunApp(Application& app, ApplicationInfo info, int argc, char** argv);
+	//! Application creation function
+	//! Initializes and runs the application with the parameters
+	int RunApp(Application& app, ApplicationInfo info, int argc, char** argv); 
 }
-Raito::Core::ApplicationInfo CreateInfo(const char* name = "App", u32 width = 1280, u32 height = 720);
 
 #ifndef DIST
+//! Application entry point macro
+//! @param app_class Class that inherits from Application to be ran
+//! @param app_info Application info
 #define CREATE_AND_RUN(app_class, app_info)						\
 	int main(int argc, char** argv)								\
 	{															\

@@ -23,11 +23,17 @@ SOFTWARE.
 */
 #pragma once
 #include <string>
-#include <format>
+
+#pragma warning(push, 0)
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
+#pragma warning(pop)
 
 namespace Raito::Core::Debug
 {
-	inline static bool g_DumpLogs = true; /**< Logging flag. Enables/Disables log dumping to a file when the program ends */
+	//! Logging module initialization function
+	//! @param logDumps sets the option to dump a log file when the program exists
+	bool Initialize(bool logDumps);
 
 	//! Information loggin function
 	//! //! Format [Info] title - msg
@@ -47,7 +53,7 @@ namespace Raito::Core::Debug
 	//! @param msg Message of the log
 	void LogError(const std::string& title, const std::string& msg);
 }
-//! Formating macro
+//! Formatting macro
 #define FMT(...) std::format(__VA_ARGS__)
 
 #ifndef DIST

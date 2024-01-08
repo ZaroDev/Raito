@@ -23,6 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+
+
 namespace Raito
 {
 	//! Window info structure
@@ -45,9 +47,7 @@ namespace Raito
 		void* WindowHandle = nullptr; /**< OS window handle */
 		void* Window = nullptr; /**< Internal window pointer */
 
-		u32 ID{}; /**< ID of the window */
-
-		bool IsAlive = false; /**< Flag to delete the window on the next update loop */
+		u32 Id{}; /**< ID of the window */
 	};
 
 	
@@ -56,26 +56,26 @@ namespace Raito
 	{
 		//! Initialization function for the window module
 		//! @param defaultInfo Window information for the main window
-		//! @return Boolean indicating sucess value
-		bool Initialize(WindowInfo defaultInfo = {});
+		//! @return Boolean indicating success value
+		bool Initialize(const WindowInfo& defaultInfo = {});
 
 		//! Update function for the window module
 		//! Polls the events for all the windows
-		//! @return Boolean indicating sucess value
+		//! @return Boolean indicating success value
 		bool Update();
 
-		//! Shudown function for the window module
+		//! Shutdown function for the window module
 		//! Deletes all the created windows
 		void Shutdown();
 
 		//! Creates a window and returns the id
 		//! @param info The information for the window to be created
 		//! @return ID of the created window
-		u32 CreateNewWindow(WindowInfo info);
+		u32 CreateNewWindow(const WindowInfo& info);
 
 		//! Returns the window with a given ID
 		//! @param id ID of the window to get returned
 		//! @return Window of the given ID
-		SysWindow& GetWindow(u32 id);
+		SysWindow& GetWindow(const u32 id);
 	}
 }

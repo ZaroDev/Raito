@@ -5,7 +5,7 @@
 namespace Raito
 {
 
-    ScopedTimer::ScopedTimer(const char* name)
+    ScopedTimer::ScopedTimer(const std::string_view name)
         : m_Name(name)
     {
         m_Start = std::chrono::high_resolution_clock::now();

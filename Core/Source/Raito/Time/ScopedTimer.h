@@ -29,7 +29,7 @@ namespace Raito
 {
 	//! Scoped timer class
 	/*
-	*	Meant to ouput the time that it took for a function to be ran
+	*	Meant to output the time that it took for a function to be run
 	*	It does output the time when destroyed
 	*/
 	class ScopedTimer
@@ -37,10 +37,12 @@ namespace Raito
 	public:
 		//! Constructor
 		//! @param name Name of the timer
-		ScopedTimer(const char* name);
+		ScopedTimer(const std::string_view name);
 		//! Destructor
 		//! Logs the time that the timer took to destroy
 		~ScopedTimer();
+
+		DEFAULT_MOVE_AND_COPY(ScopedTimer)
 
 	private:
 		std::string m_Name{}; /**< Name of the timer */

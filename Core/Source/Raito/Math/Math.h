@@ -32,6 +32,6 @@ namespace Raito::Math
 	//! @param translation Translation component
 	//! @param rotation Rotation component 
 	//! @param scale Scale component
-	//! @return Transfomation matrix
+	//! @return Transformation matrix
 	Matrix CreateTransform(const v3& translation, const Quaternion& rotation, const v3& scale);
 }

@@ -12,114 +12,115 @@ namespace Raito
 {
 	namespace
 	{
-		std::vector<SysWindow> Windows{};
-		WindowInfo DefaultInfo{};
-		u32 MainWindow{};
+		bool g_Initialized = false;
 
-		bool Initialized = false;
+		WindowInfo g_DefaultInfo{};
+		u32 g_MainWindow{};
 
-		void GLFWErrorCallback(int error, const char* description)
+		std::vector<SysWindow> g_Windows{};
+
+		void GlfwErrorCallback(int error, const char* description)
 		{
 			ERR("GLFW", "{}, {}", error, description);
 		}
 
-		void DestroyWindow(SysWindow* window)
+		void DestroyWindow(const SysWindow* window)
 		{
-			GLFWwindow* win = (GLFWwindow*)window->WindowHandle;
+			const auto win = static_cast<GLFWwindow*>(window->Window);
 			glfwDestroyWindow(win);
-			Windows.erase(Windows.begin() + window->ID);
-
+			g_Windows.erase(g_Windows.begin() + window->Id);
 		}
 	}
 
 	namespace Window
 	{
-		bool Initialize(WindowInfo defaultInfo)
+		bool Initialize(const WindowInfo& defaultInfo)
 		{
-			if (Initialized)
+			if (g_Initialized)
 			{
 				F_ERR("Window module was already initialized");
 				return false;
 			}
 
-			DefaultInfo = defaultInfo;
+			g_DefaultInfo = defaultInfo;
 			// Initialize GLFW
+			
 			if (glfwInit() != GLFW_TRUE)
 			{
 				F_ERR("Error while initializing GLFW with code: {}", glfwGetError(NULL));
 				return false;
 			}
-			glfwWindowHint(GLFW_NO_API, GLFW_TRUE);
+			glfwSetErrorCallback(GlfwErrorCallback);
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-			MainWindow = CreateNewWindow(defaultInfo);
+
+			g_MainWindow = CreateNewWindow({"Main", 1280, 720, false});
+			CreateNewWindow(defaultInfo);
+			CreateNewWindow(defaultInfo);
+			CreateNewWindow(defaultInfo);
 			
-			Initialized = true;
+			g_Initialized = true;
 
 			return true;
 		}
 
 		bool Update()
 		{
-
-			for (u32 i = 0; i < Windows.size(); i++)
+			for (u32 i = 0; i < g_Windows.size(); i++)
 			{
-				if (Windows[i].IsAlive)
+				const auto window = g_Windows[i];
+				if(glfwWindowShouldClose(static_cast<GLFWwindow*>(window.Window)))
 				{
-					glfwPollEvents();
-					continue;
+					if(window.Id == g_MainWindow)
+					{
+						Core::Application::Get().Close();
+						return false;
+					}
+					DestroyWindow(&window);
 				}
-				DestroyWindow(&Windows[i]);
 			}
 
+			glfwPollEvents();
 			return true;
 		}
 
 		void Shutdown()
 		{
-			for (u32 i = 0; i < Windows.size(); i++)
+			for(u32 i = 0; i < g_Windows.size(); i++)
 			{
-				DestroyWindow(&Windows[i]);
+				DestroyWindow(&g_Windows[i]);
 			}
 
-			Windows.clear();
-			Initialized = false;
+			g_Windows.clear();
+			g_Initialized = false;
 		}
 
-		u32 CreateNewWindow(WindowInfo info)
+		u32 CreateNewWindow(const WindowInfo& info)
 		{
+			// Create the GLFW g_Window
 			GLFWwindow* win = nullptr;
 			if ((win = glfwCreateWindow((int)info.Width, (int)info.Height, info.Title.c_str(), nullptr, nullptr)) == nullptr)
 			{
-				F_ERR("Error while creating a window {}", glfwGetError(NULL));
+				F_ERR("Error while creating a g_Window {}", glfwGetError(NULL));
 				return U32_MAX;
 			}
 
-			
+			// Create and register the window
 			SysWindow window{};
 			window.Info = info;
 			window.Window = win;
 			window.WindowHandle = glfwGetWin32Window(win);
-			window.ID = (u32)Windows.size();
-			window.IsAlive = true;
-			Windows.emplace_back(window);
+			window.Id = static_cast<u32>(g_Windows.size());
 
-			glfwSetWindowUserPointer(win, &Windows[window.ID]);
-			glfwSetWindowCloseCallback(win, [](GLFWwindow* window)
-			{
-				SysWindow& win = *(SysWindow*)glfwGetWindowUserPointer(window);
-				if (win.ID == MainWindow)
-				{
-					Core::Application::Get().Close();
-				}
-				win.IsAlive = false;
-			});
+			g_Windows.emplace_back(window);
 
 
-			return window.ID;
+			return window.Id;
 		}
-		SysWindow& GetWindow(u32 id)
+
+		SysWindow& GetWindow(const u32 id)
 		{
-			return Windows[id];
+			return g_Windows[id];
 		}
 	}
 }

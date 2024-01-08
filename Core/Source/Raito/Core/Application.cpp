@@ -10,14 +10,11 @@
 
 namespace Raito::Core
 {
-	namespace
+	
+	bool Failed()
 	{
-		bool Failed(const char* msg)
-		{
-			//LOG("Application", msg);
-			Application::Get().Close();
-			return false;
-		}
+		Application::Get().Close();
+		return false;
 	}
 
 	bool Application::Initialize()
@@ -25,13 +22,20 @@ namespace Raito::Core
 		m_Running = true;
 
 		// Init all modules
+		if (!Debug::Initialize(true))
+		{
+			return Failed();
+		}
+
 		if (!Window::Initialize({ .Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen }))
 		{
-			return Failed("Failed to initialize window module");
+			LOG("Application", "Failed to initialize window module");
+			return Failed();
 		}
 		if (!Renderer::Initialize())
 		{
-			return Failed("Failed to initialize renderer module");
+			LOG("Application", "Failed to initialize renderer module");
+			return Failed();
 		}
 
 		OnInit();
@@ -50,6 +54,11 @@ namespace Raito::Core
 	}
 	void Application::Shutdown()
 	{
+		Window::Shutdown();
+
+		Renderer::Shutdown();
+
+
 		OnShutdown();
 	}
 
@@ -74,14 +83,4 @@ namespace Raito::Core
 		app.Shutdown();
 		return EXIT_SUCCESS;
 	}
-}
-
-Raito::Core::ApplicationInfo CreateInfo(const char* name, u32 width, u32 height)
-{
-	Raito::Core::ApplicationInfo info{};
-	info.Name = name;
-	info.Width = width;
-	info.Height = height;
-
-	return info;
 }

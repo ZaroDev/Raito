@@ -22,8 +22,54 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+
+#include "D3D12Common.h"
+
 namespace Raito::Renderer::D3D12::Core
 {
+    //! D3D12 Renderer initialize function
+    //! Creates a device and initializes main rendering systems
+    //! @return If success
 	bool Initialize();
+
+    //! Shutdown function for the D3D12 renderer
+    //! Destroys everything that the renderer handles
 	void Shutdown();
+
+    //! Deferred release helper function
+    //! Releases the given object
+    void DeferredRelease(IUnknown* resource);
+
+    //! Getter for the current frame index of the renderer
+    //! @returns The frame index from 0 .. c_FrameBufferCount
+	u32 CurrentFrameIndex();
+
+    //! Sets all the flags for the deferred release to 1
+    void SetDeferredReleasesFlags();
+
+	//! Generic release function for D3D12 Objects
+    //! Releases and nulls the given object
+    //! @param resource Resource to release
+    template<typename T>
+    constexpr  void Release(T*& resource)
+    {
+        if (resource)
+        {
+            resource->Release();
+            resource = nullptr;
+        }
+    }
+
+    //! Generic deferred release function for D3D12 Objects
+    //! Releases and nulls the given object
+    //! @param resource Resource to release
+    template<typename T>
+    constexpr void DeferredRelease(T*& resource)
+    {
+	    if(resource)
+	    {
+            DeferredRelease(resource);
+            resource = nullptr;
+	    }
+    }
 }

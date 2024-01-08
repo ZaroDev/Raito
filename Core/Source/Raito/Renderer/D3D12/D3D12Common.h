@@ -37,5 +37,55 @@ SOFTWARE.
 
 namespace Raito::Renderer::D3D12
 {
-	constexpr u32 FrameBufferCount = 3;
+	constexpr u32 c_FrameBufferCount = 3;
+	using D3D12Device = ID3D12Device8;
+	using D3D12GraphicsCommandList = ID3D12GraphicsCommandList6;
+    using D3D12Factory = IDXGIFactory7;
 }
+
+#define ENABLE_GPU_BASE_VALIDATION 0
+
+#ifdef DEBUG
+#define D_LOG(...) LOG("D3D12", __VA_ARGS__)
+#define D_WARN(...) WARN("D3D12", __VA_ARGS__)
+#define D_ERROR(...) ERROR("D3D12", __VA_ARGS__)
+#else
+#define D_LOG(x) 
+#define D_WARN(x) 
+#define D_ERROR(x) 
+#endif
+
+
+#ifdef DEBUG
+#ifndef DXCall
+#define DXCall(x)                          \
+        if(FAILED(x)) {                        \
+            ASSERT(false);              \
+        }                                      
+#endif
+#else
+#define DXCall(x) x;
+#endif
+
+#ifdef DEBUG
+#define NAME_D3D12_OBJECT(obj, name) obj->SetName(name); \
+        {                                                    \
+            std::wstring wstr(name);                         \
+            std::string str(wstr.begin(), wstr.end());       \
+            D_LOG("Object created: {}", str);   \
+        }
+#define NAME_D3D12_OBJECT_INDEXED(obj, n, name)             \
+    {                                                           \
+        wchar_t fullName[128];                                  \
+        if(swprintf_s(fullName, L"%s[%u]", name, n) > 0) {      \
+            obj->SetName(fullName);                             \
+            std::wstring wstr(fullName);                        \
+            std::string str(wstr.begin(), wstr.end());          \
+            D_LOG("Object created: {}", str);     \
+        }                                                       \
+    }
+#else
+#define NAME_D3D12_OBJECT(x, name)
+#define NAME_D3D12_OBJECT_INDEXED(obj, n, name)
+#endif
+

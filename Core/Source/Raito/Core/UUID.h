@@ -23,17 +23,18 @@ SOFTWARE.
 */
 #pragma once
 
-namespace Raito {
+namespace Raito
+{
 	//! Universal Unique Identifier class
-	//! Creates a randomly generated UUID with a 64 bit lenght
+	//! Creates a randomly generated UUID with a 64 bit length
 	class UUID
 	{
 	public:
 		//! Default constructor
 		UUID();
 
-		//! Asign constructor
-		//! @param uuid The UUID to be asigned
+		//! Assign constructor
+		//! @param uuid The UUID to be assigned
 		UUID(u64 uuid);
 
 		//! Copy constructor
@@ -49,16 +50,17 @@ namespace Raito {
 
 }
 
-namespace std {
+namespace std
+{
 	template <typename T> struct hash;
 	//! STD Hash UUID implementation
 	template<>
 	struct hash<Raito::UUID>
 	{
-		//! Asign operator
+		//! Assign operator
 		//! Implementation for the STD library to hash the UUID value
 		//! @param uuid UUID to hash
-		std::size_t operator()(const Raito::UUID& uuid) const
+		std::size_t operator()(const Raito::UUID& uuid) const noexcept
 		{
 			return (u64)uuid;
 		}

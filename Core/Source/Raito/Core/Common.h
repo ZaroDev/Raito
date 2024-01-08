@@ -1,7 +1,7 @@
-/*
+ï»¿/*
 MIT License
 
-Copyright (c) 2023 Víctor Falcón Zaro
+Copyright (c) 2023 VÃ­ctor FalcÃ³n Zaro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-// Includes for Raito apps
-#include <Raito/Core/Log.h>
-#include <Raito/Core/BasicTypes.h>
-#include <Raito/Core/Assert.h>
-#include <Raito/Core/Common.h>
-#include <Raito/Core/Application.h>
-// ECS
-#include <Raito/ECS/Scene.h>
-#include <Raito/ECS/Entity.h>
-#include <Raito/ECS/Components.h>
 
-// Math
-#include <Raito/Math/Math.h>
 
-#include <Windows.h>
+#ifndef DEFAULT_COPY
+#define DEFAULT_COPY(T) \
+	T(const T&) = default; \
+	T& operator=(const T&) = default;
+#endif
+
+#ifndef DEFAULT_MOVE
+#define DEFAULT_MOVE(T) \
+	T(T&&) noexcept = default; \
+	T& operator=(T&&) = default;
+#endif
+
+
+#ifndef DEFAULT_MOVE_AND_COPY
+#define DEFAULT_MOVE_AND_COPY(T) \
+		DEFAULT_MOVE(T) \
+		DEFAULT_COPY(T)
+#endif
+
+
+#ifndef DISABLE_COPY
+#define DISABLE_COPY(T) \
+	T(const T&) = delete; \
+	T& operator=(const T&) = delete; 
+#endif
+
+#ifndef DISABLE_MOVE
+#define DISABLE_MOVE(T) \
+	T(T&&) = delete; \
+	T& operator=(T&&) = delete;
+#endif
+
+#ifndef DISABLE_MOVE_AND_COPY
+#define DISABLE_MOVE_AND_COPY(T) \
+	DISABLE_MOVE(T) \
+	DISABLE_COPY(T) 
+#endif
