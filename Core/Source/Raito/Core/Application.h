@@ -23,6 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Renderer/GraphicsAPI.h"
+
 namespace Raito::Core 
 {
 	//! Application info struct
@@ -33,6 +35,8 @@ namespace Raito::Core
 		
 		u32 Width = 1280; /**< Starting screen width */
 		u32 Height = 720; /**< Starting screen height */
+
+		Renderer::API GraphicsAPI = Renderer::API::NONE; /**< Graphics API provider */
 
 		bool Fullscreen = false; /**< Flag for the application starting screen mode */
 	};

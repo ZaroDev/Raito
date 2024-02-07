@@ -20,7 +20,7 @@ namespace Raito::Renderer::D3D12
 		void BeginFrame();
 		void EndFrame();
 
-		NODISCARD constexpr ID3D12CommandQueue* CommandQueue() const {}
+		NODISCARD constexpr ID3D12CommandQueue* CommandQueue() const { return m_CommandQueue; }
 
 
 	private:

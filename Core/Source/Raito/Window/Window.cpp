@@ -5,7 +5,7 @@
 #include "GLFW/glfw3.h"
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include "GLFW/glfw3native.h"
-
+#include "Renderer/Renderer.h"
 
 
 namespace Raito
@@ -34,7 +34,7 @@ namespace Raito
 
 	namespace Window
 	{
-		bool Initialize(const WindowInfo& defaultInfo)
+		bool Initialize(Renderer::API api, const WindowInfo& defaultInfo)
 		{
 			if (g_Initialized)
 			{
@@ -51,7 +51,16 @@ namespace Raito
 				return false;
 			}
 			glfwSetErrorCallback(GlfwErrorCallback);
-			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+			if(api != Renderer::API::OPENGL)
+			{
+				glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+			}
+			else
+			{
+				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+			}
 
 
 			g_MainWindow = CreateNewWindow(defaultInfo);
@@ -65,6 +74,11 @@ namespace Raito
 		{
 			for (const auto& window : g_Windows)
 			{
+				if(Renderer::GetCurrentAPI() == Renderer::API::OPENGL)
+				{
+					glfwSwapBuffers(static_cast<GLFWwindow*>(window.Window));
+				}
+
 				if(glfwWindowShouldClose(static_cast<GLFWwindow*>(window.Window)))
 				{
 					if(window.Id == g_MainWindow)
@@ -89,6 +103,8 @@ namespace Raito
 
 			g_Windows.clear();
 			g_Initialized = false;
+
+			glfwTerminate();
 		}
 
 		u32 CreateNewWindow(const WindowInfo& info)
@@ -100,6 +116,7 @@ namespace Raito
 				F_ERR("Error while creating a g_Window {}", glfwGetError(NULL));
 				return U32_MAX;
 			}
+			glfwMakeContextCurrent(win);
 
 			// Create and register the window
 			SysWindow window{};

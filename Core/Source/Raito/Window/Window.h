@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-
+#include "Renderer/GraphicsAPI.h"
 
 namespace Raito
 {
@@ -55,9 +55,10 @@ namespace Raito
 	namespace Window
 	{
 		//! Initialization function for the window module
+		//! @param api Graphics API of the application
 		//! @param defaultInfo Window information for the main window
 		//! @return Boolean indicating success value
-		bool Initialize(const WindowInfo& defaultInfo = {});
+		bool Initialize(Renderer::API api, const WindowInfo& defaultInfo = {});
 
 		//! Update function for the window module
 		//! Polls the events for all the windows

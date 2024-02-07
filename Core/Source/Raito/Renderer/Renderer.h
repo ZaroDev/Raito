@@ -23,17 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GraphicsAPI.h"
+
 namespace Raito::Renderer
 {
-	//! Renderer Api enumerator
-	enum class API : u8
-	{
-		NONE = 0,
-		D3D12,
-		OPENGL,
-		VULKAN,
-		COUNT
-	};
+	
 	//! Renderer initialization function
 	//! @param api The desired api to be used 
 	//! @returns the success
@@ -42,4 +36,8 @@ namespace Raito::Renderer
 	//! Renderer shutdown function
 	//! Releases all renderer objects
 	void Shutdown();
+
+	//! Renderer graphics API getter
+	//! @return Current graphics API
+	NODISCARD API GetCurrentAPI();
 }

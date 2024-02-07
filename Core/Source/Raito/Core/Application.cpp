@@ -29,12 +29,12 @@ namespace Raito::Core
 			return Failed();
 		}
 
-		if (!Window::Initialize({ .Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen }))
+		if (!Window::Initialize(m_Info.GraphicsAPI,{ .Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen }))
 		{
 			LOG("Application", "Failed to initialize window module");
 			return Failed();
 		}
-		if (!Renderer::Initialize())
+		if (!Renderer::Initialize(m_Info.GraphicsAPI))
 		{
 			LOG("Application", "Failed to initialize renderer module");
 			return Failed();
