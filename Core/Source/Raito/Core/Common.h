@@ -61,3 +61,5 @@ SOFTWARE.
 	DISABLE_MOVE(T) \
 	DISABLE_COPY(T) 
 #endif
+
+#define NODISCARD [[nodiscard]]

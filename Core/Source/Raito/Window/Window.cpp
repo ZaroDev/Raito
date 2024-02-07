@@ -54,10 +54,7 @@ namespace Raito
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 
-			g_MainWindow = CreateNewWindow({"Main", 1280, 720, false});
-			CreateNewWindow(defaultInfo);
-			CreateNewWindow(defaultInfo);
-			CreateNewWindow(defaultInfo);
+			g_MainWindow = CreateNewWindow(defaultInfo);
 			
 			g_Initialized = true;
 
@@ -66,9 +63,8 @@ namespace Raito
 
 		bool Update()
 		{
-			for (u32 i = 0; i < g_Windows.size(); i++)
+			for (const auto& window : g_Windows)
 			{
-				const auto window = g_Windows[i];
 				if(glfwWindowShouldClose(static_cast<GLFWwindow*>(window.Window)))
 				{
 					if(window.Id == g_MainWindow)
@@ -86,9 +82,9 @@ namespace Raito
 
 		void Shutdown()
 		{
-			for(u32 i = 0; i < g_Windows.size(); i++)
+			for (auto& window : g_Windows)
 			{
-				DestroyWindow(&g_Windows[i]);
+				DestroyWindow(&window);
 			}
 
 			g_Windows.clear();

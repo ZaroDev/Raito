@@ -1,11 +1,12 @@
 #include "App.h"
+#include "EditorCommon.h"
 
 namespace Editor
 {
 
 	bool App::OnInit()
 	{
-		Raito::ECS::Entity entity = m_Scene.CreateEntity("Test entity");
+		E_LOG("Application Initialized!");
 		
 		return true;
 	}

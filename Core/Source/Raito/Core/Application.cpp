@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Application.h"
 
+#include <utility>
+
 
 // Modules
 #include "Window/Window.h"
@@ -70,14 +72,14 @@ namespace Raito::Core
 			return EXIT_FAILURE;
 		}
 
-		app.m_Info = info;
-		app.s_Application = &app;
+		app.m_Info = std::move(info);
+		Application::s_Application = &app;
 
 		app.Initialize();
 
 		while (app.Update())
 		{
-			// TODO: Analitics performance dumping
+			// TODO: Analytics performance dumping
 		}
 
 		app.Shutdown();
