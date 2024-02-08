@@ -23,6 +23,20 @@ SOFTWARE.
 */
 #pragma once
 
+#include "BasicTypes.h"
+#include "Assert.h"
+#include <memory>
+
+#ifndef DEBUG_OP
+
+#ifdef DEBUG
+#define DEBUG_OP(x) x
+#else
+#define DEBUG_OP(x)
+#endif
+
+#endif
+
 
 #ifndef DEFAULT_COPY
 #define DEFAULT_COPY(T) \
@@ -63,3 +77,5 @@ SOFTWARE.
 #endif
 
 #define NODISCARD [[nodiscard]]
+
+#define USE_STL_VECTOR 1

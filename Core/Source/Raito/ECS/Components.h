@@ -51,16 +51,16 @@ namespace Raito::ECS
 
 	struct TransformComponent
 	{
-		v3 Translation = { 0.0f, 0.0f, 0.0f };
+		V3 Translation = { 0.0f, 0.0f, 0.0f };
 		Quaternion Rotation = { 0.0f, 0.0f, 0.0f, 1.0f };
-		v3 Scale = { 1.0f, 1.0f, 1.0f };
+		V3 Scale = { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const v3& translation)
+		TransformComponent(const V3& translation)
 			: Translation(translation) {}
 
-		Matrix GetTransform() const
+		Mat4 GetTransform() const
 		{
 			return Math::CreateTransform(Translation, Rotation, Scale);
 		}

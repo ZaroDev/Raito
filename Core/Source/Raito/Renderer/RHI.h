@@ -23,6 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Renderer.h"
+
 namespace Raito::Renderer
 {
 	//! Render hardware interface structure
@@ -31,5 +33,15 @@ namespace Raito::Renderer
 	{
 		bool(*Initialize)(void);
 		void(*Shutdown)(void);
+
+		struct
+		{
+			Surface(*Create)(SysWindow*);
+			void(*Remove)(u32);
+			void(*Resize)(u32, u32, u32);
+			u32(*Width)(u32);
+			u32(*Height)(u32);
+			void(*Render)(u32);
+		} Surface;
 	};
 }

@@ -25,19 +25,51 @@ SOFTWARE.
 
 #include "GraphicsAPI.h"
 
-namespace Raito::Renderer
+namespace Raito
 {
 	
-	//! Renderer initialization function
-	//! @param api The desired api to be used 
-	//! @returns the success
-	bool Initialize(API api = API::D3D12);
+	struct SysWindow;
 
-	//! Renderer shutdown function
-	//! Releases all renderer objects
-	void Shutdown();
+	namespace Renderer
+	{
+		class Surface
+		{
+		public:
+			constexpr explicit Surface(u32 id) : m_Id(id) {}
+			Surface() = default;
 
-	//! Renderer graphics API getter
-	//! @return Current graphics API
-	NODISCARD API GetCurrentAPI();
+			NODISCARD constexpr u32 Id() const { return m_Id; }
+
+			void Resize(u32 width, u32 height) const;
+			NODISCARD u32 Width() const;
+			NODISCARD u32 Height() const;
+			void Render() const;
+		private:
+			u32 m_Id;
+		};
+
+		struct RenderSurface
+		{
+			SysWindow* Window;
+			Surface Surface;
+		};
+		//
+		//! @param api The desired api to be used 
+		bool SetPlatformInterface(API api);
+
+		//! Renderer initialization function
+		//! @returns the success
+		bool Initialize();
+
+		//! Renderer shutdown function
+		//! Releases all renderer objects
+		void Shutdown();
+
+		//! Renderer graphics API getter
+		//! @return Current graphics API
+		NODISCARD API GetCurrentAPI();
+
+		Surface CreateSurface(SysWindow* window);
+		void RemoveSurface(u32 id);
+	}
 }

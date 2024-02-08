@@ -11,7 +11,7 @@ pchsource "Source/Raito/pch.cpp"
 files {"Source/**.h", "Source/**.hpp", "Source/**.c", "Source/**.cpp", "Source/**.cc"}
 
 includedirs {"Source", "Source/Raito", "%{IncludeDir.GLFW}", "%{IncludeDir.DX12TK}", "%{IncludeDir.spdlog}",
-             "%{IncludeDir.glad}"}
+             "%{IncludeDir.glad}", "%{IncludeDir.glm}"}
 
 links {"GLFW", "glad"}
 

@@ -11,5 +11,13 @@ namespace Raito::Renderer::OpenGL
 	{
 		rhi.Initialize = Initialize;
 		rhi.Shutdown = Shutdown;
+
+		rhi.Surface.Create = CreateSurface;
+		rhi.Surface.Remove = RemoveSurface;
+
+		rhi.Surface.Resize = ResizeSurface;
+		rhi.Surface.Render = RenderSurface;
+		rhi.Surface.Height = SurfaceHeight;
+		rhi.Surface.Width = SurfaceWidth;
 	}
 }

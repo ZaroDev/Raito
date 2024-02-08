@@ -169,7 +169,7 @@ namespace Raito::Renderer::D3D12::Core
 				D3D12_RLDO_SUMMARY | D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL));
 		}
 #else
-		Release(MainDevice);
+		Release(g_MainDevice);
 #endif
 	}
 

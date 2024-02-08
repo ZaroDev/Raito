@@ -33,5 +33,5 @@ namespace Raito::Math
 	//! @param rotation Rotation component 
 	//! @param scale Scale component
 	//! @return Transformation matrix
-	Matrix CreateTransform(const v3& translation, const Quaternion& rotation, const v3& scale);
+	Mat4 CreateTransform(const V3& translation, const Quaternion& rotation, const V3& scale);
 }

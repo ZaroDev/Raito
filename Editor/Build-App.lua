@@ -7,7 +7,7 @@ staticruntime "off"
 files {"Source/**.h", "Source/**.cpp"}
 
 includedirs {"Source", -- Include Core
-"../Core/Source", "%{IncludeDir.spdlog}"}
+"../Core/Source", "%{IncludeDir.spdlog}", "%{IncludeDir.glm}"}
 
 links {"Core"}
 
