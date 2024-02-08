@@ -21,4 +21,10 @@ include "Core/Vendor/GLFW"
 include "Core/Vendor/glad"
 group ""
 
+group "Editor/Dependencies"
+include "Editor/Vendor/ImGui"
+group ""
+
+group "Editor"
 include "Editor/Build-App.lua"
+group ""

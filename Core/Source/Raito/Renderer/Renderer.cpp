@@ -7,10 +7,11 @@
 
 namespace Raito::Renderer
 {
+
 	namespace
 	{
-		RHI g_GraphicsContext{};
 		API g_GraphicsAPI = API::NONE;
+		RHI g_GraphicsContext{};
 	}
 
 

@@ -7,12 +7,12 @@ staticruntime "off"
 files {"Source/**.h", "Source/**.cpp"}
 
 includedirs {"Source", -- Include Core
-"../Core/Source", "%{IncludeDir.spdlog}", "%{IncludeDir.glm}"}
+"../Core/Source", "%{IncludeDir.spdlog}", "%{IncludeDir.glm}", "%{IncludeDir.ImGui}", "%{IncludeDir.GLFW}"}
 
-links {"Core"}
+links {"Core", "ImGui"}
 
-targetdir("../Binaries/" .. outputdir .. "/%{prj.name}")
-objdir("../Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")
+targetdir("%{wks.location}/Binaries/" .. outputdir .. "/%{prj.name}")
+objdir("%{wks.location}/Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")
 
 nuget {"directxtk12_uwp:2024.1.1.1"}
 

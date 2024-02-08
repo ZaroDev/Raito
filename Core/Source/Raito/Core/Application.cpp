@@ -54,6 +54,8 @@ namespace Raito::Core
 
 		// TODO: Module Update
 
+		OnRenderGUI();
+
 		Window::Update();
 
 		return m_Running;

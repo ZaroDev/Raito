@@ -90,10 +90,13 @@ namespace Raito::Renderer::OpenGL
 	void RenderSurface(u32 id)
 	{
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
+		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		buffer.Bind();
 
-		
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 
 		buffer.UnBind();

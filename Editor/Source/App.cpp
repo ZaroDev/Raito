@@ -1,5 +1,7 @@
 #include "App.h"
 #include "EditorCommon.h"
+#include "imgui.h"
+#include "ImGui/ImGuiEditor.h"
 
 namespace Editor
 {
@@ -7,7 +9,7 @@ namespace Editor
 	bool App::OnInit()
 	{
 		E_LOG("Application Initialized!");
-		
+		ImGuiEditor::Init();
 		return true;
 	}
 
@@ -18,10 +20,17 @@ namespace Editor
 
 	bool App::OnRenderGUI()
 	{
+		ImGuiEditor::Begin();
+
+		ImGui::ShowDemoWindow();
+
+		ImGuiEditor::End();
+
 		return m_Running;
 	}
 	void App::OnShutdown()
 	{
+		ImGuiEditor::Shutdown();
 	}
 }
 

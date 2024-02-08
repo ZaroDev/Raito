@@ -4,3 +4,4 @@ IncludeDir["DX12TK"] = "%{wks.location}/packages/directxtk12_uwp.2024.1.1.1/incl
 IncludeDir["spdlog"] = "%{wks.location}/Core/Vendor/spdlog/include"
 IncludeDir["glad"] = "%{wks.location}/Core/Vendor/glad/include"
 IncludeDir["glm"] = "%{wks.location}/Core/Vendor/glm"
+IncludeDir["ImGui"] = "%{wks.location}/Editor/Vendor/ImGui"
