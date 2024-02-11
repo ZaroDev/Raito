@@ -39,10 +39,11 @@ namespace Raito
 			glfwDestroyWindow(win);
 			Renderer::RemoveSurface(surface->Surface.Id());
 
-			delete surface->Window;
-			surface->Window = nullptr;
 
 			g_RenderSurfaces.erase(g_RenderSurfaces.begin() + surface->Window->Id);
+
+			delete surface->Window;
+			surface->Window = nullptr;
 		}
 	}
 

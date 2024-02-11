@@ -22,13 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
+#include "Math/MathTypes.h"
 
 namespace Raito::Assets
 {
+	struct Vertex
+	{
+		V3 Position;
+		V3 Normal;
+		V2 TexCoords;
+	};
+
 	class Mesh
 	{
 	public:
-		Mesh();
+		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32> indices);
 		~Mesh();
+	private:
+		std::vector<Vertex> m_Vertices{};
+		std::vector<u32> m_Indices{};
 	};
 }

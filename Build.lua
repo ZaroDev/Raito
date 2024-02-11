@@ -19,6 +19,7 @@ group ""
 group "Core/Dependencies"
 include "Core/Vendor/GLFW"
 include "Core/Vendor/glad"
+include "Core/Vendor/assimp"
 group ""
 
 group "Editor/Dependencies"

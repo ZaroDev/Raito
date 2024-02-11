@@ -30,12 +30,10 @@ namespace Raito::Assets
 	class Model
 	{
 	public:
-		Model();
+		Model(const std::vector<Mesh*>& meshes);
 		~Model();
 
 	private:
-		std::vector<std::shared_ptr<Mesh>> m_Meshes{};
-
-		friend u32 ImportModel(const std::filesystem::path& filePath);
+		std::vector<Mesh*> m_Meshes{};
 	};
 }

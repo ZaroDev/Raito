@@ -30,5 +30,9 @@ namespace Raito::Assets
 	public:
 		Material();
 		~Material();
+
+
+	private:
+		u32 m_MaterialId;
 	};
 }
