@@ -35,8 +35,8 @@ namespace Raito::Renderer::OpenGL
 		}
 		void AttachColorTexture(u32 id, int samples, GLenum internalFormat, GLenum format, u32 width, u32 height, int index)
 		{
-			bool multisampled = samples > 1;
-			if (multisampled)
+			const bool multiSampled = samples > 1;
+			if (multiSampled)
 			{
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
 			}
@@ -51,13 +51,13 @@ namespace Raito::Renderer::OpenGL
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multiSampled), id, 0);
 		}
 
 		void AttachDepthTexture(u32 id, int samples, GLenum format, GLenum attachmentType, u32 width, u32 height)
 		{
-			bool multisampled = samples > 1;
-			if (multisampled)
+			const bool multiSampled = samples > 1;
+			if (multiSampled)
 			{
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
 			}
@@ -72,7 +72,7 @@ namespace Raito::Renderer::OpenGL
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multiSampled), id, 0);
 		}
 	}
 
@@ -139,7 +139,7 @@ namespace Raito::Renderer::OpenGL
 
 		const bool multiSample = m_Data.Samples > 1;
 
-		if(m_ColorAttachments.size())
+		if(!m_ColorAttachmentData.empty())
 		{
 			m_ColorAttachments.resize(m_ColorAttachmentData.size());
 			CreateTextures(multiSample, m_ColorAttachments.data(), m_ColorAttachments.size());
@@ -175,7 +175,7 @@ namespace Raito::Renderer::OpenGL
 		if (m_ColorAttachments.size() > 1)
 		{
 			ASSERT(m_ColorAttachments.size() <= 4);
-			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+			constexpr GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 			glDrawBuffers(m_ColorAttachments.size(), buffers);
 		}
 		else if (m_ColorAttachments.empty())

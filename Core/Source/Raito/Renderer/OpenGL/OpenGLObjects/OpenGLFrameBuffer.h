@@ -61,7 +61,7 @@ namespace Raito
 			void Resize(u32 width, u32 height);
 
 			NODISCARD const FrameBufferData& Data() const { return m_Data; }
-
+			NODISCARD u32 ColorAttachment(u32 index = 0) const { ASSERT(index < m_ColorAttachments.size()); return m_ColorAttachments[index]; }
 			void Reset();
 		private:
 

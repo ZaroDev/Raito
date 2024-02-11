@@ -22,3 +22,5 @@ packages.config
 
 # Exclude
 !Vendor/Binaries
+*.exe
+*.ini

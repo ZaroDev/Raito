@@ -115,6 +115,7 @@ namespace Raito
 				{
 					glfwSwapBuffers(static_cast<GLFWwindow*>(renderSurface.Window->Window));
 				}
+				renderSurface.Surface.Render();
 
 				if(glfwWindowShouldClose(static_cast<GLFWwindow*>(renderSurface.Window->Window)))
 				{
@@ -126,7 +127,6 @@ namespace Raito
 					DestroySurface(&renderSurface);
 				}
 
-				renderSurface.Surface.Render();
 			}
 
 			glfwPollEvents();

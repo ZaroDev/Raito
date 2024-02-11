@@ -62,7 +62,7 @@ namespace Raito
 
 		void CreateMainWindow();
 
-		//! Update function for the window module
+		//! EndTimeUpdate function for the window module
 		//! Polls the events for all the windows
 		//! @return Boolean indicating success value
 		bool Update();

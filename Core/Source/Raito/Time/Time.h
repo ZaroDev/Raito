@@ -23,13 +23,12 @@ SOFTWARE.
 */
 #pragma once
 
-namespace Raito
+namespace Raito::Time
 {
-	class Time
-	{
-	public:
+	float GetDeltaTime();
+	float GetFPS();
 
-
-	};
+	void StartTimeUpdate();
+	void EndTimeUpdate();
 }
 

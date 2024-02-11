@@ -2,6 +2,8 @@
 #include "EditorCommon.h"
 #include "imgui.h"
 #include "ImGui/ImGuiEditor.h"
+#include "Panels/Panel.h"
+#include "Panels/Performance.h"
 
 namespace Editor
 {
@@ -10,11 +12,19 @@ namespace Editor
 	{
 		E_LOG("Application Initialized!");
 		ImGuiEditor::Init();
+
+		m_Panels.emplace_back(std::make_unique<Performance>());
+
 		return true;
 	}
 
 	bool App::OnUpdate()
 	{
+		for (const auto& p : m_Panels)
+		{
+			p->Update();
+		}
+
 		return m_Running;
 	}
 
@@ -22,7 +32,10 @@ namespace Editor
 	{
 		ImGuiEditor::Begin();
 
-		ImGui::ShowDemoWindow();
+		for (const auto& p : m_Panels)
+		{
+			p->Render();
+		}
 
 		ImGuiEditor::End();
 

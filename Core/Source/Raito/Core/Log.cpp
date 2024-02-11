@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Log.h"
 
-
-
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
@@ -17,13 +15,10 @@ namespace Raito::Core::Debug
 	{
 		std::vector<spdlog::sink_ptr> logSinks;
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("raito.log", true));
 
-		if (logDumps)
-		{
-			logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("raito.log", true));
-			logSinks[1]->set_pattern("[%T] [%l] %n: %v");
-		}
+		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		logSinks[1]->set_pattern("[%T] [%l] %n: %v");
 
 		s_Logger = std::make_shared<spdlog::logger>("Raito", begin(logSinks), end(logSinks));
 		spdlog::register_logger(s_Logger);
@@ -35,7 +30,7 @@ namespace Raito::Core::Debug
 
 	void Log(const std::string& title, const std::string& msg)
 	{
-		s_Logger->trace("{} - {}", title, msg);
+		s_Logger->info("{} - {}", title, msg);
 	}
 	void LogWarning(const std::string& title, const std::string& msg)
 	{

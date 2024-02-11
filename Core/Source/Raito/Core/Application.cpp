@@ -9,6 +9,7 @@
 #include "Renderer/Renderer.h"
 
 #include "Time/ScopedTimer.h"
+#include "Time/Time.h"
 
 namespace Raito::Core
 {
@@ -50,14 +51,14 @@ namespace Raito::Core
 	}
 	bool Application::Update()
 	{
-		//ScopedTimer timer("Update");
+		Time::StartTimeUpdate();
 
-		// TODO: Module Update
-
-		OnRenderGUI();
+		OnUpdate();
 
 		Window::Update();
+		OnRenderGUI();
 
+		Time::EndTimeUpdate();
 		return m_Running;
 	}
 	void Application::Shutdown()

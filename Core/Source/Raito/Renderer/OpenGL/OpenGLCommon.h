@@ -26,6 +26,8 @@ SOFTWARE.
 #include "Renderer/Renderer.h"
 #include "Core/Log.h"
 
+#include <Core/Common.h>
+#include <glad/glad.h>
 
 #ifndef DIST
 #define O_LOG(...) LOG("OpenGL", __VA_ARGS__)

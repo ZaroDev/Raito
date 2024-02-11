@@ -61,7 +61,7 @@ namespace Raito::Core
 		* Initializes all the modules and calls OnInit at the end if all succeed.
 		*/
 		bool Initialize();
-		//! Update function
+		//! EndTimeUpdate function
 		/*!
 		* Main update loop, runs every module update function and
 		* calls OnUpdate() and OnRenderGUI() with this order.
@@ -76,7 +76,7 @@ namespace Raito::Core
 		//! Close function
 		/*
 		*  Puts a flag for the application to be call Shutdown() 
-		*  Reminder: It always completes the Update() call before shutting down the application
+		*  Reminder: It always completes the EndTimeUpdate() call before shutting down the application
 		*/
 		void Close() { m_Running = false; }
 
@@ -89,7 +89,7 @@ namespace Raito::Core
 		//! Note: Called after OnUpdate()
 		virtual bool OnRenderGUI() { return true; }
 
-		//! Update event function
+		//! EndTimeUpdate event function
 		//! Note: Called before OnRenderGUI()
 		virtual bool OnUpdate() { return true; }
 
