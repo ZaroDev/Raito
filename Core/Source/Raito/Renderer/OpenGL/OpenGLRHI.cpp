@@ -3,7 +3,7 @@
 
 #include "Renderer/RHI.h"
 #include "OpenGLCore.h"
-
+#include "OpenGLShaderCompiler.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -19,5 +19,12 @@ namespace Raito::Renderer::OpenGL
 		rhi.Surface.Render = RenderSurface;
 		rhi.Surface.Height = SurfaceHeight;
 		rhi.Surface.Width = SurfaceWidth;
+
+		rhi.Shader.GetShader = ShaderCompiler::GetShader;
+		rhi.Shader.GetShaderId = ShaderCompiler::GetShaderWithEngineId;
+		rhi.Shader.GetFileData = ShaderCompiler::GetFileData;
+		rhi.Shader.GetAllShaders = ShaderCompiler::GetAllShaders;
+		rhi.Shader.CompileShader = ShaderCompiler::CompileShader;
+
 	}
 }

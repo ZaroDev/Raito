@@ -7,20 +7,18 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 {
 	namespace 
 	{
-		std::vector<OpenGLShader> g_Shaders{};
-
-		
+		std::vector<Shader*> g_Shaders{};
 
 		constexpr const char* c_ShadersSourceFiles = "Shaders";
 
-		// NOTE: This must be in the same order as OpenGLEngineShader to have the ID's be the same as the enum values
+		// NOTE: This must be in the same order as EngineShader to have the ID's be the same as the enum values
 		constexpr ShaderFileData c_ShaderFiles[]
 		{
-			{"UnshadedMesh", OpenGLEngineShader::UNSHADED_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
-			{ "PostProcess", OpenGLEngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"UnshadedMesh", EngineShader::UNSHADED_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 		};
 
-		static_assert(_countof(c_ShaderFiles) == OpenGLEngineShader::ENGINE_SHADER_MAX);
+		static_assert(_countof(c_ShaderFiles) == EngineShader::ENGINE_SHADER_MAX);
 
 		u32 CreateShader(const std::filesystem::path& path, GLenum type)
 		{
@@ -71,7 +69,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 	{
 		for (const auto& shaderFile : c_ShaderFiles)
 		{
-			CompileShader(shaderFile);
+			ShaderCompiler::CompileShader(shaderFile);
 		}
 
 		return true;
@@ -140,26 +138,58 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		filePath.replace_extension("");
 
 
-		OpenGLShader& shader = g_Shaders.emplace_back(programId);
-		shader.m_ShaderType = static_cast<OpenGLShaderType>(data.Type);
-		shader.m_FilePath = filePath;
+		OpenGLShader* shader = new OpenGLShader(programId);
+		shader->m_ShaderType = static_cast<OpenGLShaderType>(data.Type);
+		shader->m_FilePath = filePath;
+		shader->m_EngineType = data.Id;
 
+		if(g_Shaders.size() > data.Id && g_Shaders.at(data.Id) != nullptr)
+		{
+			delete g_Shaders.at(data.Id);
+			g_Shaders.erase(g_Shaders.begin() + data.Id);
+			g_Shaders.insert(g_Shaders.begin() + data.Id, shader);
+		}
+		else
+		{
+			g_Shaders.emplace_back(shader);
+		}
 
-		return (u32)g_Shaders.size() - 1;
+		return data.Id;
 	}
 
-	OpenGLShader* GetShader(u32 id)
+	Shader* GetShader(u32 id)
 	{
-		return &g_Shaders[id];
+		return g_Shaders[id];
 	}
 
-	OpenGLShader* GetShader(OpenGLEngineShader id)
+	Shader* GetShaderWithEngineId(EngineShader id)
 	{
-		return &g_Shaders[id];
+		return g_Shaders[id];
+	}
+
+	ShaderFileData GetFileData(EngineShader id)
+	{
+		if(id >= EngineShader::ENGINE_SHADER_MAX)
+		{
+			return ShaderFileData();
+		}
+
+		return c_ShaderFiles[id];
+	}
+
+	const std::vector<Shader*>& GetAllShaders()
+	{
+		return g_Shaders;
 	}
 
 	void Shutdown()
 	{
+		for (auto& shader : g_Shaders)
+		{
+			delete shader;
+			shader = nullptr;
+		}
+
 		g_Shaders.clear();
 	}
 }

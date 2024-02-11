@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "GraphicsAPI.h"
+#include "Shader.h"
 
 namespace Raito
 {
@@ -71,5 +72,9 @@ namespace Raito
 
 		Surface CreateSurface(SysWindow* window);
 		void RemoveSurface(u32 id);
+
+		ShaderFileData GetFileData(EngineShader id);
+		const std::vector<class Shader*>& GetAllShaders();
+		u32 CompileShader(const ShaderFileData& data);
 	}
 }

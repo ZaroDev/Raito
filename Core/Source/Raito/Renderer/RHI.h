@@ -24,15 +24,17 @@ SOFTWARE.
 #pragma once
 
 #include "Renderer.h"
+#include "Shader.h"
 
 namespace Raito::Renderer
 {
 	//! Render hardware interface structure
 	//! General abstraction for the rendering interface
+	
 	struct RHI
 	{
-		bool(*Initialize)(void);
-		void(*Shutdown)(void);
+		bool(*Initialize)();
+		void(*Shutdown)();
 
 		struct
 		{
@@ -43,5 +45,14 @@ namespace Raito::Renderer
 			u32(*Height)(u32);
 			void(*Render)(u32);
 		} Surface;
+
+		struct
+		{
+			Shader* (*GetShader)(u32);
+			Shader* (*GetShaderId)(EngineShader);
+			const std::vector<Shader*>& (*GetAllShaders)();
+			ShaderFileData(*GetFileData)(EngineShader);
+			u32(*CompileShader)(const ShaderFileData&);
+		} Shader;
 	};
 }

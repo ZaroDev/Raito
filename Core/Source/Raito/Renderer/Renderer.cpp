@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "Renderer.h"
+#include "Shader.h"
 #include "RHI.h"
 
 #include "D3D12/D3D12RHI.h"
 #include "OpenGL/OpenGLRHI.h"
+
 
 namespace Raito::Renderer
 {
@@ -70,5 +72,20 @@ namespace Raito::Renderer
 	void RemoveSurface(u32 id)
 	{
 		g_GraphicsContext.Surface.Remove(id);
+	}
+
+	ShaderFileData GetFileData(EngineShader id)
+	{
+		return g_GraphicsContext.Shader.GetFileData(id);
+	}
+
+	const std::vector<Shader*>& GetAllShaders()
+	{
+		return g_GraphicsContext.Shader.GetAllShaders();
+	}
+
+	u32 CompileShader(const ShaderFileData& data)
+	{
+		return g_GraphicsContext.Shader.CompileShader(data);
 	}
 }

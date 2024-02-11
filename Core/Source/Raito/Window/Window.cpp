@@ -27,11 +27,21 @@ namespace Raito
 			ERR("GLFW", "{}, {}", error, description);
 		}
 
-		void DestroySurface(const Renderer::RenderSurface* surface)
+		void GlfwWindowSizeCallback(GLFWwindow* win, int width, int height)
+		{
+			const SysWindow* data = static_cast<SysWindow*>(glfwGetWindowUserPointer(win));
+			data->Surface->Surface.Resize(width, height);
+		}
+
+		void DestroySurface(Renderer::RenderSurface* surface)
 		{
 			const auto win = static_cast<GLFWwindow*>(surface->Window->Window);
 			glfwDestroyWindow(win);
 			Renderer::RemoveSurface(surface->Surface.Id());
+
+			delete surface->Window;
+			surface->Window = nullptr;
+
 			g_RenderSurfaces.erase(g_RenderSurfaces.begin() + surface->Window->Id);
 		}
 	}
@@ -48,7 +58,7 @@ namespace Raito
 
 			g_DefaultInfo = defaultInfo;
 			// Initialize GLFW
-			
+
 			if (glfwInit() != GLFW_TRUE)
 			{
 				F_ERR("Error while initializing GLFW with code: {}", glfwGetError(NULL));
@@ -56,7 +66,7 @@ namespace Raito
 			}
 			glfwSetErrorCallback(GlfwErrorCallback);
 
-			if(api != Renderer::API::OPENGL)
+			if (api != Renderer::API::OPENGL)
 			{
 				glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 			}
@@ -98,7 +108,10 @@ namespace Raito
 
 			Renderer::RenderSurface surface{ window, Renderer::CreateSurface(window) };
 
-			g_RenderSurfaces.emplace_back(surface);
+			window->Surface = &g_RenderSurfaces.emplace_back(surface);
+
+			glfwSetWindowUserPointer(win, window);
+			glfwSetWindowSizeCallback(win, GlfwWindowSizeCallback);
 
 			g_MainWindow = window->Id;
 
@@ -109,17 +122,17 @@ namespace Raito
 
 		bool Update()
 		{
-			for (const auto& renderSurface : g_RenderSurfaces)
+			for (auto& renderSurface : g_RenderSurfaces)
 			{
-				if(Renderer::GetCurrentAPI() == Renderer::API::OPENGL)
+				if (Renderer::GetCurrentAPI() == Renderer::API::OPENGL)
 				{
 					glfwSwapBuffers(static_cast<GLFWwindow*>(renderSurface.Window->Window));
 				}
 				renderSurface.Surface.Render();
 
-				if(glfwWindowShouldClose(static_cast<GLFWwindow*>(renderSurface.Window->Window)))
+				if (glfwWindowShouldClose(static_cast<GLFWwindow*>(renderSurface.Window->Window)))
 				{
-					if(renderSurface.Window->Id == g_MainWindow)
+					if (renderSurface.Window->Id == g_MainWindow)
 					{
 						Core::Application::Get().Close();
 						return false;
@@ -135,7 +148,7 @@ namespace Raito
 
 		void Shutdown()
 		{
-			for (const auto& renderSurface : g_RenderSurfaces)
+			for (auto& renderSurface : g_RenderSurfaces)
 			{
 				DestroySurface(&renderSurface);
 			}
@@ -155,7 +168,6 @@ namespace Raito
 				F_ERR("Error while creating a g_Window {}", glfwGetError(NULL));
 				return U32_MAX;
 			}
-			glfwMakeContextCurrent(win);
 
 			// Create and register the window
 			SysWindow* window = new SysWindow();
@@ -166,8 +178,10 @@ namespace Raito
 
 			Renderer::RenderSurface surface{ window, Renderer::CreateSurface(window) };
 
-			g_RenderSurfaces.emplace_back(surface);
+			window->Surface = &g_RenderSurfaces.emplace_back(surface);
 
+			glfwSetWindowUserPointer(win, window);
+			glfwSetWindowSizeCallback(win, GlfwWindowSizeCallback);
 
 			return window->Id;
 		}

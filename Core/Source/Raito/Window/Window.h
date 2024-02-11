@@ -27,6 +27,11 @@ SOFTWARE.
 
 namespace Raito
 {
+	namespace Renderer
+	{
+		struct RenderSurface;
+	}
+
 	//! Window info structure
 	struct WindowInfo
 	{
@@ -46,8 +51,10 @@ namespace Raito
 
 		void* WindowHandle = nullptr; /**< OS window handle */
 		void* Window = nullptr; /**< Internal window pointer */
+		Renderer::RenderSurface* Surface = nullptr; /**< Internal surface pointer */
 
 		u32 Id{}; /**< ID of the window */
+
 	};
 
 	

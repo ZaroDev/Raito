@@ -2,6 +2,7 @@
 
 #include <Renderer/OpenGL/OpenGLCommon.h>
 #include <Renderer/OpenGL/OpenGLShaderCompiler.h>
+#include <Renderer/Shader.h>
 
 #include <Math/MathTypes.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -18,14 +19,6 @@ namespace Raito::Renderer::OpenGL
 		COMPUTE = (1u << 4),
 
 		MAX = (1u << 5)
-	};
-
-
-	enum OpenGLEngineShader : u32
-	{
-		UNSHADED_MESH = 0,
-		POST_PROCESS,
-		ENGINE_SHADER_MAX
 	};
 
 	enum class UniformType : u16
@@ -46,11 +39,11 @@ namespace Raito::Renderer::OpenGL
 		UniformType Type = UniformType::NONE;
 	};
 
-	class OpenGLShader final
+	class OpenGLShader final : public Shader
 	{
 	public:
 		OpenGLShader(u32 id);
-		~OpenGLShader();
+		virtual ~OpenGLShader();
 
 
 		DEFAULT_MOVE_AND_COPY(OpenGLShader)
@@ -71,8 +64,10 @@ namespace Raito::Renderer::OpenGL
 			ASSERT(false);
 		}
 
-
-
+	
+		NODISCARD OpenGLShaderType ShaderType() const { return m_ShaderType; }
+		NODISCARD size_t UniformCount() const { return m_Uniforms.size(); }
+	
 	private:
 		GLint GetUniformLocation(const char* uniformName) const
 		{
@@ -80,14 +75,12 @@ namespace Raito::Renderer::OpenGL
 		}
 
 	private:
-		std::filesystem::path m_FilePath{};
 		u32 m_ShaderId = 0;
-
 		OpenGLShaderType m_ShaderType = OpenGLShaderType::MAX;
 
 		std::unordered_map<std::string, Uniform> m_Uniforms{};
 
-		friend u32 ShaderCompiler::CompileShader(const ShaderCompiler::ShaderFileData&);
+		friend u32 ShaderCompiler::CompileShader(const ShaderFileData&);
 	};
 
 

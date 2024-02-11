@@ -116,7 +116,7 @@ namespace Raito::Renderer::OpenGL
 		g_Surfaces.erase(g_Surfaces.begin() + id);
 	}
 
-	void ResizeSurface(u32 id, u32 height, u32 width)
+	void ResizeSurface(u32 id, u32 width, u32 height)
 	{
 		g_Surfaces[id].Resize(width, height);
 	}
@@ -150,7 +150,7 @@ namespace Raito::Renderer::OpenGL
 			glClear(GL_COLOR_BUFFER_BIT);
 
 
-			const auto shader = ShaderCompiler::GetShader(OpenGLEngineShader::POST_PROCESS);
+			const auto shader = static_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
 
 			shader->Bind();
 

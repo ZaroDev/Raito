@@ -4,6 +4,7 @@
 #include "ImGui/ImGuiEditor.h"
 #include "Panels/Panel.h"
 #include "Panels/Performance.h"
+#include "Panels/Shaders.h"
 
 namespace Editor
 {
@@ -14,6 +15,7 @@ namespace Editor
 		ImGuiEditor::Init();
 
 		m_Panels.emplace_back(std::make_unique<Performance>());
+		m_Panels.emplace_back(std::make_unique<Shaders>());
 
 		return true;
 	}

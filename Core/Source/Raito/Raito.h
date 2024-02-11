@@ -42,6 +42,7 @@ SOFTWARE.
 #include <Raito/Renderer/GraphicsAPI.h>
 #include <Raito/Renderer/RHI.h>
 #include <Raito/Renderer/Renderer.h>
+#include <Raito/Renderer/Shader.h>
 
 // Window
 #include <Raito/Window/Window.h>

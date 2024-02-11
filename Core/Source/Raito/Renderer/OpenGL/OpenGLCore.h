@@ -35,7 +35,7 @@ namespace Raito::Renderer::OpenGL
     void RemoveSurface(u32 id);
 
 
-    void ResizeSurface(u32 id, u32 height, u32 width);
+    void ResizeSurface(u32 id, u32 width, u32 height);
     u32 SurfaceWidth(u32 id);
     u32 SurfaceHeight(u32 id);
     void RenderSurface(u32 id);
