@@ -10,6 +10,8 @@
 #include "OpenGLObjects/OpenGLShader.h"
 #include "Window/Window.h"
 
+#include <Raito/Time/Time.h>
+
 namespace Raito::Renderer::OpenGL
 {
 	namespace
@@ -136,7 +138,7 @@ namespace Raito::Renderer::OpenGL
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
 		buffer.Bind();
 
-		glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
@@ -146,13 +148,15 @@ namespace Raito::Renderer::OpenGL
 		// Post-processing pass
 		{
 			// Clear the back buffer
-			glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 
 			const auto shader = static_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
 
 			shader->Bind();
+
+		
 
 			glBindVertexArray(g_FrameBufferQuadVAO);
 			glDisable(GL_DEPTH_TEST);

@@ -46,3 +46,8 @@ SOFTWARE.
 
 // Window
 #include <Raito/Window/Window.h>
+
+// Assets
+#include <Raito/Assets/Mesh.h>
+#include <Raito/Assets/Model.h>
+#include <Raito/Assets/AssetImport.h>

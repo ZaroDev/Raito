@@ -27,6 +27,7 @@ namespace Raito::Time
 {
 	float GetDeltaTime();
 	float GetFPS();
+	float GetTimeSinceStart();
 
 	void StartTimeUpdate();
 	void EndTimeUpdate();

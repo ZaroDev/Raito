@@ -8,9 +8,14 @@ namespace Raito::Time
 		float g_DeltaTime;
 
 		std::chrono::time_point<std::chrono::steady_clock> g_LastTime;
+
+		float g_TimeSinceStart = 0.0f;
 	}
 
-
+	float GetTimeSinceStart()
+	{
+		return g_TimeSinceStart;
+	}
 	float GetDeltaTime()
 	{
 		return g_DeltaTime;
@@ -31,5 +36,7 @@ namespace Raito::Time
 		const auto endTime = std::chrono::high_resolution_clock::now();
 		const std::chrono::duration<float> duration = (endTime - g_LastTime);
 		g_DeltaTime = duration.count() * 1000.0f;
+
+		g_TimeSinceStart += duration.count();
 	}
 }
