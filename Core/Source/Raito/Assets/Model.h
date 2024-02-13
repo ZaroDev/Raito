@@ -23,10 +23,10 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Mesh.h"
 
 namespace Raito::Assets
 {
-	class Mesh;
 	class Model
 	{
 	public:
@@ -34,6 +34,6 @@ namespace Raito::Assets
 		~Model();
 
 	private:
-		std::vector<Mesh*> m_Meshes{};
+		std::vector<u32> m_Meshes{};
 	};
 }

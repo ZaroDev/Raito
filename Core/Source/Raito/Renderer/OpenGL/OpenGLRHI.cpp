@@ -26,5 +26,7 @@ namespace Raito::Renderer::OpenGL
 		rhi.Shader.GetAllShaders = ShaderCompiler::GetAllShaders;
 		rhi.Shader.CompileShader = ShaderCompiler::CompileShader;
 
+		rhi.Meshes.AddMesh = AddMesh;
+		rhi.Meshes.RemoveMesh = RemoveMesh;
 	}
 }

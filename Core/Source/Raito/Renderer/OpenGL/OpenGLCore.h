@@ -25,6 +25,8 @@ SOFTWARE.
 
 #include "OpenGLCommon.h"
 
+#include "Assets/Mesh.h"
+
 namespace Raito::Renderer::OpenGL
 {
 	bool Initialize();
@@ -39,4 +41,7 @@ namespace Raito::Renderer::OpenGL
     u32 SurfaceWidth(u32 id);
     u32 SurfaceHeight(u32 id);
     void RenderSurface(u32 id);
+
+    u32 AddMesh(Assets::Mesh* mesh);
+    void RemoveMesh(u32 id);
 }

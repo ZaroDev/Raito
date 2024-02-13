@@ -9,13 +9,15 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "Time/ScopedTimer.h"
+
 namespace Raito::Assets
 {
 	namespace
 	{
-		std::vector<Raito::Assets::Model*> g_Models{};
+		std::vector<Model*> g_Models{};
 
-		Raito::Assets::Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene)
+		Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		{
 			std::vector<Vertex> vertices{};
 			std::vector<u32> indices{};
@@ -51,21 +53,19 @@ namespace Raito::Assets
 				const aiFace face = mesh->mFaces[i];
 				for(u32 j = 0; j < face.mNumIndices; j++)
 				{
-					indices.emplace_back(face.mIndices[i]);
+					indices.emplace_back(face.mIndices[j]);
 				}
 			}
-
-
 			return new Raito::Assets::Mesh(vertices, indices);
 		}
 
-		void ProcessNode(const std::vector<Raito::Assets::Mesh*>& meshes, aiNode* node, const aiScene* scene)
+		void ProcessNode(std::vector<Raito::Assets::Mesh*>& meshes, aiNode* node, const aiScene* scene)
 		{
 			// process all the node's meshes (if any)
 			for (u32 i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				//meshes.emplace_back(ProcessMesh(mesh, scene));
+				meshes.emplace_back(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
 			for (u32 i = 0; i < node->mNumChildren; i++)
@@ -78,21 +78,22 @@ namespace Raito::Assets
 	{
 		Assimp::Importer importer;
 
-		const aiScene* scene = importer.ReadFile(filePath.string().c_str(),
-			aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_SplitLargeMeshes | aiProcess_OptimizeMeshes);
+		ScopedTimer timer("Import asset");
 
-		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || scene->mRootNode)
+		const aiScene* scene = importer.ReadFile(filePath.string().c_str(), aiProcess_Triangulate | aiProcess_FlipUVs);
+
+		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			ERR("Model importer", "Assimp error {0}", importer.GetErrorString());
 			return 0;
 		}
 
-		const std::vector<Raito::Assets::Mesh*> meshes;
+		std::vector<Mesh*> meshes;
 
 		ProcessNode(meshes, scene->mRootNode, scene);
 
-		g_Models.emplace_back(new Raito::Assets::Model(meshes));
+		g_Models.emplace_back(new Model(meshes));
 
-		return u32();
+		return (u32)g_Models.size() - 1;
 	}
 }

@@ -1,16 +1,30 @@
 #include "pch.h"
 #include "Model.h"
 
-#include "Mesh.h"
+
+#include "Renderer/Renderer.h"
 
 namespace Raito::Assets
 {
+	Model::Model(const std::vector<Mesh*>& meshes)
+		
+	{
+		for(auto& mesh : meshes)
+		{
+			u32 id = Renderer::AddMesh(mesh);
+			m_Meshes.emplace_back(id);
+
+			// Since we don't need the mesh data anymore we just delete the whole mesh
+			delete mesh;
+		}
+
+	}
+
 	Model::~Model()
 	{
-		for (auto mesh : m_Meshes)
+		for (const u32 mesh : m_Meshes)
 		{
-			delete mesh;
-			mesh = nullptr;
+			Renderer::RemoveMesh(mesh);
 		}
 
 		m_Meshes.clear();

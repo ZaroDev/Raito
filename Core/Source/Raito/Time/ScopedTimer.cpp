@@ -17,6 +17,6 @@ namespace Raito
         m_Duration = m_End - m_Start;
 
         float dt = m_Duration.count() * 1000.f;
-        LOG(m_Name.c_str(), "Timer took {}", dt);
+        LOG(m_Name, "Timer took {0} ms", dt);
     }
 }

@@ -26,6 +26,11 @@ SOFTWARE.
 #include "Renderer.h"
 #include "Shader.h"
 
+namespace Raito::Assets
+{
+	class Mesh;
+}
+
 namespace Raito::Renderer
 {
 	//! Render hardware interface structure
@@ -54,5 +59,12 @@ namespace Raito::Renderer
 			ShaderFileData(*GetFileData)(EngineShader);
 			u32(*CompileShader)(const ShaderFileData&);
 		} Shader;
+
+		struct
+		{
+			u32(*AddMesh)(Assets::Mesh*);
+			void(*RemoveMesh)(u32);
+
+		} Meshes;
 	};
 }

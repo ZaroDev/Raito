@@ -67,8 +67,6 @@ namespace Raito
 		//! @return Boolean indicating success value
 		bool Initialize(Renderer::API api, const WindowInfo& defaultInfo = {});
 
-		void CreateMainWindow();
-
 		//! EndTimeUpdate function for the window module
 		//! Polls the events for all the windows
 		//! @return Boolean indicating success value

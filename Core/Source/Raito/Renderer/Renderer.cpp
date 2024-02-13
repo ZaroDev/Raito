@@ -88,4 +88,14 @@ namespace Raito::Renderer
 	{
 		return g_GraphicsContext.Shader.CompileShader(data);
 	}
+
+	u32 AddMesh(Assets::Mesh* mesh)
+	{
+		return g_GraphicsContext.Meshes.AddMesh(mesh);
+	}
+
+	void RemoveMesh(u32 id)
+	{
+		g_GraphicsContext.Meshes.RemoveMesh(id);
+	}
 }

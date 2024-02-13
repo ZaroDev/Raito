@@ -28,7 +28,11 @@ SOFTWARE.
 
 namespace Raito
 {
-	
+	namespace Assets
+	{
+		struct Mesh;
+	}
+
 	struct SysWindow;
 
 	namespace Renderer
@@ -76,5 +80,8 @@ namespace Raito
 		ShaderFileData GetFileData(EngineShader id);
 		const std::vector<class Shader*>& GetAllShaders();
 		u32 CompileShader(const ShaderFileData& data);
+
+		u32 AddMesh(struct Assets::Mesh* mesh);
+		void RemoveMesh(u32 id);
 	}
 }

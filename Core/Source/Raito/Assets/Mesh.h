@@ -33,13 +33,12 @@ namespace Raito::Assets
 		V2 TexCoords;
 	};
 
-	class Mesh final
+	struct Mesh final
 	{
-	public:
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
 		~Mesh();
-	private:
-		std::vector<Vertex> m_Vertices{};
-		std::vector<u32> m_Indices{};
+	
+		std::vector<Vertex> Vertices{};
+		std::vector<u32> Indices{};
 	};
 }
