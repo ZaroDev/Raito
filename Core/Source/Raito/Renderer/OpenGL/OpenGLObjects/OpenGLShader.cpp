@@ -54,6 +54,7 @@ namespace Raito::Renderer::OpenGL
 	OpenGLShader::~OpenGLShader()
 	{
 		glDeleteProgram(m_ShaderId);
+		m_Uniforms.clear();
 	}
 
 	void OpenGLShader::Bind() const

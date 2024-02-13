@@ -9,7 +9,6 @@
 
 namespace Raito::Renderer::OpenGL
 {
-
 	enum OpenGLShaderType : u32
 	{
 		VERTEX = (1u << 0),
@@ -71,7 +70,12 @@ namespace Raito::Renderer::OpenGL
 	private:
 		GLint GetUniformLocation(const char* uniformName) const
 		{
-			return m_Uniforms.at(uniformName).Id;
+			if(m_Uniforms.count(uniformName))
+			{
+				return m_Uniforms.at(uniformName).Id;
+			}
+
+			return 0;
 		}
 
 	private:

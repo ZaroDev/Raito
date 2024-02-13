@@ -160,11 +160,11 @@ namespace Raito::Renderer::OpenGL
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+		glEnable(GL_DEPTH_TEST);
 
 		// Geometry pass
 		{
-			const auto shader = static_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::UNSHADED_MESH));
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::UNSHADED_MESH));
 
 			shader->Bind();
 
@@ -181,8 +181,8 @@ namespace Raito::Renderer::OpenGL
 
 
 				// Fragment shader variables
-				shader->SetUniformRef("u_ObjectColor", V3(1.0f));
-				shader->SetUniformRef("u_LightColor", V3(1.0f));
+				shader->SetUniformRef("u_ObjectColor", V3(1.0f, 1.0f, 0.0f));
+				shader->SetUniformRef("u_LightColor", V3(0.5f));
 
 
 
@@ -205,7 +205,7 @@ namespace Raito::Renderer::OpenGL
 			glClear(GL_COLOR_BUFFER_BIT);
 
 
-			const auto shader = static_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
 
 			shader->Bind();
 

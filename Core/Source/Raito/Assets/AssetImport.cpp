@@ -56,10 +56,10 @@ namespace Raito::Assets
 					indices.emplace_back(face.mIndices[j]);
 				}
 			}
-			return new Raito::Assets::Mesh(vertices, indices);
+			return new Mesh(vertices, indices);
 		}
 
-		void ProcessNode(std::vector<Raito::Assets::Mesh*>& meshes, aiNode* node, const aiScene* scene)
+		void ProcessNode(std::vector<Mesh*>& meshes, aiNode* node, const aiScene* scene)
 		{
 			// process all the node's meshes (if any)
 			for (u32 i = 0; i < node->mNumMeshes; i++)

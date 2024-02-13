@@ -11,6 +11,7 @@ namespace Raito::Renderer
 	{
 		m_ForwardDirection = glm::vec3(0, 0, -1);
 		m_Position = glm::vec3(0, 0, 5);
+		RecalculateView();
 	}
 
 	bool Camera::OnUpdate(float ts)
