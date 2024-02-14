@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace Raito::Assets
 {
-	class Mesh;
+	struct Mesh;
 }
 
 namespace Raito::Renderer

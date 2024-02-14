@@ -49,14 +49,28 @@ namespace Raito::ECS
 			: Tag(tag) {}
 	};
 
+	struct MeshComponent
+	{
+		u32 MeshId;
+		MeshComponent() = default;
+		MeshComponent(const MeshComponent&) = default;
+		MeshComponent(u32 id)
+			: MeshId(id) {}
+	};
+
 	struct TransformComponent
 	{
 		V3 Translation = { 0.0f, 0.0f, 0.0f };
 		Quaternion Rotation = { 0.0f, 0.0f, 0.0f, 1.0f };
 		V3 Scale = { 1.0f, 1.0f, 1.0f };
 
+
+
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
+		TransformComponent(V3 translation, Quaternion rotation, V3 scale)
+			: Translation(translation), Rotation(rotation), Scale(scale) {}
+
 		TransformComponent(const V3& translation)
 			: Translation(translation) {}
 

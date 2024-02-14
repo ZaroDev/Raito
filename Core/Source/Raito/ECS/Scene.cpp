@@ -35,10 +35,4 @@ namespace Raito::ECS
 	{
 		return Entity();
 	}
-
-	template<typename T>
-	void Scene::OnComponentAdded(Entity entity, T& component)
-	{
-		static_assert(sizeof(T) != 0);
-	}
 }

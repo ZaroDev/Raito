@@ -40,7 +40,6 @@ namespace Raito::ECS
 		{
 			ASSERT(!HasComponent<T>());
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
 		}
 
@@ -48,7 +47,6 @@ namespace Raito::ECS
 		T& AddOrReplaceComponent(Args&&... args)
 		{
 			T& component = m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
 		}
 

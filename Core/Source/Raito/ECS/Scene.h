@@ -69,12 +69,6 @@ namespace Raito::ECS
 		{
 			return m_Registry.view<Components...>();
 		}
-	private:
-		//! Entity component added templated callback
-		//! @param entity Entity that received the component
-		//! @param component The component added
-		template<typename T>
-		void OnComponentAdded(Entity entity, T& component);
 
 	private:
 		entt::registry m_Registry; /**< Scene entity registry */

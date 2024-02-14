@@ -22,5 +22,7 @@ packages.config
 
 # Exclude
 !Vendor/Binaries
+
+Assets/Meshes
 *.exe
 *.ini

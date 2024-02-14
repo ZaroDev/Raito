@@ -14,11 +14,14 @@
 
 #include <Renderer/Camera.h>
 
+#include <ECS/Entity.h>
+#include <Core/Application.h>
+
 namespace Raito::Renderer::OpenGL
 {
 	namespace
 	{
-		Camera g_Camera(45.0, 0.1f, 10000.0f);
+		Camera g_Camera(45.0, 0.1f, 1000.0f);
 
 		std::vector<OpenGLFrameBuffer> g_Surfaces{};
 
@@ -30,6 +33,8 @@ namespace Raito::Renderer::OpenGL
 
 			GLsizei IndexCount;
 		};
+
+
 		std::vector<OpenGLMeshData> g_Meshes{};
 
 
@@ -168,12 +173,15 @@ namespace Raito::Renderer::OpenGL
 
 			shader->Bind();
 
-			for (const auto& mesh : g_Meshes)
+			auto& scene = Core::Application::Get().Scene;
+			auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
+			for (auto& entt : view)
 			{
 				// TODO: Set material data
 
 
-				constexpr auto model = Mat4(1.0);
+				const Mat4 model = view.get<ECS::TransformComponent>(entt).GetTransform();
+				const OpenGLMeshData& mesh = g_Meshes[view.get<ECS::MeshComponent>(entt).MeshId];
 
 				shader->SetUniformRef("u_View", g_Camera.GetView());
 				shader->SetUniformRef("u_Projection", g_Camera.GetProjection());

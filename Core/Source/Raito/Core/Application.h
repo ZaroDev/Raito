@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "Renderer/GraphicsAPI.h"
+#include "ECS/Scene.h"
 
 namespace Raito::Core 
 {
@@ -80,6 +81,10 @@ namespace Raito::Core
 		*/
 		void Close() { m_Running = false; }
 
+	public:
+		// Test scene
+		ECS::Scene Scene{};
+
 	protected:
 
 		//! Initialization event function
@@ -101,6 +106,7 @@ namespace Raito::Core
 
 		bool m_Running = false; /**< Flag for the application loop to be ran */
 	private:
+		
 
 		inline static Application* s_Application = nullptr; /**< Static pointer to the instance of the application */
 		ApplicationInfo m_Info{}; /**< Info of the current application */

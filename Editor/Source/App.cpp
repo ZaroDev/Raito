@@ -19,7 +19,7 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Performance>());
 		m_Panels.emplace_back(std::make_unique<Shaders>());
 
-		Raito::Assets::ImportModel("Meshes/MacLaren720s/scene.gltf");
+		Raito::Assets::ImportModel("Meshes/NewSponza_Main_glTF_002.gltf");
 
 		return true;
 	}

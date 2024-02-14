@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "Mesh.h"
+#include "ECS/Scene.h"
 
 namespace Raito::Assets
 {

@@ -35,10 +35,15 @@ namespace Raito::Assets
 
 	struct Mesh final
 	{
+		Mesh() = default;
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
 		~Mesh();
 	
 		std::vector<Vertex> Vertices{};
 		std::vector<u32> Indices{};
+		
+		Mat4 Transform;
+
+		std::string Name{};
 	};
 }
