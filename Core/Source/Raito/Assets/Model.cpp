@@ -19,13 +19,11 @@ namespace Raito::Assets
 
 
 			// TODO: Create materials per mesh
-
-
 			auto& scene = Core::Application::Get().Scene;
 
 			ECS::Entity ent = scene.CreateEntity(mesh->Name);
 
-			ent.AddOrReplaceComponent<ECS::TransformComponent>();
+			ent.AddOrReplaceComponent<ECS::TransformComponent>(mesh->Transform);
 			ent.AddComponent<ECS::MeshComponent>(id);
 
 			// Since we don't need the mesh data anymore we just delete the whole mesh

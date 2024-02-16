@@ -189,8 +189,8 @@ namespace Raito::Renderer::OpenGL
 
 
 				// Fragment shader variables
-				shader->SetUniformRef("u_ObjectColor", V3(1.0f, 1.0f, 0.0f));
-				shader->SetUniformRef("u_LightColor", V3(0.5f));
+				shader->SetUniformRef("u_ObjectColor", V3(0.9f, 0.9f, 0.9f));
+				shader->SetUniformRef("u_LightColor", V3(1.0f));
 
 
 

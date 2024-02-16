@@ -17,7 +17,19 @@ namespace Raito::Assets
 	{
 		std::vector<Model*> g_Models{};
 
-		Mesh* ProcessMesh(aiNode* node, aiMesh* mesh, const aiScene* scene)
+		Mat4 aiMatrix4x4ToGlm(const aiMatrix4x4* from)
+		{
+			Mat4 to;
+
+			to[0][0] = from->a1; to[0][1] = from->b1;  to[0][2] = from->c1; to[0][3] = from->d1;
+			to[1][0] = from->a2; to[1][1] = from->b2;  to[1][2] = from->c2; to[1][3] = from->d2;
+			to[2][0] = from->a3; to[2][1] = from->b3;  to[2][2] = from->c3; to[2][3] = from->d3;
+			to[3][0] = from->a4; to[3][1] = from->b4;  to[3][2] = from->c4; to[3][3] = from->d4;
+
+			return to;
+		}
+
+		Mesh* ProcessMesh(aiNode* node, aiMesh* mesh, const aiScene* scene, const Mat4& transform)
 		{
 			std::vector<Vertex> vertices{};
 			std::vector<u32> indices{};
@@ -61,29 +73,32 @@ namespace Raito::Assets
 
 			m->Vertices = vertices;
 			m->Indices = indices;
-
-			auto transform = node->mTransformation * node->mParent->mTransformation;
-			m->Transform = Mat4(transform.a1, transform.a2, transform.a3, transform.a4,
-								transform.b1, transform.b2, transform.b3, transform.b4,
-								transform.c1, transform.c2, transform.c3, transform.c4,
-								transform.d1, transform.d2, transform.d3, transform.d4);
+			m->Name = node->mName.C_Str();
+			m->Transform = transform;
 
 
 			return m;
 		}
 
-		void ProcessNode(std::vector<Mesh*>& meshes, aiNode* node, const aiScene* scene)
+		void ProcessNode(std::vector<Mesh*>& meshes, aiNode* node, const aiScene* scene, const Mat4& parent)
 		{
+			Mat4 transform = aiMatrix4x4ToGlm(&node->mTransformation);
+			if (node->mParent)
+			{
+				transform = transform * aiMatrix4x4ToGlm(&node->mParent->mTransformation);
+			}
+
 			// process all the node's meshes (if any)
 			for (u32 i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				meshes.emplace_back(ProcessMesh(node, mesh, scene));
+				meshes.emplace_back(ProcessMesh(node, mesh, scene, transform));
 			}
 			// then do the same for each of its children
 			for (u32 i = 0; i < node->mNumChildren; i++)
 			{
-				ProcessNode(meshes, node->mChildren[i], scene);
+				
+				ProcessNode(meshes, node->mChildren[i], scene, transform);
 			}
 		}
 	}
@@ -103,7 +118,7 @@ namespace Raito::Assets
 
 		std::vector<Mesh*> meshes;
 
-		ProcessNode(meshes, scene->mRootNode, scene);
+		ProcessNode(meshes, scene->mRootNode, scene, Mat4(1.0f));
 
 		g_Models.emplace_back(new Model(meshes));
 

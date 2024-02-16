@@ -1,10 +1,14 @@
 #include "App.h"
 #include "EditorCommon.h"
 #include "imgui.h"
+
 #include "ImGui/ImGuiEditor.h"
+
 #include "Panels/Panel.h"
+
 #include "Panels/Performance.h"
 #include "Panels/Shaders.h"
+#include "Panels/Hierarchy.h"
 
 #include <filesystem>
 
@@ -18,8 +22,9 @@ namespace Editor
 
 		m_Panels.emplace_back(std::make_unique<Performance>());
 		m_Panels.emplace_back(std::make_unique<Shaders>());
+		m_Panels.emplace_back(std::make_unique<Hierarchy>());
 
-		Raito::Assets::ImportModel("Meshes/NewSponza_Main_glTF_002.gltf");
+		Raito::Assets::ImportModel("Meshes/Sponza/NewSponza_Main_glTF_002.gltf");
 
 		return true;
 	}

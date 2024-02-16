@@ -34,4 +34,6 @@ namespace Raito::Math
 	//! @param scale Scale component
 	//! @return Transformation matrix
 	Mat4 CreateTransform(const V3& translation, const Quaternion& rotation, const V3& scale);
+
+	void DecomposeTransform(const Mat4& matrix, V3& translation, Quaternion& rotation, V3& scale);
 }
