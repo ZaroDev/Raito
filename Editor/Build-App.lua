@@ -16,11 +16,10 @@ targetdir("%{wks.location}/Binaries/" .. outputdir .. "/%{prj.name}")
 objdir("%{wks.location}/Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")
 debugdir("%{wks.location}/Assets")
 
-nuget {"directxtk12_uwp:2024.1.1.1"}
-
 filter "system:windows"
 systemversion "latest"
 defines {"WINDOWS"}
+nuget {"directxtk12_uwp:2024.1.1.1"}
 postbuildcommands {("{COPY} \"%{cfg.buildtarget.relpath}\" \"%{wks.location}Assets\"")}
 
 filter "configurations:Debug"

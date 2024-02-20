@@ -24,7 +24,7 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Shaders>());
 		m_Panels.emplace_back(std::make_unique<Hierarchy>());
 
-		Raito::Assets::ImportModel("Meshes/Sponza/NewSponza_Main_glTF_002.gltf");
+		Raito::Assets::ImportModel("Meshes/scene.gltf");
 
 		return true;
 	}

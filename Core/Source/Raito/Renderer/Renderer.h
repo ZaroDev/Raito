@@ -31,6 +31,7 @@ namespace Raito
 	namespace Assets
 	{
 		struct Mesh;
+		struct Texture;
 	}
 
 	struct SysWindow;
@@ -78,10 +79,14 @@ namespace Raito
 		void RemoveSurface(u32 id);
 
 		ShaderFileData GetFileData(EngineShader id);
-		const std::vector<class Shader*>& GetAllShaders();
+		const std::vector<Shader*>& GetAllShaders();
 		u32 CompileShader(const ShaderFileData& data);
 
-		u32 AddMesh(struct Assets::Mesh* mesh);
+		u32 AddMesh(Assets::Mesh* mesh);
 		void RemoveMesh(u32 id);
+
+
+		u32 AddTexture(Assets::Texture* texture, ubyte* data);
+		void RemoveTexture(u32 id);
 	}
 }

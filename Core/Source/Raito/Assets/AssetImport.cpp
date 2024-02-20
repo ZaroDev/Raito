@@ -3,7 +3,6 @@
 
 #include "Model.h"
 #include "Mesh.h"
-#include "Material.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -11,11 +10,31 @@
 
 #include "Time/ScopedTimer.h"
 
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "Texture.h"
+#include "stb/stb_image.h"
+
 namespace Raito::Assets
 {
 	namespace
 	{
 		std::vector<Model*> g_Models{};
+		std::unordered_map<std::filesystem::path, Texture*> g_Textures{};
+
+		void LoadTexturesOfType(const std::filesystem::path& path, aiMaterial* material, aiTextureType type)
+		{
+			for (u32 i = 0; i < material->GetTextureCount(type); i++)
+			{
+				aiString str;
+				material->GetTexture(type, i, &str);
+				std::filesystem::path p = path.parent_path();
+
+				p /= str.C_Str();
+
+				ImportTexture(p);
+			}
+		}
 
 		Mat4 aiMatrix4x4ToGlm(const aiMatrix4x4* from)
 		{
@@ -29,7 +48,7 @@ namespace Raito::Assets
 			return to;
 		}
 
-		Mesh* ProcessMesh(aiNode* node, aiMesh* mesh, const aiScene* scene, const Mat4& transform)
+		Mesh* ProcessMesh(const std::filesystem::path& path, aiNode* node, aiMesh* mesh, const aiScene* scene, const Mat4& transform)
 		{
 			std::vector<Vertex> vertices{};
 			std::vector<u32> indices{};
@@ -56,9 +75,6 @@ namespace Raito::Assets
 				{
 					vertex.TexCoords = V2(0.0f, 0.0f);
 				}
-
-				// TODO: Import material data
-
 				vertices.emplace_back(vertex);
 			}
 
@@ -71,6 +87,12 @@ namespace Raito::Assets
 				}
 			}
 
+			if(mesh->mMaterialIndex >= 0)
+			{
+				aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+				LoadTexturesOfType(path, material, aiTextureType_DIFFUSE);
+			}
+
 			m->Vertices = vertices;
 			m->Indices = indices;
 			m->Name = node->mName.C_Str();
@@ -80,7 +102,7 @@ namespace Raito::Assets
 			return m;
 		}
 
-		void ProcessNode(std::vector<Mesh*>& meshes, aiNode* node, const aiScene* scene, const Mat4& parent)
+		void ProcessNode(const std::filesystem::path& path, std::vector<Mesh*>& meshes, aiNode* node, const aiScene* scene, const Mat4& parent)
 		{
 			Mat4 transform = aiMatrix4x4ToGlm(&node->mTransformation);
 			if (node->mParent)
@@ -92,13 +114,13 @@ namespace Raito::Assets
 			for (u32 i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-				meshes.emplace_back(ProcessMesh(node, mesh, scene, transform));
+				meshes.emplace_back(ProcessMesh(path, node, mesh, scene, transform));
 			}
 			// then do the same for each of its children
 			for (u32 i = 0; i < node->mNumChildren; i++)
 			{
 				
-				ProcessNode(meshes, node->mChildren[i], scene, transform);
+				ProcessNode(path,meshes, node->mChildren[i], scene, transform);
 			}
 		}
 	}
@@ -118,10 +140,27 @@ namespace Raito::Assets
 
 		std::vector<Mesh*> meshes;
 
-		ProcessNode(meshes, scene->mRootNode, scene, Mat4(1.0f));
+		ProcessNode(filePath, meshes, scene->mRootNode, scene, Mat4(1.0f));
 
 		g_Models.emplace_back(new Model(meshes));
 
-		return (u32)g_Models.size() - 1;
+		return static_cast<u32>(g_Models.size()) - 1;
+	}
+
+	void ImportTexture(const std::filesystem::path& filePath)
+	{
+		if(g_Textures.contains(filePath) && g_Textures[filePath] != nullptr)
+		{
+			LOG("Textures", "Texture {0} import skipped", filePath.string());
+			return;
+		}
+		i32 width, height, nChannels;
+
+		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
+
+		auto* texture = new Texture(width, height, data);
+		g_Textures[filePath] = texture;
+
+		stbi_image_free(data);
 	}
 }

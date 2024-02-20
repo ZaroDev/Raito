@@ -28,5 +28,8 @@ namespace Raito::Renderer::OpenGL
 
 		rhi.Meshes.AddMesh = AddMesh;
 		rhi.Meshes.RemoveMesh = RemoveMesh;
+
+		rhi.Textures.AddTexture = AddTexture;
+		rhi.Textures.RemoveTexture = RemoveTexture;
 	}
 }

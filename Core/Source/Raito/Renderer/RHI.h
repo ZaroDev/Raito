@@ -29,6 +29,7 @@ SOFTWARE.
 namespace Raito::Assets
 {
 	struct Mesh;
+	struct Texture;
 }
 
 namespace Raito::Renderer
@@ -66,5 +67,11 @@ namespace Raito::Renderer
 			void(*RemoveMesh)(u32);
 
 		} Meshes;
+
+		struct
+		{
+			u32(*AddTexture)(Assets::Texture*, ubyte* data);
+			void(*RemoveTexture)(u32);
+		} Textures;
 	};
 }

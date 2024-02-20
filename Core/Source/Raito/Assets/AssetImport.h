@@ -29,5 +29,5 @@ namespace Raito::Assets
 	void Shutdown();
 
 	u32 ImportModel(const std::filesystem::path& filePath);
-	
+	void ImportTexture(const std::filesystem::path& filePath);
 }

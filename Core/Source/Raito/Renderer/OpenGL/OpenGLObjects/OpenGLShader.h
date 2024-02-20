@@ -66,11 +66,12 @@ namespace Raito::Renderer::OpenGL
 	
 		NODISCARD OpenGLShaderType ShaderType() const { return m_ShaderType; }
 		NODISCARD size_t UniformCount() const { return m_Uniforms.size(); }
-	
+		NODISCARD const std::unordered_map<std::string, Uniform>& Uniforms() const { return m_Uniforms; }
+
 	private:
 		GLint GetUniformLocation(const char* uniformName) const
 		{
-			if(m_Uniforms.count(uniformName))
+			if(m_Uniforms.contains(uniformName))
 			{
 				return m_Uniforms.at(uniformName).Id;
 			}

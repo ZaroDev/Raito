@@ -26,6 +26,7 @@ SOFTWARE.
 #include "OpenGLCommon.h"
 
 #include "Assets/Mesh.h"
+#include "Assets/Texture.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -44,4 +45,7 @@ namespace Raito::Renderer::OpenGL
 
     u32 AddMesh(Assets::Mesh* mesh);
     void RemoveMesh(u32 id);
+
+    u32 AddTexture(Assets::Texture* texture, ubyte* data);
+    void RemoveTexture(u32 id);
 }

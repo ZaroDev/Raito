@@ -98,4 +98,14 @@ namespace Raito::Renderer
 	{
 		g_GraphicsContext.Meshes.RemoveMesh(id);
 	}
+
+	u32 AddTexture(Assets::Texture* texture, ubyte* data)
+	{
+		return g_GraphicsContext.Textures.AddTexture(texture, data);
+	}
+
+	void RemoveTexture(u32 id)
+	{
+		g_GraphicsContext.Textures.RemoveTexture(id);
+	}
 }

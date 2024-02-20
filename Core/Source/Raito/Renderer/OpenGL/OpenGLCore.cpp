@@ -27,15 +27,17 @@ namespace Raito::Renderer::OpenGL
 
 		struct OpenGLMeshData
 		{
-			u32 VAO;
-			u32 VBO;
-			u32 EBO;
+			u32 VAO = 0;
+			u32 VBO = 0;
+			u32 EBO = 0;
 
-			GLsizei IndexCount;
+			GLsizei IndexCount = 0;
 		};
 
 
 		std::vector<OpenGLMeshData> g_Meshes{};
+
+		std::vector<u32> g_Textures{};
 
 
 		void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void* userParam)
@@ -174,14 +176,14 @@ namespace Raito::Renderer::OpenGL
 			shader->Bind();
 
 			auto& scene = Core::Application::Get().Scene;
-			auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
-			for (auto& entt : view)
+			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
+			for (auto& entity : view)
 			{
 				// TODO: Set material data
 
 
-				const Mat4 model = view.get<ECS::TransformComponent>(entt).GetTransform();
-				const OpenGLMeshData& mesh = g_Meshes[view.get<ECS::MeshComponent>(entt).MeshId];
+				const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
+				const OpenGLMeshData& mesh = g_Meshes[view.get<ECS::MeshComponent>(entity).MeshId];
 
 				shader->SetUniformRef("u_View", g_Camera.GetView());
 				shader->SetUniformRef("u_Projection", g_Camera.GetProjection());
@@ -209,15 +211,12 @@ namespace Raito::Renderer::OpenGL
 		// Post-processing pass
 		{
 			// Clear the back buffer
-			glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
-
 
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
 
 			shader->Bind();
-
-		
 
 			glBindVertexArray(g_FrameBufferQuadVAO);
 			glDisable(GL_DEPTH_TEST);
@@ -233,7 +232,7 @@ namespace Raito::Renderer::OpenGL
 	{
 		OpenGLMeshData data;
 
-		data.IndexCount = mesh->Indices.size();
+		data.IndexCount = (u32)mesh->Indices.size();
 
 		glGenVertexArrays(1, &data.VAO);
 		glGenBuffers(1, &data.VBO);
@@ -260,7 +259,7 @@ namespace Raito::Renderer::OpenGL
 
 		glBindVertexArray(0);
 
-		u32 id = g_Meshes.size();
+		const u32 id = (u32)g_Meshes.size();
 
 		g_Meshes.emplace_back(data);
 
@@ -275,5 +274,35 @@ namespace Raito::Renderer::OpenGL
 		glDeleteBuffers(1, &data.EBO);
 
 		glDeleteVertexArrays(1, &data.VAO);
+
+		g_Meshes[id] = OpenGLMeshData();
+	}
+
+	u32 AddTexture(Assets::Texture* texture, ubyte* data)
+	{
+		u32 textureId;
+
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->Width, texture->Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		texture->Id = (u32)g_Textures.size();
+
+		g_Textures.emplace_back(textureId);
+
+		return texture->Id;
+	}
+
+	void RemoveTexture(u32 id)
+	{
+		glDeleteTextures(1, &g_Textures[id]);
+		g_Textures[id] = U32_MAX;
 	}
 }
