@@ -21,13 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
+#include "Texture.h"
 
 namespace Raito::Assets
 {
-	bool Initialize();
-	void Shutdown();
-
 	u32 ImportModel(const std::filesystem::path& filePath);
 	void ImportTexture(const std::filesystem::path& filePath);
+
+	const std::unordered_map<std::filesystem::path, Texture*>& GetAllTextures();
 }

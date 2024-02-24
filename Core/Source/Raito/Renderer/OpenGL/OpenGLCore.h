@@ -24,9 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "OpenGLCommon.h"
-
 #include "Assets/Mesh.h"
-#include "Assets/Texture.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -48,4 +46,9 @@ namespace Raito::Renderer::OpenGL
 
     u32 AddTexture(Assets::Texture* texture, ubyte* data);
     void RemoveTexture(u32 id);
+
+
+    u32 AddMaterial(EngineShader shader);
+    void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size);
+    void RemoveMaterial(u32 id);
 }

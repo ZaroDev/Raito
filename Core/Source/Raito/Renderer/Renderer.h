@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
 #include "GraphicsAPI.h"
@@ -88,5 +89,9 @@ namespace Raito
 
 		u32 AddTexture(Assets::Texture* texture, ubyte* data);
 		void RemoveTexture(u32 id);
+
+		u32 AddMaterial(EngineShader shader);
+		void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size);
+		void RemoveMaterial(u32 id);
 	}
 }

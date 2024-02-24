@@ -16,22 +16,23 @@ namespace Editor
 
 		const auto& shaders = Raito::Renderer::GetAllShaders();
 
-		ImGui::BeginTable("Compiled Shaders", 1);
-		ImGui::TableNextColumn();
-		for(const auto& shader : shaders)
+		if (ImGui::BeginTable("Compiled Shaders", 1))
 		{
-			ImGui::PushID(shader->EngineType());
-			ImGui::Text(shader->FilePath().c_str());
-			ImGui::SameLine();
-			if(ImGui::Button("Refresh"))
+			ImGui::TableNextColumn();
+			for (const auto& shader : shaders)
 			{
-				CompileShader(GetFileData(shader->EngineType()));
+				ImGui::PushID(shader->EngineType());
+				ImGui::Text(shader->FilePath().c_str());
+				ImGui::SameLine();
+				if (ImGui::Button("Refresh"))
+				{
+					CompileShader(GetFileData(shader->EngineType()));
+				}
+				ImGui::PopID();
 			}
-			ImGui::PopID();
+
+			ImGui::EndTable();
 		}
-
-		ImGui::EndTable();
-
 		ImGui::End();
 	}
 }

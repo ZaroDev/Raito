@@ -1,3 +1,27 @@
+/*
+MIT License
+
+Copyright (c) 2023 Víctor Falcón Zaro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include <pch.h>
 #include "OpenGLCore.h"
 
@@ -16,6 +40,9 @@
 
 #include <ECS/Entity.h>
 #include <Core/Application.h>
+
+#include "Assets/Texture.h"
+#include "OpenGLObjects/OpenGLMaterial.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -36,21 +63,19 @@ namespace Raito::Renderer::OpenGL
 
 
 		std::vector<OpenGLMeshData> g_Meshes{};
-
 		std::vector<u32> g_Textures{};
+		std::vector<OpenGLMaterial> g_Materials{};
 
 
 		void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void* userParam)
 		{
 			switch (severity)
 			{
-			case GL_DEBUG_SEVERITY_HIGH:         O_ERROR("{}", message); return;
-			case GL_DEBUG_SEVERITY_MEDIUM:       O_WARN("{}", message); return;
-			case GL_DEBUG_SEVERITY_LOW:          O_WARN("{}", message); return;
-			case GL_DEBUG_SEVERITY_NOTIFICATION: O_LOG("{}", message); return;
+			case GL_DEBUG_SEVERITY_HIGH:         O_ERROR("{0}", message); break;
+			case GL_DEBUG_SEVERITY_MEDIUM:       O_WARN("{0}", message); break;
+			case GL_DEBUG_SEVERITY_LOW:          O_WARN("{0}", message); break;
+			case GL_DEBUG_SEVERITY_NOTIFICATION: O_LOG("{0}", message); break;
 			}
-
-			ASSERT(false);
 		}
 
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
@@ -171,37 +196,33 @@ namespace Raito::Renderer::OpenGL
 
 		// Geometry pass
 		{
-			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::UNSHADED_MESH));
-
-			shader->Bind();
 
 			auto& scene = Core::Application::Get().Scene;
 			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
+
 			for (auto& entity : view)
 			{
-				// TODO: Set material data
-
-
+				const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
+				const OpenGLMeshData& meshData = g_Meshes[mesh.MeshId];
 				const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
-				const OpenGLMeshData& mesh = g_Meshes[view.get<ECS::MeshComponent>(entity).MeshId];
+				
+				OpenGLMaterial& material = g_Materials[mesh.MaterialId];
 
-				shader->SetUniformRef("u_View", g_Camera.GetView());
-				shader->SetUniformRef("u_Projection", g_Camera.GetProjection());
-				shader->SetUniformRef("u_Model", model);
+				material.SetValue("u_View", g_Camera.GetView());
+				material.SetValue("u_Projection", g_Camera.GetProjection());
+				material.SetValue("u_Model", model);
+				material.SetValue("u_ObjectColor", V3(0.9f, 0.9f, 0.9f));
+				material.SetValue("u_LightColor", V3(1.0f));
+
+				material.Bind();
 
 
-				// Fragment shader variables
-				shader->SetUniformRef("u_ObjectColor", V3(0.9f, 0.9f, 0.9f));
-				shader->SetUniformRef("u_LightColor", V3(1.0f));
-
-
-
-				glBindVertexArray(mesh.VAO);
-				glDrawElements(GL_TRIANGLES, mesh.IndexCount, GL_UNSIGNED_INT, 0);
+				glBindVertexArray(meshData.VAO);
+				glDrawElements(GL_TRIANGLES, meshData.IndexCount, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
-			}
 
-			shader->UnBind();
+				material.UnBind();
+			}
 		}
 
 
@@ -293,16 +314,32 @@ namespace Raito::Renderer::OpenGL
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->Width, texture->Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
-		texture->Id = (u32)g_Textures.size();
+		texture->RenderId = textureId;
 
 		g_Textures.emplace_back(textureId);
-
-		return texture->Id;
+		
+		return (u32)g_Textures.size() - 1;
 	}
 
 	void RemoveTexture(u32 id)
 	{
 		glDeleteTextures(1, &g_Textures[id]);
 		g_Textures[id] = U32_MAX;
+	}
+
+	u32 AddMaterial(EngineShader shaderId)
+	{
+		g_Materials.emplace_back(shaderId);
+		return (u32)g_Materials.size() - 1;
+	}
+
+	void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size)
+	{
+		g_Materials[id].SetValuePtr(name, data, size);
+	}
+
+	void RemoveMaterial(u32 id)
+	{
+		g_Materials.erase(g_Materials.begin() + id);
 	}
 }

@@ -1,3 +1,27 @@
+/*
+MIT License
+
+Copyright (c) 2023 Víctor Falcón Zaro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #pragma once
 
 #include <Renderer/OpenGL/OpenGLCommon.h>
@@ -50,23 +74,33 @@ namespace Raito::Renderer::OpenGL
 		void Bind() const;
 		void UnBind() const;
 
+
+		template<typename T>
+		void SetUniform(u32 id, const T value)
+		{
+			ASSERT(false);
+		}
+		template<typename T>
+		void SetUniformRef(u32 id, const T& value)
+		{
+			ASSERT(false);
+		}
+
 		template<typename T>
 		void SetUniform(const char* uniformName, const T value)
 		{
-			O_ERROR("Uniform specialization not found for {0}", uniformName);
-			ASSERT(false);
+			SetUniform<T>(GetUniformLocation(uniformName), value);
 		}
 		template<typename T>
 		void SetUniformRef(const char* uniformName, const T& value)
 		{
-			O_ERROR("Uniform specialization not found for {0}", uniformName);
-			ASSERT(false);
+			SetUniformRef<T>(GetUniformLocation(uniformName), value);
 		}
 
-	
 		NODISCARD OpenGLShaderType ShaderType() const { return m_ShaderType; }
 		NODISCARD size_t UniformCount() const { return m_Uniforms.size(); }
 		NODISCARD const std::unordered_map<std::string, Uniform>& Uniforms() const { return m_Uniforms; }
+		NODISCARD u32 Id() const { return m_ShaderId; }
 
 	private:
 		GLint GetUniformLocation(const char* uniformName) const
@@ -90,39 +124,39 @@ namespace Raito::Renderer::OpenGL
 
 
 	template<>
-	inline void OpenGLShader::SetUniform<i32>(const char* uniformName, const i32 value)
+	inline void OpenGLShader::SetUniform<i32>(u32 id, const i32 value)
 	{
-		glUniform1i(GetUniformLocation(uniformName), value);
+		glUniform1i(id, value);
 	}
 	template<>
-	inline void OpenGLShader::SetUniform<u32>(const char* uniformName, const u32 value)
+	inline void OpenGLShader::SetUniform<u32>(u32 id, const u32 value)
 	{
-		glUniform1ui(GetUniformLocation(uniformName), value);
+		glUniform1ui(id, value);
 	}
 	template<>
-	inline void OpenGLShader::SetUniform<float>(const char* uniformName, const float value)
+	inline void OpenGLShader::SetUniform<float>(u32 id,  const float value)
 	{
-		glUniform1f(GetUniformLocation(uniformName), value);
+		glUniform1f(id, value);
 	}
 	template<>
-	inline void OpenGLShader::SetUniformRef<V3>(const char* uniformName, const V3& value)
+	inline void OpenGLShader::SetUniformRef<V3>(u32 id, const V3& value)
 	{
-		glUniform3fv(GetUniformLocation(uniformName), 1, glm::value_ptr(value));
+		glUniform3fv(id, 1, glm::value_ptr(value));
 	}
 	template<>
-	inline void OpenGLShader::SetUniformRef<V4>(const char* uniformName, const V4& value)
+	inline void OpenGLShader::SetUniformRef<V4>(u32 id, const V4& value)
 	{
-		glUniform4fv(GetUniformLocation(uniformName), 1, glm::value_ptr(value));
+		glUniform4fv(id, 1, glm::value_ptr(value));
 	}
 	template<>
-	inline void OpenGLShader::SetUniformRef<Mat3>(const char* uniformName, const Mat3& value)
+	inline void OpenGLShader::SetUniformRef<Mat3>(u32 id, const Mat3& value)
 	{
-		glUniformMatrix3fv(GetUniformLocation(uniformName), 1, GL_FALSE, glm::value_ptr(value));
+		glUniformMatrix3fv(id, 1, GL_FALSE, glm::value_ptr(value));
 	}
 	template<>
-	inline void OpenGLShader::SetUniformRef<Mat4>(const char* uniformName, const Mat4& value)
+	inline void OpenGLShader::SetUniformRef<Mat4>(u32 id, const Mat4& value)
 	{
-		glUniformMatrix4fv(GetUniformLocation(uniformName), 1, GL_FALSE, glm::value_ptr(value));
+		glUniformMatrix4fv(id, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 }

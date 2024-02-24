@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
 #include "Renderer.h"
@@ -73,5 +74,12 @@ namespace Raito::Renderer
 			u32(*AddTexture)(Assets::Texture*, ubyte* data);
 			void(*RemoveTexture)(u32);
 		} Textures;
+
+		struct
+		{
+			u32(*AddMaterial)(EngineShader);
+			void(*SetMaterialValue)(u32, const char*, ubyte* data, size_t size);
+			void(*RemoveMaterial)(u32);
+		} Materials;
 	};
 }

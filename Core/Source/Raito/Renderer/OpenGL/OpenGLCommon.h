@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
 #include "Renderer/Renderer.h"
@@ -34,7 +35,7 @@ SOFTWARE.
 #define O_WARN(...) WARN("OpenGL", __VA_ARGS__)
 #define O_ERROR(...) ERR("OpenGL", __VA_ARGS__)
 #else
-#define O_LOG(x) 
-#define O_WARN(x) 
-#define O_ERROR(x) 
+#define O_LOG(...) 
+#define O_WARN(...) 
+#define O_ERROR(...) 
 #endif

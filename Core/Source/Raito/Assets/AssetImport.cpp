@@ -1,3 +1,27 @@
+/*
+MIT License
+
+Copyright (c) 2023 Víctor Falcón Zaro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include "pch.h"
 #include "AssetImport.h"
 
@@ -13,6 +37,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "Texture.h"
+#include "Renderer/Renderer.h"
 #include "stb/stb_image.h"
 
 namespace Raito::Assets
@@ -21,8 +46,9 @@ namespace Raito::Assets
 	{
 		std::vector<Model*> g_Models{};
 		std::unordered_map<std::filesystem::path, Texture*> g_Textures{};
+		std::unordered_map<u32, u32> g_Materials{};
 
-		void LoadTexturesOfType(const std::filesystem::path& path, aiMaterial* material, aiTextureType type)
+		void LoadTexturesOfType(Mesh* m, const std::filesystem::path& path, aiMaterial* material, aiTextureType type)
 		{
 			for (u32 i = 0; i < material->GetTextureCount(type); i++)
 			{
@@ -33,6 +59,10 @@ namespace Raito::Assets
 				p /= str.C_Str();
 
 				ImportTexture(p);
+				const u32 materialId = AddMaterial(Renderer::UNSHADED_MESH);
+				m->MaterialId = materialId;
+
+				Renderer::SetMaterialValue(materialId, "u_Texture", reinterpret_cast<ubyte*>(&g_Textures[p]->RenderId), sizeof(g_Textures[p]->RenderId));
 			}
 		}
 
@@ -89,8 +119,15 @@ namespace Raito::Assets
 
 			if(mesh->mMaterialIndex >= 0)
 			{
-				aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-				LoadTexturesOfType(path, material, aiTextureType_DIFFUSE);
+				if(g_Materials.contains(mesh->mMaterialIndex))
+				{
+					m->MaterialId = g_Materials[mesh->mMaterialIndex];
+				}
+				else
+				{
+					aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE);
+				}
 			}
 
 			m->Vertices = vertices;
@@ -154,13 +191,18 @@ namespace Raito::Assets
 			LOG("Textures", "Texture {0} import skipped", filePath.string());
 			return;
 		}
-		i32 width, height, nChannels;
 
+		i32 width, height, nChannels;
 		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
 
 		auto* texture = new Texture(width, height, data);
 		g_Textures[filePath] = texture;
 
 		stbi_image_free(data);
+	}
+
+	const std::unordered_map<std::filesystem::path, Texture*>& GetAllTextures()
+	{
+		return g_Textures;
 	}
 }
