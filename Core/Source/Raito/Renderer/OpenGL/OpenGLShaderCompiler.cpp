@@ -38,7 +38,8 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		// NOTE: This must be in the same order as EngineShader to have the ID's be the same as the enum values
 		constexpr ShaderFileData c_ShaderFiles[]
 		{
-			{"UnshadedMesh", EngineShader::UNSHADED_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"DefaultMesh", EngineShader::DEFAULT_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"GaussianBlur", EngineShader::GAUSSIAN_BLUR, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 		};
 

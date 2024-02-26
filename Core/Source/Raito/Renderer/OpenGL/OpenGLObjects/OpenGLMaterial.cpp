@@ -46,6 +46,11 @@ namespace Raito::Renderer::OpenGL
 		shader->Bind();
 		for (const auto& data : m_Uniforms | std::views::values)
 		{
+			if(!data.Value)
+			{
+				continue;
+			}
+
 			switch (data.Data.Type)
 			{
 			case UniformType::NONE:
@@ -80,6 +85,7 @@ namespace Raito::Renderer::OpenGL
 			{
 				const TextureData textureData = *reinterpret_cast<TextureData*>(data.Value);
 				glUniformHandleui64ARB(data.Data.Id, textureData.Handle);
+
 			}
 			break;
 			}

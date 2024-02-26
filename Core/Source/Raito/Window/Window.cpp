@@ -213,6 +213,11 @@ namespace Raito
 
 		SysWindow& GetWindow(const u32 id)
 		{
+			if(id == 0)
+			{
+				return *g_RenderSurfaces[g_MainWindow].Window;
+			}
+
 			return *g_RenderSurfaces[id].Window;
 		}
 	}

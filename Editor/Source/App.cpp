@@ -13,6 +13,7 @@
 #include <filesystem>
 
 #include "Panels/Assets.h"
+#include "Panels/Framebuffers.h"
 
 namespace Editor
 {
@@ -26,6 +27,7 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Shaders>());
 		m_Panels.emplace_back(std::make_unique<Hierarchy>());
 		m_Panels.emplace_back(std::make_unique<Assets>());
+		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
 		Raito::Assets::ImportModel("Meshes/DamagedHelmet.gltf");
 

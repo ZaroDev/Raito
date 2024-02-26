@@ -33,14 +33,14 @@ namespace Editor
 			ImGui::Text("Transform");
 
 			
-			ImGui::InputFloat3("Pos", (float*)&transform.Translation);
+			ImGui::DragFloat3("Pos", (float*)&transform.Translation);
 
 			Raito::V3 rot = glm::degrees(glm::eulerAngles(transform.Rotation));
-			if(ImGui::InputFloat3("Rot", (float*)&rot))
+			if(ImGui::DragFloat3("Rot", (float*)&rot))
 			{
 				transform.Rotation = Raito::Quaternion(rot);
 			}
-			ImGui::InputFloat3("Scl", (float*)&transform.Scale);
+			ImGui::DragFloat3("Scl", (float*)&transform.Scale);
 		}
 
 

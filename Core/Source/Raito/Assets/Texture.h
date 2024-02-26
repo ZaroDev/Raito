@@ -30,15 +30,22 @@ namespace Raito::Assets
 
 	//  TODO: Create texture import options distinct maps etc...
 	//	For now all textures will have mip maps
+	enum TextureType : u8
+	{
+		DIFFUSE,
+		NORMAL,
+		EMISSIVE,
+		AMBIENT_OCCLUSION
+	};
+
 	struct Texture final
 	{
-		Texture(u32 width, u32 height,  ubyte* data);
+		Texture(u32 width, u32 height,  ubyte* data, TextureType type);
 		~Texture();
 
 		DEFAULT_MOVE_AND_COPY(Texture)
 
 		u32 Id = 0;
-
 		struct
 		{
 			u64 Handle = 0;
@@ -47,5 +54,7 @@ namespace Raito::Assets
 
 		u32 Width = 0;
 		u32 Height = 0;
+
+		TextureType Type{};
 	};
 }

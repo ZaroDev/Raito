@@ -16,6 +16,7 @@ void main()
 {
     gl_Position = u_Projection * u_View * u_Model * vec4(aPos, 1.0);
     FragPos = vec3(u_Model * vec4(aPos, 1.0));
+    // Must be done in the CPU for better performance
     Normal = mat3(transpose(inverse(u_Model))) * -aNormal;  
     TexCoord = aTexCoord;
 }

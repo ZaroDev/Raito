@@ -157,7 +157,7 @@ namespace Raito::Renderer::OpenGL
 				O_WARN("Material doesn't contain uniform {0}", name);
 				return;
 			}
-			delete[] m_Uniforms[name].Value;
+			delete m_Uniforms[name].Value;
 
 			m_Uniforms[name].Value = new ubyte[size];
 			m_Uniforms[name].Size = size;
@@ -172,7 +172,7 @@ namespace Raito::Renderer::OpenGL
 				O_WARN("Material doesn't contain uniform {0}", name);
 				return;
 			}
-			delete[] m_Uniforms[name].Value;
+			delete m_Uniforms[name].Value;
 			m_Uniforms[name].Value = new ubyte[sizeof(T)];
 			m_Uniforms[name].Size = sizeof(T);
 			memcpy(m_Uniforms[name].Value, &value, sizeof(T));

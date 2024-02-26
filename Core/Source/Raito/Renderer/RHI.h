@@ -51,6 +51,8 @@ namespace Raito::Renderer
 			u32(*Width)(u32);
 			u32(*Height)(u32);
 			void(*Render)(u32);
+			u32(*GetColorAttachment)(u32, u32);
+			u32(*GetDepthAttachment)(u32);
 		} Surface;
 
 		struct
@@ -81,5 +83,6 @@ namespace Raito::Renderer
 			void(*SetMaterialValue)(u32, const char*, ubyte* data, size_t size);
 			void(*RemoveMaterial)(u32);
 		} Materials;
+
 	};
 }

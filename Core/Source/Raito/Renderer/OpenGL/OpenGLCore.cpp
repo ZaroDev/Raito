@@ -51,6 +51,7 @@ namespace Raito::Renderer::OpenGL
 		Camera g_Camera(45.0, 0.1f, 1000.0f);
 
 		std::vector<OpenGLFrameBuffer> g_Surfaces{};
+		std::array<OpenGLFrameBuffer*, 2> g_BloomBuffers{};
 
 		struct OpenGLMeshData
 		{
@@ -80,6 +81,28 @@ namespace Raito::Renderer::OpenGL
 		}
 
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
+
+		void InitializeBloomPass()
+		{
+			SysWindow window = Window::GetWindow();
+			FrameBufferData data;
+			data.Attachments = { FrameBufferTextureFormat::RGBA16F };
+			data.Width = window.Info.Width;
+			data.Height = window.Info.Height;
+			data.Samples = 1;
+			data.SwapChainTarget = false;
+
+			for(u32 i = 0; i < g_BloomBuffers.size(); i++)
+			{
+				g_BloomBuffers[i] = new OpenGLFrameBuffer{data};
+			}
+
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
+			shader->Bind();
+			shader->SetUniform("u_ScreenTexture", 0);
+			shader->SetUniform("u_BloomTexture", 1);
+			shader->UnBind();
+		}
 
 		void InitializePostProcessPass()
 		{
@@ -131,7 +154,7 @@ namespace Raito::Renderer::OpenGL
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
-
+		
 
 		if (!ShaderCompiler::Initialize())
 		{
@@ -140,6 +163,7 @@ namespace Raito::Renderer::OpenGL
 		}
 
 		InitializePostProcessPass();
+		InitializeBloomPass();
 
 		return true;
 	}
@@ -171,7 +195,12 @@ namespace Raito::Renderer::OpenGL
 	Surface CreateSurface(SysWindow* window)
 	{
 		FrameBufferData data;
-		data.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
+		data.Attachments = 
+		{
+			FrameBufferTextureFormat::RGBA16F,	// Normal color buffer
+			FrameBufferTextureFormat::RGBA16F,	// Bloom color buffer
+			FrameBufferTextureFormat::Depth		// Depth buffer
+		};
 		data.Width = window->Info.Width;
 		data.Height = window->Info.Height;
 		data.Samples = 1;
@@ -189,6 +218,11 @@ namespace Raito::Renderer::OpenGL
 	void ResizeSurface(u32 id, u32 width, u32 height)
 	{
 		g_Surfaces[id].Resize(width, height);
+
+		for (const auto& buffer : g_BloomBuffers)
+		{
+			buffer->Resize(width, height);
+		}
 	}
 
 	u32 SurfaceWidth(u32 id)
@@ -201,6 +235,16 @@ namespace Raito::Renderer::OpenGL
 		return g_Surfaces[id].Data().Height;
 	}
 
+	u32 GetColorGetAttachment(u32 target, u32 id)
+	{
+		return g_Surfaces[target].ColorAttachment(id);
+	}
+
+	u32 GetDepthAttachment(u32 id)
+	{
+		return g_Surfaces[id].DepthAttachment();
+	}
+
 	void RenderSurface(u32 id)
 	{
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
@@ -211,11 +255,9 @@ namespace Raito::Renderer::OpenGL
 
 		buffer.Bind();
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Geometry pass
 		{
@@ -241,15 +283,43 @@ namespace Raito::Renderer::OpenGL
 				material.Bind();
 
 				glBindVertexArray(meshData.VAO);
-				glDrawElements(GL_TRIANGLES, meshData.IndexCount, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
 				glBindVertexArray(0);
 
 				material.UnBind();
 			}
 		}
-
-
 		buffer.UnBind();
+
+
+		bool horizontal = true;
+		// Bloom pass
+		{
+			constexpr u32 blurAmount = 10u;
+
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::GAUSSIAN_BLUR));
+			shader->Bind();
+
+
+			for (u32 i = 0; i < blurAmount; i++)
+			{
+				g_BloomBuffers[horizontal]->Bind();
+				shader->SetUniform("u_Horizontal", horizontal);
+
+				const u32 blurTexture = i == 0 ? buffer.ColorAttachment(1) : g_BloomBuffers[!horizontal]->ColorAttachment();
+
+				glBindVertexArray(g_FrameBufferQuadVAO);
+				glDisable(GL_DEPTH_TEST);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, blurTexture);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				horizontal = !horizontal;
+			}
+			
+			shader->UnBind();
+			g_BloomBuffers[!horizontal]->UnBind();
+		}
 
 
 		// Post-processing pass
@@ -264,7 +334,13 @@ namespace Raito::Renderer::OpenGL
 
 			glBindVertexArray(g_FrameBufferQuadVAO);
 			glDisable(GL_DEPTH_TEST);
+
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, g_BloomBuffers[!horizontal]->ColorAttachment());
+
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
 			shader->UnBind();
@@ -276,7 +352,7 @@ namespace Raito::Renderer::OpenGL
 	{
 		OpenGLMeshData data;
 
-		data.IndexCount = (u32)mesh->Indices.size();
+		data.IndexCount = static_cast<u32>(mesh->Indices.size());
 
 		glGenVertexArrays(1, &data.VAO);
 		glGenBuffers(1, &data.VBO);
@@ -285,25 +361,25 @@ namespace Raito::Renderer::OpenGL
 		glBindVertexArray(data.VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, data.VBO);
 
-		glBufferData(GL_ARRAY_BUFFER, mesh->Vertices.size() * sizeof(Assets::Vertex), &mesh->Vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mesh->Vertices.size() * sizeof(Assets::Vertex), mesh->Vertices.data(), GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, data.EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->Indices.size() * sizeof(u32), &mesh->Indices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->Indices.size() * sizeof(u32), mesh->Indices.data(), GL_STATIC_DRAW);
 
 		// Vertex positions
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Assets::Vertex), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Assets::Vertex), static_cast<void*>(nullptr));
 
 		// Vertex normals
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Assets::Vertex), (void*)offsetof(Assets::Vertex, Normal));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Assets::Vertex), reinterpret_cast<void*>(offsetof(Assets::Vertex, Normal)));
 
 		// Vertex texture coords
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Assets::Vertex), (void*)offsetof(Assets::Vertex, TexCoords));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Assets::Vertex), reinterpret_cast<void*>(offsetof(Assets::Vertex, TexCoords)));
 
 		glBindVertexArray(0);
 
-		const u32 id = (u32)g_Meshes.size();
+		const u32 id = static_cast<u32>(g_Meshes.size());
 
 		g_Meshes.emplace_back(data);
 
@@ -334,7 +410,7 @@ namespace Raito::Renderer::OpenGL
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->Width, texture->Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, texture->Type == Assets::DIFFUSE ? GL_SRGB : GL_RGB, texture->Width, texture->Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		// Get and load into VRAM using bindless textures
@@ -347,7 +423,7 @@ namespace Raito::Renderer::OpenGL
 
 		g_Textures.emplace_back(textureData);
 		
-		return (u32)g_Textures.size() - 1;
+		return static_cast<u32>(g_Textures.size()) - 1;
 	}
 
 	void RemoveTexture(u32 id)
@@ -360,7 +436,7 @@ namespace Raito::Renderer::OpenGL
 	u32 AddMaterial(EngineShader shaderId)
 	{
 		g_Materials.emplace_back(shaderId);
-		return (u32)g_Materials.size() - 1;
+		return static_cast<u32>(g_Materials.size()) - 1;
 	}
 
 	void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size)

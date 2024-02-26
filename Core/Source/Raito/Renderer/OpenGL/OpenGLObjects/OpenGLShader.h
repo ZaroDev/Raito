@@ -122,6 +122,11 @@ namespace Raito::Renderer::OpenGL
 		friend u32 ShaderCompiler::CompileShader(const ShaderFileData&);
 	};
 
+	template<>
+	inline void OpenGLShader::SetUniform<bool>(u32 id , const bool value)
+	{
+		glUniform1i(id, value);
+	}
 
 	template<>
 	inline void OpenGLShader::SetUniform<i32>(u32 id, const i32 value)

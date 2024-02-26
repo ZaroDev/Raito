@@ -56,6 +56,16 @@ namespace Raito::Renderer
 		return g_GraphicsContext.Surface.Width(m_Id);
 	}
 
+	u32 Surface::ColorAttachment(u32 id) const
+	{
+		return g_GraphicsContext.Surface.GetColorAttachment(m_Id, id);
+	}
+
+	u32 Surface::DepthAttachment() const
+	{
+		return g_GraphicsContext.Surface.GetDepthAttachment(m_Id);
+	}
+
 	void Surface::Render() const
 	{
 		g_GraphicsContext.Surface.Render(m_Id);

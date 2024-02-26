@@ -28,7 +28,7 @@ SOFTWARE.
 namespace Raito::Assets
 {
 	u32 ImportModel(const std::filesystem::path& filePath);
-	void ImportTexture(const std::filesystem::path& filePath);
+	void ImportTexture(const std::filesystem::path& filePath, TextureType type);
 
 	const std::unordered_map<std::filesystem::path, Texture*>& GetAllTextures();
 }

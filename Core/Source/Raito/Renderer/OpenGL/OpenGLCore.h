@@ -39,6 +39,8 @@ namespace Raito::Renderer::OpenGL
     void ResizeSurface(u32 id, u32 width, u32 height);
     u32 SurfaceWidth(u32 id);
     u32 SurfaceHeight(u32 id);
+    u32 GetColorGetAttachment(u32 target, u32 id);
+    u32 GetDepthAttachment(u32 id);
     void RenderSurface(u32 id);
 
     u32 AddMesh(Assets::Mesh* mesh);

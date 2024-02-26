@@ -50,6 +50,8 @@ namespace Raito
 			void Resize(u32 width, u32 height) const;
 			NODISCARD u32 Width() const;
 			NODISCARD u32 Height() const;
+			NODISCARD u32 ColorAttachment(u32 id = 0) const;
+			NODISCARD u32 DepthAttachment() const;
 			void Render() const;
 		private:
 			u32 m_Id;
@@ -60,6 +62,50 @@ namespace Raito
 			SysWindow* Window;
 			Surface Surface;
 		};
+
+		enum class FrameBufferTextureFormat
+		{
+			None = 0,
+
+			// Color
+			RGBA8,
+			RGBA16F,
+			RED_INTEGER,
+
+			// Depth/stencil
+			DEPTH24STENCIL8,
+
+			// Defaults
+			Depth = DEPTH24STENCIL8
+		};
+
+		struct FrameBufferTextureData
+		{
+			FrameBufferTextureData() = default;
+			FrameBufferTextureData(FrameBufferTextureFormat format)
+				: TextureFormat(format) {}
+
+			FrameBufferTextureFormat TextureFormat = FrameBufferTextureFormat::None;
+		};
+
+		struct FrameBufferAttachmentData
+		{
+			FrameBufferAttachmentData() = default;
+			FrameBufferAttachmentData(std::initializer_list<FrameBufferTextureData> attachments)
+				: Attachments(attachments) {}
+
+			std::vector<FrameBufferTextureData> Attachments;
+		};
+
+		struct FrameBufferData
+		{
+			FrameBufferAttachmentData Attachments;
+			u32 Width, Height;
+			u32 Samples = 1;
+			bool SwapChainTarget = false;
+		};
+
+
 		//
 		//! @param api The desired api to be used 
 		bool SetPlatformInterface(API api);

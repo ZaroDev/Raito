@@ -30,7 +30,8 @@ namespace Raito::Renderer
 	
 	enum EngineShader : u32
 	{
-		UNSHADED_MESH = 0,
+		DEFAULT_MESH = 0,
+		GAUSSIAN_BLUR,
 		POST_PROCESS,
 		ENGINE_SHADER_MAX
 	};

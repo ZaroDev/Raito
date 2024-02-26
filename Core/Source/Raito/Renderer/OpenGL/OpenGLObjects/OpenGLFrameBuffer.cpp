@@ -125,6 +125,10 @@ namespace Raito::Renderer::OpenGL
 			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 			glDeleteTextures(1, &m_DepthAttachment);
 		}
+
+		m_RenderId = 0;
+		m_ColorAttachments.clear();
+		m_ColorAttachmentData.clear();
 	}
 
 	void OpenGLFrameBuffer::Bind() const
@@ -158,7 +162,7 @@ namespace Raito::Renderer::OpenGL
 			m_DepthAttachment = 0;
 		}
 
-		glCreateFramebuffers(1, &m_RenderId);
+		glGenFramebuffers(1, &m_RenderId);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RenderId);
 
 		const bool multiSample = m_Data.Samples > 1;
@@ -176,6 +180,9 @@ namespace Raito::Renderer::OpenGL
 				{
 				case FrameBufferTextureFormat::RGBA8:
 					AttachColorTexture(m_ColorAttachments[i], m_Data.Samples, GL_RGBA8, GL_RGBA, m_Data.Width, m_Data.Height, i);
+					break;
+				case FrameBufferTextureFormat::RGBA16F:
+					AttachColorTexture(m_ColorAttachments[i], m_Data.Samples, GL_RGBA16F, GL_RGBA, m_Data.Width, m_Data.Height, i);
 					break;
 				case FrameBufferTextureFormat::RED_INTEGER:
 					AttachColorTexture(m_ColorAttachments[i], m_Data.Samples, GL_R32I, GL_RED_INTEGER, m_Data.Width, m_Data.Height, i);

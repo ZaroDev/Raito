@@ -85,6 +85,6 @@ namespace Raito
 		//! Returns the window with a given ID
 		//! @param id ID of the window to get returned
 		//! @return Window of the given ID
-		SysWindow& GetWindow(const u32 id);
+		SysWindow& GetWindow(const u32 id = 0);
 	}
 }

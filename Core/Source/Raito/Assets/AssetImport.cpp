@@ -58,11 +58,34 @@ namespace Raito::Assets
 
 				p /= str.C_Str();
 
-				ImportTexture(p);
-				const u32 materialId = AddMaterial(Renderer::UNSHADED_MESH);
-				m->MaterialId = materialId;
+				
 
-				Renderer::SetMaterialValue(materialId, "u_Texture", reinterpret_cast<ubyte*>(&g_Textures[p]->RenderData), sizeof(g_Textures[p]->RenderData));
+				std::string value{};
+
+				TextureType textureType{};
+
+				switch (type)
+				{
+				case aiTextureType_DIFFUSE:
+					value = "u_Diffuse"; textureType = TextureType::DIFFUSE;
+					break;
+				case aiTextureType_NORMALS:
+					value = "u_Normal"; textureType = TextureType::NORMAL;
+					break;
+				case aiTextureType_EMISSIVE:
+					value = "u_Emissive"; textureType = TextureType::EMISSIVE;
+					break;
+				case aiTextureType_LIGHTMAP:
+					value = "u_AmbientOcclusion"; textureType = TextureType::AMBIENT_OCCLUSION;
+					break;
+
+				default:
+					break;
+				} 
+
+				ImportTexture(p, textureType);
+
+				Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&g_Textures[p]->RenderData), sizeof(g_Textures[p]->RenderData));
 			}
 		}
 
@@ -126,7 +149,14 @@ namespace Raito::Assets
 				else
 				{
 					aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+					const u32 materialId = AddMaterial(Renderer::DEFAULT_MESH);
+					m->MaterialId = materialId;
+
 					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE);
+					LoadTexturesOfType(m, path, material, aiTextureType_NORMALS);
+					LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE);
+
+					g_Materials[mesh->mMaterialIndex] = materialId;
 				}
 			}
 
@@ -184,7 +214,7 @@ namespace Raito::Assets
 		return static_cast<u32>(g_Models.size()) - 1;
 	}
 
-	void ImportTexture(const std::filesystem::path& filePath)
+	void ImportTexture(const std::filesystem::path& filePath, TextureType type)
 	{
 		if(g_Textures.contains(filePath) && g_Textures[filePath] != nullptr)
 		{
@@ -195,7 +225,7 @@ namespace Raito::Assets
 		i32 width, height, nChannels;
 		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
 
-		auto* texture = new Texture(width, height, data);
+		auto* texture = new Texture(width, height, data, type);
 		g_Textures[filePath] = texture;
 
 		stbi_image_free(data);

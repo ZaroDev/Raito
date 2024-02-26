@@ -30,8 +30,8 @@ SOFTWARE.
 
 namespace Raito::Assets
 {
-	Texture::Texture(u32 width, u32 height, ubyte* data)
-		: Width(width), Height(height)
+	Texture::Texture(u32 width, u32 height, ubyte* data, TextureType type)
+		: Width(width), Height(height), Type(type)
 	{
 		Id = Renderer::AddTexture(this, data);
 	}
