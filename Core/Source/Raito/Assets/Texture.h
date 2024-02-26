@@ -35,7 +35,8 @@ namespace Raito::Assets
 		DIFFUSE,
 		NORMAL,
 		EMISSIVE,
-		AMBIENT_OCCLUSION
+		AMBIENT_OCCLUSION,
+		METAL_ROUGHNESS
 	};
 
 	struct Texture final

@@ -85,4 +85,14 @@ namespace Raito::ECS
 		}
 	};
 
+	struct LightComponent
+	{
+		V3 Color = { 1.0f, 1.0f, 1.0f };
+
+		LightComponent() = default;
+		LightComponent(const LightComponent&) = default;
+		LightComponent(V3 color)
+			: Color(color){}
+	};
+
 }

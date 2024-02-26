@@ -31,6 +31,7 @@ SOFTWARE.
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/pbrmaterial.h>
 
 #include "Time/ScopedTimer.h"
 
@@ -67,7 +68,7 @@ namespace Raito::Assets
 				switch (type)
 				{
 				case aiTextureType_DIFFUSE:
-					value = "u_Diffuse"; textureType = TextureType::DIFFUSE;
+					value = "u_Albedo"; textureType = TextureType::DIFFUSE;
 					break;
 				case aiTextureType_NORMALS:
 					value = "u_Normal"; textureType = TextureType::NORMAL;
@@ -78,7 +79,9 @@ namespace Raito::Assets
 				case aiTextureType_LIGHTMAP:
 					value = "u_AmbientOcclusion"; textureType = TextureType::AMBIENT_OCCLUSION;
 					break;
-
+				case aiTextureType_UNKNOWN:
+					value = "u_MetalRoughness"; textureType = TextureType::METAL_ROUGHNESS;
+					break;
 				default:
 					break;
 				} 
@@ -155,6 +158,8 @@ namespace Raito::Assets
 					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE);
 					LoadTexturesOfType(m, path, material, aiTextureType_NORMALS);
 					LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE);
+					LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP);
+					LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN);
 
 					g_Materials[mesh->mMaterialIndex] = materialId;
 				}

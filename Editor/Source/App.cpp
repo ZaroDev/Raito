@@ -31,6 +31,9 @@ namespace Editor
 
 		Raito::Assets::ImportModel("Meshes/DamagedHelmet.gltf");
 
+		Raito::ECS::Entity entity = Scene.CreateEntity("Light");
+		entity.AddComponent<Raito::ECS::LightComponent>();
+
 		return true;
 	}
 

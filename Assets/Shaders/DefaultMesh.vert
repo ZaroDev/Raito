@@ -7,16 +7,18 @@ layout (location = 2) in vec2 aTexCoord;
 uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform mat4 u_Projection;
+uniform mat3 u_NormalMatrix;
 
-out vec3 FragPos;
+out vec3 WorldPos;
 out vec3 Normal;
 out vec2 TexCoord;
 
 void main() 
 {
-    gl_Position = u_Projection * u_View * u_Model * vec4(aPos, 1.0);
-    FragPos = vec3(u_Model * vec4(aPos, 1.0));
-    // Must be done in the CPU for better performance
-    Normal = mat3(transpose(inverse(u_Model))) * -aNormal;  
     TexCoord = aTexCoord;
+    
+    WorldPos = vec3(u_Model * vec4(aPos, 1.0));
+    Normal = u_NormalMatrix * aNormal;  
+    
+    gl_Position = u_Projection * u_View * vec4(WorldPos, 1.0);
 }

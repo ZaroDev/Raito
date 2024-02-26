@@ -270,15 +270,24 @@ namespace Raito::Renderer::OpenGL
 				const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
 				const OpenGLMeshData& meshData = g_Meshes[mesh.MeshId];
 				const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
+				const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
 				
 				OpenGLMaterial& material = g_Materials[mesh.MaterialId];
 
-				material.SetValue("u_View", g_Camera.GetView());
+
 				material.SetValue("u_ViewPos", g_Camera.GetPosition());
+
+				const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
+				for (auto& light : lightView)
+				{
+					material.SetValue("u_LightPosition", lightView.get<ECS::TransformComponent>(light).Translation);
+					material.SetValue("u_LightColor", lightView.get<ECS::LightComponent>(light).Color);
+				}
+				material.SetValue("u_View", g_Camera.GetView());
 				material.SetValue("u_Projection", g_Camera.GetProjection());
 				material.SetValue("u_Model", model);
-				material.SetValue("u_ObjectColor", V3(0.9f, 0.9f, 0.9f));
-				material.SetValue("u_LightColor", V3(1.0f));
+				material.SetValue("u_NormalMatrix", normalMatrix);
+
 
 				material.Bind();
 

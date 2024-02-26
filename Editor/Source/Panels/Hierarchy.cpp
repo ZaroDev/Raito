@@ -18,30 +18,63 @@ namespace Editor
 
 		Raito::ECS::Scene& scene = Raito::Core::Application::Get().Scene;
 
-		auto view = scene.GetAllEntitiesWith<Raito::ECS::TagComponent, Raito::ECS::TransformComponent, Raito::ECS::MeshComponent>();
-
-		for (auto& ent : view)
 		{
-			const auto& tag = view.get<Raito::ECS::TagComponent>(ent);
-			auto& transform = view.get<Raito::ECS::TransformComponent>(ent);
-			const auto& mesh = view.get<Raito::ECS::MeshComponent>(ent);
+			const auto view = scene.GetAllEntitiesWith<Raito::ECS::TagComponent, Raito::ECS::TransformComponent, Raito::ECS::MeshComponent>();
 
-
-			ImGui::Separator();
-			ImGui::Text(tag.Tag.c_str());
-			ImGui::Text("Mesh id: %i", mesh.MeshId);
-			ImGui::Text("Transform");
-
-			
-			ImGui::DragFloat3("Pos", (float*)&transform.Translation);
-
-			Raito::V3 rot = glm::degrees(glm::eulerAngles(transform.Rotation));
-			if(ImGui::DragFloat3("Rot", (float*)&rot))
+			for (auto& ent : view)
 			{
-				transform.Rotation = Raito::Quaternion(rot);
+				const auto& tag = view.get<Raito::ECS::TagComponent>(ent);
+				auto& transform = view.get<Raito::ECS::TransformComponent>(ent);
+				const auto& mesh = view.get<Raito::ECS::MeshComponent>(ent);
+				ImGui::PushID(tag.Tag.c_str());
+
+				ImGui::Separator();
+				ImGui::Text(tag.Tag.c_str());
+				ImGui::Text("Mesh id: %i", mesh.MeshId);
+				ImGui::Text("Transform");
+
+
+				ImGui::DragFloat3("Pos", (float*)&transform.Translation);
+
+				Raito::V3 rot = glm::degrees(glm::eulerAngles(transform.Rotation));
+				if (ImGui::DragFloat3("Rot", (float*)&rot))
+				{
+					transform.Rotation = Raito::Quaternion(rot);
+				}
+				ImGui::DragFloat3("Scl", (float*)&transform.Scale);
+
+				ImGui::PopID();
 			}
-			ImGui::DragFloat3("Scl", (float*)&transform.Scale);
 		}
+		{
+			const auto view = scene.GetAllEntitiesWith<Raito::ECS::TagComponent, Raito::ECS::TransformComponent, Raito::ECS::LightComponent>();
+
+			for (auto& ent : view)
+			{
+				const auto& tag = view.get<Raito::ECS::TagComponent>(ent);
+				auto& transform = view.get<Raito::ECS::TransformComponent>(ent);
+				const auto& light = view.get<Raito::ECS::LightComponent>(ent);
+
+				ImGui::PushID(tag.Tag.c_str());
+
+				ImGui::Separator();
+				ImGui::Text(tag.Tag.c_str());
+				ImGui::Text("Transform");
+				ImGui::DragFloat3("Pos", (float*)&transform.Translation);
+
+				Raito::V3 rot = glm::degrees(glm::eulerAngles(transform.Rotation));
+				if (ImGui::DragFloat3("Rot", (float*)&rot))
+				{
+					transform.Rotation = Raito::Quaternion(rot);
+				}
+				ImGui::DragFloat3("Scl", (float*)&transform.Scale);
+
+				ImGui::ColorEdit3("Light Color", (float*)&light.Color);
+
+				ImGui::PopID();
+			}
+		}
+
 
 
 		ImGui::End();
