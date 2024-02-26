@@ -62,7 +62,7 @@ namespace Raito::Assets
 				const u32 materialId = AddMaterial(Renderer::UNSHADED_MESH);
 				m->MaterialId = materialId;
 
-				Renderer::SetMaterialValue(materialId, "u_Texture", reinterpret_cast<ubyte*>(&g_Textures[p]->RenderId), sizeof(g_Textures[p]->RenderId));
+				Renderer::SetMaterialValue(materialId, "u_Texture", reinterpret_cast<ubyte*>(&g_Textures[p]->RenderData), sizeof(g_Textures[p]->RenderData));
 			}
 		}
 

@@ -39,3 +39,12 @@ SOFTWARE.
 #define O_WARN(...) 
 #define O_ERROR(...) 
 #endif
+
+namespace Raito::Renderer::OpenGL
+{
+	struct TextureData
+	{
+		u64 Handle = 0;
+		u32 Id = 0;
+	};
+}

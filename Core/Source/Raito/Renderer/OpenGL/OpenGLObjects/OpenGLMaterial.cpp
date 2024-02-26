@@ -42,8 +42,6 @@ namespace Raito::Renderer::OpenGL
 
 	void OpenGLMaterial::Bind()
 	{
-		GLint textureCount = 0;
-
 		const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShader(m_ShaderId));
 		shader->Bind();
 		for (const auto& data : m_Uniforms | std::views::values)
@@ -80,9 +78,8 @@ namespace Raito::Renderer::OpenGL
 			break;
 			case UniformType::SAMPLER_2D:
 			{
-				glActiveTexture(GL_TEXTURE0 + textureCount);
-				glBindTexture(GL_TEXTURE_2D, *reinterpret_cast<GLuint*>(data.Value));
-				textureCount++;
+				const TextureData textureData = *reinterpret_cast<TextureData*>(data.Value);
+				glUniformHandleui64ARB(data.Data.Id, textureData.Handle);
 			}
 			break;
 			}
@@ -93,6 +90,5 @@ namespace Raito::Renderer::OpenGL
 	{
 		const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShader(m_ShaderId));
 		shader->UnBind();
-		glActiveTexture(GL_TEXTURE0);
 	}
 }

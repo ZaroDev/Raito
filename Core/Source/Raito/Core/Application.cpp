@@ -75,21 +75,24 @@ namespace Raito::Core
 	}
 	bool Application::Update()
 	{
-		Time::StartTimeUpdate();
+		while (m_Running)
+		{
+			Time::StartTimeUpdate();
 
-		OnUpdate();
+			OnUpdate();
 
-		Window::Update();
+			Window::Update();
 
-		OnRenderGUI();
+			OnRenderGUI();
 
-		Time::EndTimeUpdate();
+			Time::EndTimeUpdate();
+		}
 		return m_Running;
 	}
 	void Application::Shutdown()
 	{
-		Renderer::Shutdown();
 		Window::Shutdown();
+		Renderer::Shutdown();
 
 		OnShutdown();
 	}
@@ -107,10 +110,7 @@ namespace Raito::Core
 
 		app.Initialize();
 
-		while (app.Update())
-		{
-			// TODO: Analytics performance dumping
-		}
+		app.Update();
 
 		app.Shutdown();
 		return EXIT_SUCCESS;

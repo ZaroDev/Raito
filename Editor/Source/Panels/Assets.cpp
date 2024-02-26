@@ -21,9 +21,9 @@ namespace Editor
 		{
 			if (texture.second)
 			{
-				ImGui::Image((ImTextureID)(intptr_t)texture.second->RenderId,
+				ImGui::Image((ImTextureID)(intptr_t)texture.second->RenderData.RenderId,
 					ImVec2{ static_cast<float>(texture.second->Width / 10u), static_cast<float>(texture.second->Height / 10u) });
-				ImGui::Text("%i", texture.second->RenderId);
+				ImGui::Text("%i", texture.second->RenderData.RenderId);
 			}
 			ImGui::Text("Path %s", texture.first.string().c_str());
 		}
