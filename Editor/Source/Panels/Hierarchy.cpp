@@ -39,7 +39,7 @@ namespace Editor
 				Raito::V3 rot = glm::degrees(glm::eulerAngles(transform.Rotation));
 				if (ImGui::DragFloat3("Rot", (float*)&rot))
 				{
-					transform.Rotation = Raito::Quaternion(rot);
+					transform.Rotation = Raito::Quaternion(glm::radians(rot));
 				}
 				ImGui::DragFloat3("Scl", (float*)&transform.Scale);
 
@@ -65,7 +65,7 @@ namespace Editor
 				Raito::V3 rot = glm::degrees(glm::eulerAngles(transform.Rotation));
 				if (ImGui::DragFloat3("Rot", (float*)&rot))
 				{
-					transform.Rotation = Raito::Quaternion(rot);
+					transform.Rotation = Raito::Quaternion(glm::radians(rot));
 				}
 				ImGui::DragFloat3("Scl", (float*)&transform.Scale);
 

@@ -39,6 +39,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		constexpr ShaderFileData c_ShaderFiles[]
 		{
 			{"DefaultMesh", EngineShader::DEFAULT_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"DefaultLight", EngineShader::DEFAULT_LIGHT, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"GaussianBlur", EngineShader::GAUSSIAN_BLUR, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 		};

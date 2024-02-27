@@ -48,3 +48,14 @@ namespace Raito::Renderer::OpenGL
 		u32 Id = 0;
 	};
 }
+
+#ifndef DIST
+#define GL(_f)                     \
+    gl##_f;                        \
+    { \
+	GLenum error = glGetError(); \
+	if(error != GL_NO_ERROR) fprintf(stderr, "%s:%d glGetError() = 0x%04x\n", __FILE__, __LINE__, error); \
+    assert(error == GL_NO_ERROR); }
+#else
+#define GL(x) gl##x
+#endif

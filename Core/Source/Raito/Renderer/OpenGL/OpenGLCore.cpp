@@ -62,8 +62,8 @@ namespace Raito::Renderer::OpenGL
 			GLsizei IndexCount = 0;
 		};
 
-		
 
+		OpenGLMeshData g_LightSphereData;
 		std::vector<OpenGLMeshData> g_Meshes{};
 		std::vector<TextureData> g_Textures{};
 		std::vector<OpenGLMaterial> g_Materials{};
@@ -92,9 +92,9 @@ namespace Raito::Renderer::OpenGL
 			data.Samples = 1;
 			data.SwapChainTarget = false;
 
-			for(u32 i = 0; i < g_BloomBuffers.size(); i++)
+			for (u32 i = 0; i < g_BloomBuffers.size(); i++)
 			{
-				g_BloomBuffers[i] = new OpenGLFrameBuffer{data};
+				g_BloomBuffers[i] = new OpenGLFrameBuffer{ data };
 			}
 
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
@@ -133,6 +133,95 @@ namespace Raito::Renderer::OpenGL
 			glDeleteVertexArrays(1, &g_FrameBufferQuadVAO);
 			glDeleteBuffers(1, &g_FrameBufferQuadVBO);
 		}
+
+		void CreateSphere()
+		{
+			OpenGLMeshData sphere;
+			glGenVertexArrays(1, &sphere.VAO);
+
+			glGenBuffers(1, &sphere.VBO);
+			glGenBuffers(1, &sphere.EBO);
+
+			std::vector<glm::vec3> positions;
+			std::vector<glm::vec2> uv;
+			std::vector<glm::vec3> normals;
+			std::vector<unsigned int> indices;
+
+			const u32 X_SEGMENTS = 64;
+			const u32 Y_SEGMENTS = 64;
+			const float PI = 3.14159265359f;
+			for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+			{
+				for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+				{
+					float xSegment = (float)x / (float)X_SEGMENTS;
+					float ySegment = (float)y / (float)Y_SEGMENTS;
+					float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+					float yPos = std::cos(ySegment * PI);
+					float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+
+					positions.push_back(glm::vec3(xPos, yPos, zPos));
+					uv.push_back(glm::vec2(xSegment, ySegment));
+					normals.push_back(glm::vec3(xPos, yPos, zPos));
+				}
+			}
+
+			bool oddRow = false;
+			for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+			{
+				if (!oddRow) // even rows: y == 0, y == 2; and so on
+				{
+					for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+					{
+						indices.push_back(y * (X_SEGMENTS + 1) + x);
+						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+					}
+				}
+				else
+				{
+					for (int x = X_SEGMENTS; x >= 0; --x)
+					{
+						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+						indices.push_back(y * (X_SEGMENTS + 1) + x);
+					}
+				}
+				oddRow = !oddRow;
+			}
+			sphere.IndexCount = static_cast<unsigned int>(indices.size());
+
+			std::vector<float> data;
+			for (unsigned int i = 0; i < positions.size(); ++i)
+			{
+				data.push_back(positions[i].x);
+				data.push_back(positions[i].y);
+				data.push_back(positions[i].z);
+				if (!normals.empty())
+				{
+					data.push_back(normals[i].x);
+					data.push_back(normals[i].y);
+					data.push_back(normals[i].z);
+				}
+				if (!uv.empty())
+				{
+					data.push_back(uv[i].x);
+					data.push_back(uv[i].y);
+				}
+			}
+			glBindVertexArray(sphere.VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, sphere.VBO);
+			glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+			constexpr u32 stride = (3 + 2 + 3) * sizeof(float);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, static_cast<void*>(0));
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(6 * sizeof(float)));
+
+			g_LightSphereData = sphere;
+		}
 	}
 
 	bool Initialize()
@@ -154,7 +243,7 @@ namespace Raito::Renderer::OpenGL
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
-		
+
 
 		if (!ShaderCompiler::Initialize())
 		{
@@ -164,6 +253,8 @@ namespace Raito::Renderer::OpenGL
 
 		InitializePostProcessPass();
 		InitializeBloomPass();
+
+		CreateSphere();
 
 		return true;
 	}
@@ -175,14 +266,14 @@ namespace Raito::Renderer::OpenGL
 
 		g_Materials.clear();
 
-		for (const auto & texture : g_Textures)
+		for (const auto& texture : g_Textures)
 		{
 			glMakeImageHandleNonResidentARB(texture.Handle);
 			glDeleteTextures(1, &texture.Id);
 		}
 		g_Textures.clear();
 
-		for (const auto & mesh : g_Meshes)
+		for (const auto& mesh : g_Meshes)
 		{
 			glDeleteBuffers(1, &mesh.VBO);
 			glDeleteBuffers(1, &mesh.EBO);
@@ -195,7 +286,7 @@ namespace Raito::Renderer::OpenGL
 	Surface CreateSurface(SysWindow* window)
 	{
 		FrameBufferData data;
-		data.Attachments = 
+		data.Attachments =
 		{
 			FrameBufferTextureFormat::RGBA16F,	// Normal color buffer
 			FrameBufferTextureFormat::RGBA16F,	// Bloom color buffer
@@ -264,25 +355,24 @@ namespace Raito::Renderer::OpenGL
 
 			auto& scene = Core::Application::Get().Scene;
 			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
-
+			const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
 			for (auto& entity : view)
 			{
 				const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
 				const OpenGLMeshData& meshData = g_Meshes[mesh.MeshId];
 				const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
 				const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
-				
+
 				OpenGLMaterial& material = g_Materials[mesh.MaterialId];
 
 
 				material.SetValue("u_ViewPos", g_Camera.GetPosition());
-
-				const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
 				for (auto& light : lightView)
 				{
 					material.SetValue("u_LightPosition", lightView.get<ECS::TransformComponent>(light).Translation);
 					material.SetValue("u_LightColor", lightView.get<ECS::LightComponent>(light).Color);
 				}
+
 				material.SetValue("u_View", g_Camera.GetView());
 				material.SetValue("u_Projection", g_Camera.GetProjection());
 				material.SetValue("u_Model", model);
@@ -297,6 +387,26 @@ namespace Raito::Renderer::OpenGL
 
 				material.UnBind();
 			}
+			// Render lights
+
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFAULT_LIGHT));
+			shader->Bind();
+			for(auto& light : lightView)
+			{
+				const auto& transform = lightView.get<ECS::TransformComponent>(light).GetTransform();
+				const V3& lightColor = lightView.get<ECS::LightComponent>(light).Color;
+
+				shader->SetUniformRef("u_View", g_Camera.GetView());
+				shader->SetUniformRef("u_Projection", g_Camera.GetProjection());
+				shader->SetUniformRef("u_Model", transform);
+
+				shader->SetUniformRef("u_Color", lightColor);
+
+				glBindVertexArray(g_LightSphereData.VAO);
+				glDrawElements(GL_TRIANGLE_STRIP, g_LightSphereData.IndexCount, GL_UNSIGNED_INT, nullptr);
+				glBindVertexArray(0);
+			}
+			shader->UnBind();
 		}
 		buffer.UnBind();
 
@@ -325,7 +435,7 @@ namespace Raito::Renderer::OpenGL
 
 				horizontal = !horizontal;
 			}
-			
+
 			shader->UnBind();
 			g_BloomBuffers[!horizontal]->UnBind();
 		}
@@ -419,8 +529,47 @@ namespace Raito::Renderer::OpenGL
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, texture->Type == Assets::DIFFUSE ? GL_SRGB : GL_RGB, texture->Width, texture->Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		GLenum format = GL_RGB, internalFormat = GL_RGB;
+		switch (texture->ComponentsNum)
+		{
+		case 1:
+		{
+			format = internalFormat = GL_RED;
+		}break;
+		case 3:
+		{
+			format = internalFormat = GL_RGB;
+
+			if (texture->Type == Assets::DIFFUSE)
+			{
+				internalFormat = GL_SRGB;
+			}
+			else if(texture->Type == Assets::HDR)
+			{
+				internalFormat = GL_RGB16F;
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			}
+		}break;
+		case 4:
+		{
+			format = internalFormat = GL_RGBA;
+			if (texture->Type == Assets::DIFFUSE)
+			{
+				internalFormat = GL_SRGB_ALPHA;
+			}
+		}
+		break;
+		}
+
+
+
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->Width, texture->Height, 0, format, GL_UNSIGNED_BYTE, data);
+
+		if (texture->Type != Assets::HDR)
+		{
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
 
 		// Get and load into VRAM using bindless textures
 		textureData.Handle = glGetTextureHandleARB(textureData.Id);
@@ -429,9 +578,8 @@ namespace Raito::Renderer::OpenGL
 		texture->RenderData.RenderId = textureData.Id;
 		texture->RenderData.Handle = textureData.Handle;
 
-
 		g_Textures.emplace_back(textureData);
-		
+
 		return static_cast<u32>(g_Textures.size()) - 1;
 	}
 

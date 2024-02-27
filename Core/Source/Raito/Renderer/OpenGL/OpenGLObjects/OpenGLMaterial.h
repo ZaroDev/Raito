@@ -154,7 +154,6 @@ namespace Raito::Renderer::OpenGL
 		{
 			if (!m_Uniforms.contains(name))
 			{
-				O_WARN("Material doesn't contain uniform {0}", name);
 				return;
 			}
 			delete m_Uniforms[name].Value;
@@ -169,7 +168,6 @@ namespace Raito::Renderer::OpenGL
 		{
 			if(!m_Uniforms.contains(name))
 			{
-				O_WARN("Material doesn't contain uniform {0}", name);
 				return;
 			}
 			delete m_Uniforms[name].Value;

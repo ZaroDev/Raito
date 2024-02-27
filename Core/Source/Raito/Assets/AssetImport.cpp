@@ -230,8 +230,10 @@ namespace Raito::Assets
 		i32 width, height, nChannels;
 		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
 
-		auto* texture = new Texture(width, height, data, type);
+		LOG("Textures", "Imported {0}", filePath.string());
+		auto* texture = new Texture(width, height, nChannels, data, type);
 		g_Textures[filePath] = texture;
+
 
 		stbi_image_free(data);
 	}

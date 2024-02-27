@@ -36,12 +36,13 @@ namespace Raito::Assets
 		NORMAL,
 		EMISSIVE,
 		AMBIENT_OCCLUSION,
-		METAL_ROUGHNESS
+		METAL_ROUGHNESS,
+		HDR
 	};
 
 	struct Texture final
 	{
-		Texture(u32 width, u32 height,  ubyte* data, TextureType type);
+		Texture(u32 width, u32 height,  u32 nComponents, ubyte* data, TextureType type);
 		~Texture();
 
 		DEFAULT_MOVE_AND_COPY(Texture)
@@ -55,6 +56,7 @@ namespace Raito::Assets
 
 		u32 Width = 0;
 		u32 Height = 0;
+		u32 ComponentsNum = 0;
 
 		TextureType Type{};
 	};

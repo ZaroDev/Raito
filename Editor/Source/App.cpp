@@ -29,10 +29,17 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Assets>());
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
-		Raito::Assets::ImportModel("Meshes/DamagedHelmet.gltf");
+		//Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
+		//Raito::Assets::ImportModel("Meshes/Porsche911/scene.gltf");
+		Raito::Assets::ImportModel("Meshes/WaterBottle/WaterBottle.gltf");
 
 		Raito::ECS::Entity entity = Scene.CreateEntity("Light");
 		entity.AddComponent<Raito::ECS::LightComponent>();
+		entity.AddOrReplaceComponent<Raito::ECS::TransformComponent>(
+			Raito::V3{0.0f, 1.0f, 2.0f},
+			Raito::Quaternion{Raito::V3(0.0f)},
+			Raito::V3(0.1f)
+		);
 
 		return true;
 	}
