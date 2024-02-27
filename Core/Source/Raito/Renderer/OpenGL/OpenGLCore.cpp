@@ -388,7 +388,6 @@ namespace Raito::Renderer::OpenGL
 				material.UnBind();
 			}
 			// Render lights
-
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFAULT_LIGHT));
 			shader->Bind();
 			for(auto& light : lightView)
@@ -413,6 +412,7 @@ namespace Raito::Renderer::OpenGL
 
 		bool horizontal = true;
 		// Bloom pass
+		// TODO: Make Physically based bloom instead of the crappy learnopengl.com implementation
 		{
 			constexpr u32 blurAmount = 10u;
 
@@ -529,6 +529,7 @@ namespace Raito::Renderer::OpenGL
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+		// Get the texture format based on type and components
 		GLenum format = GL_RGB, internalFormat = GL_RGB;
 		switch (texture->ComponentsNum)
 		{
@@ -572,6 +573,7 @@ namespace Raito::Renderer::OpenGL
 		}
 
 		// Get and load into VRAM using bindless textures
+		// TODO: Unload textures that aren't used in the scene
 		textureData.Handle = glGetTextureHandleARB(textureData.Id);
 		glMakeTextureHandleResidentARB(textureData.Handle);
 

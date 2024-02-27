@@ -22,7 +22,7 @@ packages.config
 
 # Exclude
 !Vendor/Binaries
-
+!Assets/Meshes/DamagedHelmet
 Assets/Meshes
 *.exe
 *.ini

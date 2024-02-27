@@ -29,9 +29,9 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Assets>());
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
-		//Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
+		Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
 		//Raito::Assets::ImportModel("Meshes/Porsche911/scene.gltf");
-		Raito::Assets::ImportModel("Meshes/WaterBottle/WaterBottle.gltf");
+		//Raito::Assets::ImportModel("Meshes/WaterBottle/WaterBottle.gltf");
 
 		Raito::ECS::Entity entity = Scene.CreateEntity("Light");
 		entity.AddComponent<Raito::ECS::LightComponent>();
