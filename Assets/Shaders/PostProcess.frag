@@ -1,11 +1,10 @@
 #version 460 core
 out vec4 FragColor;
-  
+
 in vec2 TexCoords;
 
 layout(location = 0) uniform sampler2D u_ScreenTexture;
 layout(location = 1) uniform sampler2D u_BloomTexture;
-
 
 vec3 aces(vec3 x) {
   const float a = 2.51;
@@ -16,17 +15,13 @@ vec3 aces(vec3 x) {
   return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
 }
 
-void main()
-{
-    const float gamma = 2.2;
-    vec3 hdrColor = texture(u_ScreenTexture, TexCoords).rgb;
-    vec3 bloomColor = texture(u_BloomTexture, TexCoords).rgb;
+void main() {
+  vec3 hdrColor = texture(u_ScreenTexture, TexCoords).rgb;
+  vec3 bloomColor = texture(u_BloomTexture, TexCoords).rgb;
 
-    hdrColor += bloomColor;
+  hdrColor += bloomColor;
 
-    vec3 result = aces(hdrColor);
+  vec3 result = aces(hdrColor);
 
-    result = pow(result, vec3(1.0 / gamma));
-
-    FragColor = vec4(result, 1.0);
+  FragColor = vec4(result, 1.0);
 }

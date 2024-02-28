@@ -40,7 +40,10 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		{
 			{"DefaultMesh", EngineShader::DEFAULT_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{"DefaultLight", EngineShader::DEFAULT_LIGHT, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"Skybox", EngineShader::SKYBOX, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"GaussianBlur", EngineShader::GAUSSIAN_BLUR, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"EquirectangularToCubemap", EngineShader::EQUIRECTANGULAR_TO_CUBEMAP, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"Irradiance", EngineShader::IRRADIANCE, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 		};
 

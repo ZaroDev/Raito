@@ -41,6 +41,7 @@ SOFTWARE.
 #include <ECS/Entity.h>
 #include <Core/Application.h>
 
+#include "Assets/AssetImport.h"
 #include "Assets/Texture.h"
 #include "OpenGLObjects/OpenGLMaterial.h"
 
@@ -64,6 +65,8 @@ namespace Raito::Renderer::OpenGL
 
 
 		OpenGLMeshData g_LightSphereData;
+		OpenGLMeshData g_CubeData;
+
 		std::vector<OpenGLMeshData> g_Meshes{};
 		std::vector<TextureData> g_Textures{};
 		std::vector<OpenGLMaterial> g_Materials{};
@@ -132,6 +135,80 @@ namespace Raito::Renderer::OpenGL
 		{
 			glDeleteVertexArrays(1, &g_FrameBufferQuadVAO);
 			glDeleteBuffers(1, &g_FrameBufferQuadVBO);
+		}
+
+		void CreateCube()
+		{
+			OpenGLMeshData cube;
+
+			float vertices[] = {
+				// back face
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+				// front face
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				// left face
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				// right face
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+				 // bottom face
+				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				  1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				 -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				 // top face
+				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				  1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				  1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+				  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				 -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+			};
+			glGenVertexArrays(1, &cube.VAO);
+			glGenBuffers(1, &cube.VBO);
+			// fill buffer
+			glBindBuffer(GL_ARRAY_BUFFER, cube.VBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			// link vertex attributes
+			glBindVertexArray(cube.VAO);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+
+			g_CubeData = cube;
+		}
+
+		void RenderCube()
+		{
+			glBindVertexArray(g_CubeData.VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glBindVertexArray(0);
 		}
 
 		void CreateSphere()
@@ -222,6 +299,143 @@ namespace Raito::Renderer::OpenGL
 
 			g_LightSphereData = sphere;
 		}
+
+		void RenderSphere()
+		{
+			glBindVertexArray(g_LightSphereData.VAO);
+			glDrawElements(GL_TRIANGLE_STRIP, g_LightSphereData.IndexCount, GL_UNSIGNED_INT, nullptr);
+			glBindVertexArray(0);
+		}
+
+		u32 g_IrradianceCubeMap = 0;
+		u64 g_IrradianceHandler = 0;
+		u32 g_EnvironmentCubeMap = 0;
+		u32 g_CaptureFBO, g_CaptureRBO;
+
+
+		void InitializeImageBasedLighting()
+		{
+			ImportTexture("Textures/thatch_chapel_4k.hdr", Assets::HDR);
+			Assets::Texture* hdri = Assets::GetTexture("Textures/thatch_chapel_4k.hdr");
+
+			if(!hdri)
+			{
+				return;
+			}
+			// Create the framebuffer to store the views
+			glGenFramebuffers(1, &g_CaptureFBO);
+			glGenRenderbuffers(1, &g_CaptureRBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, g_CaptureFBO);
+			glBindRenderbuffer(GL_RENDERBUFFER, g_CaptureRBO);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, g_CaptureRBO);
+
+
+			glGenTextures(1, &g_EnvironmentCubeMap);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, g_EnvironmentCubeMap);
+			for (unsigned int i = 0; i < 6; ++i)
+			{
+				// note that we store each face with 16 bit floating point values
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB,
+					512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+			}
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+			Mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+			Mat4 captureViews[] =
+			{
+			   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+			   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+			   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+			   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+			};
+
+			{
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::EQUIRECTANGULAR_TO_CUBEMAP));
+
+				shader->Bind();
+
+				glUniformHandleui64ARB(shader->GetUniformLocation("u_EquirectangularMap"), hdri->RenderData.Handle);
+				shader->SetUniformRef("u_Projection", captureProjection);
+
+				glViewport(0, 0, 512, 512);
+				glBindFramebuffer(GL_FRAMEBUFFER, g_CaptureFBO);
+				for(u32 i = 0; i < 6; i++)
+				{
+					shader->SetUniformRef("u_View", captureViews[i]);
+
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, g_EnvironmentCubeMap, 0);
+					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+					RenderCube();
+				}
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				shader->UnBind();
+			}
+
+			glGenTextures(1, &g_IrradianceCubeMap);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, g_IrradianceCubeMap);
+
+			for(u32 i = 0; i < 6; i++)
+			{
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
+			}
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+			glBindFramebuffer(GL_FRAMEBUFFER, g_CaptureFBO);
+			glBindRenderbuffer(GL_RENDERBUFFER, g_CaptureRBO);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+			{
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::IRRADIANCE));
+
+				shader->Bind();
+
+				shader->SetUniform("u_EnivornmentMap", 0);
+				shader->SetUniformRef("u_Projection", captureProjection);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, g_EnvironmentCubeMap);
+
+				glViewport(0, 0, 32, 32);
+				glBindFramebuffer(GL_FRAMEBUFFER, g_CaptureFBO);
+				for (u32 i = 0; i < 6; i++)
+				{
+					shader->SetUniformRef("u_View", captureViews[i]);
+
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, g_IrradianceCubeMap, 0);
+					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+					RenderCube();
+				}
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				shader->UnBind();
+			}
+
+			g_IrradianceHandler = glGetTextureHandleARB(g_IrradianceCubeMap);
+			glMakeTextureHandleResidentARB(g_IrradianceHandler);
+
+			{
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SKYBOX));
+				shader->Bind();
+				shader->SetUniform("u_EnvironmentMap", 0);
+				shader->UnBind();
+			}
+
+		}
 	}
 
 	bool Initialize()
@@ -244,6 +458,8 @@ namespace Raito::Renderer::OpenGL
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
 
+		CreateSphere();
+		CreateCube();
 
 		if (!ShaderCompiler::Initialize())
 		{
@@ -253,8 +469,8 @@ namespace Raito::Renderer::OpenGL
 
 		InitializePostProcessPass();
 		InitializeBloomPass();
+		InitializeImageBasedLighting();
 
-		CreateSphere();
 
 		return true;
 	}
@@ -349,6 +565,7 @@ namespace Raito::Renderer::OpenGL
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
 
 		// Geometry pass
 		{
@@ -377,8 +594,8 @@ namespace Raito::Renderer::OpenGL
 				material.SetValue("u_Projection", g_Camera.GetProjection());
 				material.SetValue("u_Model", model);
 				material.SetValue("u_NormalMatrix", normalMatrix);
-
-
+				material.SetValue("u_IrradianceMap", TextureData{ g_IrradianceHandler, g_IrradianceCubeMap });
+				
 				material.Bind();
 
 				glBindVertexArray(meshData.VAO);
@@ -401,13 +618,31 @@ namespace Raito::Renderer::OpenGL
 
 				shader->SetUniformRef("u_Color", lightColor);
 
-				glBindVertexArray(g_LightSphereData.VAO);
-				glDrawElements(GL_TRIANGLE_STRIP, g_LightSphereData.IndexCount, GL_UNSIGNED_INT, nullptr);
-				glBindVertexArray(0);
+				RenderSphere();
 			}
 			shader->UnBind();
 		}
+
+		// Render skybox
+		{
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SKYBOX));
+			shader->Bind();
+			shader->SetUniform("u_EnvironmentMap", 0);
+
+			shader->SetUniformRef("u_View", g_Camera.GetView());
+			shader->SetUniformRef("u_Projection", g_Camera.GetProjection());
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, g_EnvironmentCubeMap);
+
+			RenderCube();
+
+			shader->UnBind();
+		}
+
+
 		buffer.UnBind();
+
+
 
 
 		bool horizontal = true;

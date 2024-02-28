@@ -31,4 +31,5 @@ namespace Raito::Assets
 	void ImportTexture(const std::filesystem::path& filePath, TextureType type);
 
 	const std::unordered_map<std::filesystem::path, Texture*>& GetAllTextures();
+	Texture* GetTexture(const std::filesystem::path& filePath);
 }

@@ -228,6 +228,16 @@ namespace Raito::Assets
 		}
 
 		i32 width, height, nChannels;
+
+		if(type == HDR)
+		{
+			stbi_set_flip_vertically_on_load(true);
+		}
+		else
+		{
+			stbi_set_flip_vertically_on_load(false);
+		}
+
 		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
 
 		LOG("Textures", "Imported {0}", filePath.string());
@@ -241,5 +251,15 @@ namespace Raito::Assets
 	const std::unordered_map<std::filesystem::path, Texture*>& GetAllTextures()
 	{
 		return g_Textures;
+	}
+
+	Texture* GetTexture(const std::filesystem::path& filePath)
+	{
+		if(g_Textures.contains(filePath))
+		{
+			return g_Textures[filePath];
+		}
+
+		return nullptr;
 	}
 }
