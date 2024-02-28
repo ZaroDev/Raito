@@ -1,3 +1,27 @@
+/*
+MIT License
+
+Copyright (c) 2023 Víctor Falcón Zaro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include "pch.h"
 #include "Application.h"
 
@@ -9,6 +33,7 @@
 #include "Renderer/Renderer.h"
 
 #include "Time/ScopedTimer.h"
+#include "Time/Time.h"
 
 namespace Raito::Core
 {
@@ -28,8 +53,12 @@ namespace Raito::Core
 		{
 			return Failed();
 		}
-
-		if (!Window::Initialize({ .Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen }))
+		if(!Renderer::SetPlatformInterface(m_Info.GraphicsAPI))
+		{
+			LOG("Application", "Failed to set graphics API");
+			return Failed();
+		}
+		if (!Window::Initialize(m_Info.GraphicsAPI,{ .Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen }))
 		{
 			LOG("Application", "Failed to initialize window module");
 			return Failed();
@@ -46,20 +75,24 @@ namespace Raito::Core
 	}
 	bool Application::Update()
 	{
-		//ScopedTimer timer("Update");
+		while (m_Running)
+		{
+			Time::StartTimeUpdate();
 
-		// TODO: Module Update
+			OnUpdate();
 
-		Window::Update();
+			Window::Update();
 
+			OnRenderGUI();
+
+			Time::EndTimeUpdate();
+		}
 		return m_Running;
 	}
 	void Application::Shutdown()
 	{
 		Window::Shutdown();
-
 		Renderer::Shutdown();
-
 
 		OnShutdown();
 	}
@@ -77,10 +110,7 @@ namespace Raito::Core
 
 		app.Initialize();
 
-		while (app.Update())
-		{
-			// TODO: Analytics performance dumping
-		}
+		app.Update();
 
 		app.Shutdown();
 		return EXIT_SUCCESS;

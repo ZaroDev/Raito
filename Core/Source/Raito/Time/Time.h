@@ -21,15 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
-namespace Raito
+namespace Raito::Time
 {
-	class Time
-	{
-	public:
+	float GetDeltaTime();
+	float GetFPS();
+	float GetTimeSinceStart();
 
-
-	};
+	void StartTimeUpdate();
+	void EndTimeUpdate();
 }
 

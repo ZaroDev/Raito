@@ -21,12 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
-
+#include "Renderer/GraphicsAPI.h"
 
 namespace Raito
 {
+	namespace Renderer
+	{
+		struct RenderSurface;
+	}
+
 	//! Window info structure
 	struct WindowInfo
 	{
@@ -46,8 +52,10 @@ namespace Raito
 
 		void* WindowHandle = nullptr; /**< OS window handle */
 		void* Window = nullptr; /**< Internal window pointer */
+		Renderer::RenderSurface* Surface = nullptr; /**< Internal surface pointer */
 
 		u32 Id{}; /**< ID of the window */
+
 	};
 
 	
@@ -55,11 +63,12 @@ namespace Raito
 	namespace Window
 	{
 		//! Initialization function for the window module
+		//! @param api Graphics API of the application
 		//! @param defaultInfo Window information for the main window
 		//! @return Boolean indicating success value
-		bool Initialize(const WindowInfo& defaultInfo = {});
+		bool Initialize(Renderer::API api, const WindowInfo& defaultInfo = {});
 
-		//! Update function for the window module
+		//! EndTimeUpdate function for the window module
 		//! Polls the events for all the windows
 		//! @return Boolean indicating success value
 		bool Update();
@@ -76,6 +85,6 @@ namespace Raito
 		//! Returns the window with a given ID
 		//! @param id ID of the window to get returned
 		//! @return Window of the given ID
-		SysWindow& GetWindow(const u32 id);
+		SysWindow& GetWindow(const u32 id = 0);
 	}
 }

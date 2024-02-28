@@ -21,7 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
+
+#include "BasicTypes.h"
+#include "Assert.h"
+#include <memory>
+
+#ifndef DEBUG_OP
+
+#ifdef DEBUG
+#define DEBUG_OP(x) x
+#else
+#define DEBUG_OP(x)
+#endif
+
+#endif
 
 
 #ifndef DEFAULT_COPY
@@ -63,3 +78,5 @@ SOFTWARE.
 #endif
 
 #define NODISCARD [[nodiscard]]
+
+#define USE_STL_VECTOR 1

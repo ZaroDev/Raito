@@ -7,18 +7,20 @@ staticruntime "off"
 files {"Source/**.h", "Source/**.cpp"}
 
 includedirs {"Source", -- Include Core
-"../Core/Source", "%{IncludeDir.spdlog}"}
+"../Core/Source", "%{IncludeDir.spdlog}", "%{IncludeDir.glm}", "%{IncludeDir.ImGui}", "%{IncludeDir.GLFW}",
+             "%{IncludeDir.assimp}"}
 
-links {"Core"}
+links {"Core", "ImGui"}
 
-targetdir("../Binaries/" .. outputdir .. "/%{prj.name}")
-objdir("../Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")
-
-nuget {"directxtk12_uwp:2024.1.1.1"}
+targetdir("%{wks.location}/Binaries/" .. outputdir .. "/%{prj.name}")
+objdir("%{wks.location}/Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")
+debugdir("%{wks.location}/Assets")
 
 filter "system:windows"
 systemversion "latest"
 defines {"WINDOWS"}
+nuget {"directxtk12_uwp:2024.1.1.1"}
+postbuildcommands {("{COPY} \"%{cfg.buildtarget.relpath}\" \"%{wks.location}Assets\"")}
 
 filter "configurations:Debug"
 kind "ConsoleApp"

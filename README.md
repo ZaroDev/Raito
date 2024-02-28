@@ -22,7 +22,7 @@ Raito aims to be a powerful rendering engine designed for creating visually stun
 
 |         | Vulkan | DX12 | OpenGL |
 |---------|--------|------| -------|
-| Windows | ✘      | ✓    | ✘     |
+| Windows | ✘      | ✓    | ✓     |
 | Linux   | ✘      | ✘    | ✘    |
 | MacOS   | ✘      | ✘    | ✘    |
 

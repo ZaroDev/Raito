@@ -21,14 +21,32 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
+#include "Math/MathTypes.h"
 
 namespace Raito::Assets
 {
-	class Mesh
+	struct Vertex
 	{
-	public:
-		Mesh();
+		V3 Position;
+		V3 Normal;
+		V2 TexCoords;
+	};
+
+	struct Mesh final
+	{
+		Mesh() = default;
+		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
 		~Mesh();
+	
+		std::vector<Vertex> Vertices{};
+		std::vector<u32> Indices{};
+		
+		Mat4 Transform;
+
+		std::string Name{};
+
+		u32 MaterialId;
 	};
 }

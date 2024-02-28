@@ -10,8 +10,10 @@ pchsource "Source/Raito/pch.cpp"
 
 files {"Source/**.h", "Source/**.hpp", "Source/**.c", "Source/**.cpp", "Source/**.cc"}
 
-includedirs {"Source", "Source/Raito", "%{IncludeDir.GLFW}", "%{IncludeDir.DX12TK}", "%{IncludeDir.spdlog}"}
-links {"GLFW"}
+includedirs {"Source", "Source/Raito", "%{IncludeDir.GLFW}", "%{IncludeDir.DX12TK}", "%{IncludeDir.spdlog}",
+             "%{IncludeDir.glad}", "%{IncludeDir.glm}", "%{IncludeDir.assimp}"}
+
+links {"GLFW", "glad", "assimp"}
 
 targetdir("../Binaries/" .. outputdir .. "/%{prj.name}")
 objdir("../Binaries/Intermediates/" .. outputdir .. "/%{prj.name}")

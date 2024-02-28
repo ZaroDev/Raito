@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
 #include "Math/MathTypes.h"
@@ -33,5 +34,7 @@ namespace Raito::Math
 	//! @param rotation Rotation component 
 	//! @param scale Scale component
 	//! @return Transformation matrix
-	Matrix CreateTransform(const v3& translation, const Quaternion& rotation, const v3& scale);
+	Mat4 CreateTransform(const V3& translation, const Quaternion& rotation, const V3& scale);
+
+	void DecomposeTransform(const Mat4& matrix, V3& translation, Quaternion& rotation, V3& scale);
 }

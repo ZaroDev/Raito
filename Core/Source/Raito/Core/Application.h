@@ -21,7 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
+
+#include "Renderer/GraphicsAPI.h"
+#include "ECS/Scene.h"
 
 namespace Raito::Core 
 {
@@ -33,6 +37,8 @@ namespace Raito::Core
 		
 		u32 Width = 1280; /**< Starting screen width */
 		u32 Height = 720; /**< Starting screen height */
+
+		Renderer::API GraphicsAPI = Renderer::API::NONE; /**< Graphics API provider */
 
 		bool Fullscreen = false; /**< Flag for the application starting screen mode */
 	};
@@ -57,7 +63,7 @@ namespace Raito::Core
 		* Initializes all the modules and calls OnInit at the end if all succeed.
 		*/
 		bool Initialize();
-		//! Update function
+		//! EndTimeUpdate function
 		/*!
 		* Main update loop, runs every module update function and
 		* calls OnUpdate() and OnRenderGUI() with this order.
@@ -72,9 +78,13 @@ namespace Raito::Core
 		//! Close function
 		/*
 		*  Puts a flag for the application to be call Shutdown() 
-		*  Reminder: It always completes the Update() call before shutting down the application
+		*  Reminder: It always completes the EndTimeUpdate() call before shutting down the application
 		*/
 		void Close() { m_Running = false; }
+
+	public:
+		// Test scene
+		ECS::Scene Scene{};
 
 	protected:
 
@@ -85,7 +95,7 @@ namespace Raito::Core
 		//! Note: Called after OnUpdate()
 		virtual bool OnRenderGUI() { return true; }
 
-		//! Update event function
+		//! EndTimeUpdate event function
 		//! Note: Called before OnRenderGUI()
 		virtual bool OnUpdate() { return true; }
 
@@ -97,6 +107,7 @@ namespace Raito::Core
 
 		bool m_Running = false; /**< Flag for the application loop to be ran */
 	private:
+		
 
 		inline static Application* s_Application = nullptr; /**< Static pointer to the instance of the application */
 		ApplicationInfo m_Info{}; /**< Info of the current application */

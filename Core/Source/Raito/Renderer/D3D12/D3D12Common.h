@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 #include "Raito/Core/BasicTypes.h"
 #include "Raito/Core/Assert.h"
@@ -45,10 +46,10 @@ namespace Raito::Renderer::D3D12
 
 #define ENABLE_GPU_BASE_VALIDATION 0
 
-#ifdef DEBUG
+#ifndef DIST
 #define D_LOG(...) LOG("D3D12", __VA_ARGS__)
 #define D_WARN(...) WARN("D3D12", __VA_ARGS__)
-#define D_ERROR(...) ERROR("D3D12", __VA_ARGS__)
+#define D_ERROR(...) ERR("D3D12", __VA_ARGS__)
 #else
 #define D_LOG(x) 
 #define D_WARN(x) 

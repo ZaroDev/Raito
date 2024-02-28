@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
 #include <string>
@@ -49,21 +50,49 @@ namespace Raito::ECS
 			: Tag(tag) {}
 	};
 
+	struct MeshComponent
+	{
+		u32 MeshId;
+		u32 MaterialId;
+
+		MeshComponent() = default;
+		MeshComponent(const MeshComponent&) = default;
+		MeshComponent(u32 mesh, u32 material)
+			: MeshId(mesh), MaterialId(material) {}
+	};
+
 	struct TransformComponent
 	{
-		v3 Translation = { 0.0f, 0.0f, 0.0f };
+		V3 Translation = { 0.0f, 0.0f, 0.0f };
 		Quaternion Rotation = { 0.0f, 0.0f, 0.0f, 1.0f };
-		v3 Scale = { 1.0f, 1.0f, 1.0f };
+		V3 Scale = { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const v3& translation)
+		TransformComponent(V3 translation, Quaternion rotation, V3 scale)
+			: Translation(translation), Rotation(rotation), Scale(scale) {}
+		TransformComponent(const V3& translation)
 			: Translation(translation) {}
 
-		Matrix GetTransform() const
+		TransformComponent(const Mat4& mat)
+		{
+			Math::DecomposeTransform(mat, Translation, Rotation, Scale);
+		}
+
+		Mat4 GetTransform() const
 		{
 			return Math::CreateTransform(Translation, Rotation, Scale);
 		}
+	};
+
+	struct LightComponent
+	{
+		V3 Color = { 1.0f, 1.0f, 1.0f };
+
+		LightComponent() = default;
+		LightComponent(const LightComponent&) = default;
+		LightComponent(V3 color)
+			: Color(color){}
 	};
 
 }
