@@ -33,7 +33,7 @@ namespace Raito::Renderer::OpenGL
 	struct UniformValue
 	{
 		UniformValue() = default;
-		UniformValue(Uniform data, ubyte* value, size_t size)
+		UniformValue(ShaderValue data, ubyte* value, size_t size)
 			: Data(data), Value(value), Size(size){}
 
 		~UniformValue()
@@ -92,7 +92,7 @@ namespace Raito::Renderer::OpenGL
 			return *this;
 		}
 
-		Uniform Data{};
+		ShaderValue Data{};
 		ubyte* Value = nullptr;
 		size_t Size = 0;
 
