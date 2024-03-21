@@ -21,8 +21,8 @@ Makefile
 packages.config
 
 # Exclude
+*.exe
+*.ini
 !Vendor/Binaries
 !Assets/Meshes/DamagedHelmet
 Assets/Meshes
-*.exe
-*.ini

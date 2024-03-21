@@ -17,4 +17,4 @@
 
 [submodule "Core/Vendor/assimp"]
 	path = Core/Vendor/assimp
-	url = https://github.com/ZaroDev/assimp.git
+	url = https://github.com/Zarodev/assimp

@@ -31,6 +31,7 @@ SOFTWARE.
 #include "GLFW/glfw3.h"
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include "GLFW/glfw3native.h"
+#include "optick/include/optick.h"
 
 #include "Renderer/Renderer.h"
 
@@ -147,6 +148,8 @@ namespace Raito
 
 		bool Update()
 		{
+			OPTICK_EVENT();
+
 			for (auto& renderSurface : g_RenderSurfaces)
 			{
 				if (Renderer::GetCurrentAPI() == Renderer::API::OPENGL)
