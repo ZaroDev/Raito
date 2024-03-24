@@ -33,9 +33,6 @@ jobs:
         # Working directory
         working-directory: "./"
     
-    - name: List contents of the directory
-      run: ls -R
-    
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
