@@ -40,6 +40,7 @@ If you have problems with the submodules remember to
 Must if you want the project to build:
 
 - Visual Studio 2022
+- CMake
 
 ### Generating projects
 
