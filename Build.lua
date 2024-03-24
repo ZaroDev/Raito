@@ -20,6 +20,7 @@ group "Core/Dependencies"
 include "Core/Vendor/GLFW"
 include "Core/Vendor/glad"
 include "Core/Vendor/assimp"
+include "Core/Vendor/D3D12MemoryAllocator"
 group ""
 
 group "Editor/Dependencies"
