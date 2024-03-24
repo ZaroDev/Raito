@@ -68,6 +68,7 @@ namespace Raito::Renderer
 
 	void Surface::Render() const
 	{
+
 		g_GraphicsContext.Surface.Render(m_Id);
 	}
 

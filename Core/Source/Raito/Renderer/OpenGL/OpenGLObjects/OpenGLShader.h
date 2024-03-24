@@ -56,7 +56,7 @@ namespace Raito::Renderer::OpenGL
 		SAMPLER_2D
 	};
 
-	struct Uniform
+	struct ShaderValue
 	{
 		GLint Id = 0;
 		UniformType Type = UniformType::NONE;
@@ -99,7 +99,9 @@ namespace Raito::Renderer::OpenGL
 
 		NODISCARD OpenGLShaderType ShaderType() const { return m_ShaderType; }
 		NODISCARD size_t UniformCount() const { return m_Uniforms.size(); }
-		NODISCARD const std::unordered_map<std::string, Uniform>& Uniforms() const { return m_Uniforms; }
+		NODISCARD size_t AttributeCount() const { return m_Attributes.size(); }
+		NODISCARD const std::unordered_map<std::string, ShaderValue>& Uniforms() const { return m_Uniforms; }
+		NODISCARD const std::unordered_map<std::string, ShaderValue>& Attributes() const { return m_Attributes; }
 		NODISCARD u32 Id() const { return m_ShaderId; }
 
 
@@ -117,7 +119,8 @@ namespace Raito::Renderer::OpenGL
 		u32 m_ShaderId = 0;
 		OpenGLShaderType m_ShaderType = OpenGLShaderType::MAX;
 
-		std::unordered_map<std::string, Uniform> m_Uniforms{};
+		std::unordered_map<std::string, ShaderValue> m_Uniforms{};
+		std::unordered_map<std::string, ShaderValue> m_Attributes{};
 
 		friend u32 ShaderCompiler::CompileShader(const ShaderFileData&);
 	};

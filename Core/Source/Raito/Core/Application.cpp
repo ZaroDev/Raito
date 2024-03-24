@@ -34,6 +34,7 @@ SOFTWARE.
 
 #include "Time/ScopedTimer.h"
 #include "Time/Time.h"
+#include <optick/include/optick.h>
 
 namespace Raito::Core
 {
@@ -77,6 +78,8 @@ namespace Raito::Core
 	{
 		while (m_Running)
 		{
+			OPTICK_FRAME("Main Thread");
+
 			Time::StartTimeUpdate();
 
 			OnUpdate();

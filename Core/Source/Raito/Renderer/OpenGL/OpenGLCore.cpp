@@ -44,6 +44,7 @@ SOFTWARE.
 #include "Assets/AssetImport.h"
 #include "Assets/Texture.h"
 #include "OpenGLObjects/OpenGLMaterial.h"
+#include "optick/include/optick.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -554,6 +555,8 @@ namespace Raito::Renderer::OpenGL
 
 	void RenderSurface(u32 id)
 	{
+		OPTICK_EVENT();
+
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
 
 		g_Camera.OnResize(buffer.Data().Width, buffer.Data().Height);

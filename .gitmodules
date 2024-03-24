@@ -14,6 +14,7 @@
 	path = Editor/Vendor/ImGui
 	url = https://github.com/ZaroDev/imgui.git
 	branch = docking
+
 [submodule "Core/Vendor/assimp"]
 	path = Core/Vendor/assimp
-	url = https://github.com/ZaroDev/assimp_premake.git
+	url = https://github.com/Zarodev/assimp
