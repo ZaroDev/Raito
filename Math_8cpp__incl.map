@@ -1,0 +1,39 @@
+<map id="Core/Source/Raito/Math/Math.cpp" name="Core/Source/Raito/Math/Math.cpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="467,5,628,46"/>
+<area shape="rect" id="Node000002" href="$pch_8h.html" title=" " alt="" coords="481,94,534,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="540,48,523,81,518,79,535,45"/>
+<area shape="rect" id="Node000017" href="$Math_8h.html" title=" " alt="" coords="812,94,872,120"/>
+<area shape="poly" id="edge17_Node000001_Node000017" title=" " alt="" coords="622,44,797,91,796,96,620,49"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="486,241,539,267"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="510,120,514,226,509,226,505,120"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,168,63,193"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="481,113,315,132,200,148,79,170,78,165,199,143,315,127,481,108"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="87,168,133,193"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="481,114,343,133,248,149,149,170,148,165,247,144,342,128,480,109"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="158,168,225,193"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="481,116,241,170,240,164,480,111"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="249,168,328,193"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="481,119,341,165,339,160,480,114"/>
+<area shape="rect" id="Node000008" href="$BasicTypes_8h.html" title=" " alt="" coords="965,241,1130,267"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="534,106,628,111,757,122,883,139,935,151,973,165,992,178,1009,194,1035,226,1030,230,1005,197,988,182,970,170,933,156,882,145,756,127,628,117,534,112"/>
+<area shape="rect" id="Node000010" href="$Log_8h.html" title=" " alt="" coords="352,168,471,193"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="493,122,441,161,438,156,489,118"/>
+<area shape="rect" id="Node000013" href="$Assert_8h.html" title=" " alt="" coords="544,168,679,193"/>
+<area shape="poly" id="edge13_Node000002_Node000013" title=" " alt="" coords="526,118,583,156,580,161,523,122"/>
+<area shape="rect" id="Node000015" href="$Common_8h.html" title=" " alt="" coords="703,168,851,193"/>
+<area shape="poly" id="edge15_Node000002_Node000015" title=" " alt="" coords="535,113,717,161,715,166,533,118"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="875,168,959,193"/>
+<area shape="poly" id="edge16_Node000002_Node000016" title=" " alt="" coords="534,110,860,164,859,170,533,115"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="1016,315,1079,341"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="1050,267,1050,299,1045,299,1045,267"/>
+<area shape="poly" id="edge10_Node000010_Node000003" title=" " alt="" coords="430,192,484,230,481,234,427,196"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="350,241,462,267"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="413,194,411,226,405,226,408,193"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="208,241,327,267"/>
+<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="388,196,307,236,304,232,386,191"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="578,241,645,267"/>
+<area shape="poly" id="edge14_Node000013_Node000014" title=" " alt="" coords="614,194,614,226,609,226,609,194"/>
+<area shape="rect" id="Node000018" href="$MathTypes_8h.html" title=" " alt="" coords="1034,168,1162,193"/>
+<area shape="poly" id="edge18_Node000017_Node000018" title=" " alt="" coords="873,114,1040,160,1039,166,872,119"/>
+<area shape="poly" id="edge19_Node000018_Node000008" title=" " alt="" coords="1092,195,1067,230,1062,227,1087,192"/>
+</map>
