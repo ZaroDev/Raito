@@ -15,11 +15,11 @@
 	url = https://github.com/ZaroDev/imgui.git
 	branch = docking
 	ignore = dirty
-[submodule "Core/Vendor/assimp"]
-	path = Core/Vendor/assimp
-	url = https://github.com/Zarodev/assimp
-	ignore = dirty
 [submodule "Core/Vendor/D3D12MemoryAllocator"]
 	path = Core/Vendor/D3D12MemoryAllocator
 	url = https://github.com/ZaroDev/D3D12MemoryAllocator.git
+	ignore = dirty
+[submodule "Core/Vendor/assimp"]
+	path = Core/Vendor/assimp
+	url = https://github.com/ZaroDev/assimp.git
 	ignore = dirty
