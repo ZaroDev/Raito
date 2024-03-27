@@ -25,6 +25,8 @@ SOFTWARE.
 #include "pch.h"
 #include "D3D12Core.h"
 #include "D3D12Common.h"
+#include "D3D12Objects/D3D12Command.h"
+#include "D3D12Objects/D3D12Surface.h"
 
 namespace Raito::Renderer::D3D12::Core
 {
@@ -34,12 +36,15 @@ namespace Raito::Renderer::D3D12::Core
 	{
 		D3D12Device* g_MainDevice = nullptr;
 		D3D12Factory* g_Factory = nullptr;
+		D3D12Command g_GFXCommand;
 
 		constexpr D3D_FEATURE_LEVEL c_MinimumFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
 		std::vector<IUnknown*> g_DeferredReleases[c_FrameBufferCount]{};
 		u32 g_DeferredReleasesFlags[c_FrameBufferCount]{};
 		std::mutex g_DeferredReleasesMutex{};
+
+		std::vector<D3D12Surface> g_Surfaces{};
 	}
 
 	// Get the first most performing adapter with the minimum feature level
@@ -60,6 +65,23 @@ namespace Raito::Renderer::D3D12::Core
 		}
 		D_ERROR("Couldn't find any suitable main adapter!");
 		return nullptr;
+	}
+
+	void __declspec(noinline) ProcessDeferredReleases(u32 frameIndex)
+	{
+		std::lock_guard lock{ g_DeferredReleasesMutex };
+		// NOTE: We clear this flag in the beginning. If we'd clear it at the end
+		// then it might overwrite some other thread that was trying to see it.
+		// it's fine it overwriting happens before processing items.
+		g_DeferredReleasesFlags[frameIndex] = 0;
+
+		std::vector<IUnknown*>& resources = g_DeferredReleases[frameIndex];
+		if (!resources.empty())
+		{
+			for (auto& resource : resources)
+				Release(resource);
+			resources.clear();
+		}
 	}
 
 	D3D_FEATURE_LEVEL GetMaxFeatureLevel(IDXGIAdapter4* adapter)
@@ -155,7 +177,10 @@ namespace Raito::Renderer::D3D12::Core
 			return Failed();
 		}
 
+		new (&g_GFXCommand) D3D12Command(g_MainDevice, D3D12_COMMAND_LIST_TYPE_DIRECT);
+
 		NAME_D3D12_OBJECT(g_MainDevice, L"Main D3D12 Device");
+
 
 #ifdef DEBUG
 		{
@@ -175,7 +200,19 @@ namespace Raito::Renderer::D3D12::Core
 	{
 		D_LOG("Shutting down renderer");
 
+		g_GFXCommand.Release();
+
+		for(u32 i = 0; i < c_FrameBufferCount; i++)
+		{
+			ProcessDeferredReleases(i);
+		}
+
 		Release(g_Factory);
+
+		// NOTE: Some types only use deferred release for their resources during
+		// shutdown/reset/clear. To finally release these resources we call
+		// ProcessDeferredReleases once more.
+		ProcessDeferredReleases(0);
 
 #ifdef DEBUG
 		{
@@ -200,6 +237,54 @@ namespace Raito::Renderer::D3D12::Core
 	void SetDeferredReleasesFlags()
 	{
 		g_DeferredReleasesFlags[CurrentFrameIndex()] = 1;
+	}
+
+	D3D12Device* const Device()
+	{
+		return g_MainDevice;
+	}
+
+	Surface CreateSurface(SysWindow* window)
+	{
+		D3D12Surface& surface = g_Surfaces.emplace_back(window);
+		surface.CreateSwapChain(g_Factory, g_GFXCommand.CommandQueue());
+
+
+		return Surface{ (u32)g_Surfaces.size() - 1 };
+	}
+
+	void RemoveSurface(u32 id)
+	{
+		g_GFXCommand.Flush();
+		g_Surfaces.erase(g_Surfaces.begin() + id);
+	}
+
+	void ResizeSurface(u32 id, u32 width, u32 height)
+	{
+	}
+
+	u32 SurfaceWidth(u32 id)
+	{
+		return 0;
+	}
+
+	u32 SurfaceHeight(u32 id)
+	{
+		return 0;
+	}
+
+	u32 GetColorGetAttachment(u32 target, u32 id)
+	{
+		return 0;
+	}
+
+	u32 GetDepthAttachment(u32 id)
+	{
+		return 0;
+	}
+
+	void RenderSurface(u32 id)
+	{
 	}
 
 

@@ -34,5 +34,13 @@ namespace Raito::Renderer::D3D12
 	{
 		rhi.Initialize = Core::Initialize;
 		rhi.Shutdown = Core::Shutdown;
+		rhi.Surface.Create = Core::CreateSurface;
+		rhi.Surface.Remove = Core::RemoveSurface;
+		rhi.Surface.Resize = Core::ResizeSurface;
+		rhi.Surface.Render = Core::RenderSurface;
+		rhi.Surface.Height = Core::SurfaceHeight;
+		rhi.Surface.Width = Core::SurfaceWidth;
+		rhi.Surface.GetColorAttachment = Core::GetColorGetAttachment;
+		rhi.Surface.GetDepthAttachment = Core::GetDepthAttachment;
 	}
 }

@@ -25,6 +25,8 @@ SOFTWARE.
 #pragma once
 
 #include <Raito/Renderer/D3D12/D3D12Common.h>
+#include "D3D12Surface.h"
+
 
 namespace Raito::Renderer::D3D12
 {
@@ -42,7 +44,7 @@ namespace Raito::Renderer::D3D12
 		void Release();
 
 		void BeginFrame();
-		void EndFrame();
+		void EndFrame(const D3D12Surface& surface);
 
 		NODISCARD constexpr ID3D12CommandQueue* CommandQueue() const { return m_CommandQueue; }
 

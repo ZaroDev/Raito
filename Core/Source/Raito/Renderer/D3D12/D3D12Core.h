@@ -73,4 +73,24 @@ namespace Raito::Renderer::D3D12::Core
             resource = nullptr;
 	    }
     }
+
+    D3D12Device* const Device();
+
+    //! Surface creation function
+    //! @param window window that the surface will be displayed on
+    //! @return the created surface
+    Surface CreateSurface(SysWindow* window);
+
+    //! Surface remove function
+    //! removes and destroys the indicated surface
+    //! @param id id of the surface to be removed
+    void RemoveSurface(u32 id);
+
+
+    void ResizeSurface(u32 id, u32 width, u32 height);
+    u32 SurfaceWidth(u32 id);
+    u32 SurfaceHeight(u32 id);
+    u32 GetColorGetAttachment(u32 target, u32 id);
+    u32 GetDepthAttachment(u32 id);
+    void RenderSurface(u32 id);
 }

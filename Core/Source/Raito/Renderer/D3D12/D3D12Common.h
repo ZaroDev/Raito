@@ -36,6 +36,8 @@ SOFTWARE.
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d12.lib")
 
+#include <D3D12MemAlloc.h>
+
 namespace Raito::Renderer::D3D12
 {
 	constexpr u32 c_FrameBufferCount = 3;
