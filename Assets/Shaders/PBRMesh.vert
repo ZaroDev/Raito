@@ -4,12 +4,10 @@ layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
 
-layout(binding = 1, std140) uniform LocalParams {
-    mat4 u_Model;
-    mat4 u_View;
-    mat4 u_Projection;
-    mat3 u_NormalMatrix;
-};
+uniform mat4 u_Model;
+uniform mat4 u_View;
+uniform mat4 u_Projection;
+uniform mat3 u_NormalMatrix;
 
 out vec3 WorldPos;
 out vec3 Normal;
