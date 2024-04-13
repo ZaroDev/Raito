@@ -74,7 +74,7 @@ namespace Raito::Renderer::D3D12::Core
 	    }
     }
 
-    D3D12Device* const Device();
+    Microsoft::WRL::ComPtr<D3D12Device> Device();
 
     //! Surface creation function
     //! @param window window that the surface will be displayed on

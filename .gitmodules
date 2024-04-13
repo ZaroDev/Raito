@@ -19,3 +19,6 @@
 	path = Core/Vendor/assimp
 	url = https://github.com/ZaroDev/assimp.git
 	ignore = dirty
+[submodule "Core/Vendor/nvrhi"]
+	path = Core/Vendor/nvrhi
+	url = https://github.com/ZaroDev/nvrhi.git

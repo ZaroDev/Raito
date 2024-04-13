@@ -26,6 +26,7 @@ SOFTWARE.
 #include "Raito/Core/BasicTypes.h"
 #include "Raito/Core/Assert.h"
 #include "Raito/Renderer/Renderer.h"
+#include <nvrhi/d3d12.h>
 
 #include <dxgi1_6.h>
 #include <d3d12.h>
@@ -36,7 +37,6 @@ SOFTWARE.
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d12.lib")
 
-#include <D3D12MemAlloc.h>
 
 namespace Raito::Renderer::D3D12
 {
