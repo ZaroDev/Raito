@@ -25,43 +25,25 @@ SOFTWARE.
 #include "pch.h"
 #include "D3D12Core.h"
 #include "D3D12Common.h"
+#include "D3D12Objects/D3D12Callback.h"
 
 #ifdef DEBUG
 #include <nvrhi/validation.h>
 #endif
 
 #define HR_RETURN(hr, msg) if(FAILED(hr)) { D_LOG(msg); return false; }
+
 namespace Raito::Renderer::D3D12::Core
 {
 	using namespace Microsoft::WRL;
 
 	namespace
 	{
-		struct D3D12Callback : public nvrhi::IMessageCallback
-		{
-			D3D12Callback() = default;
-			virtual ~D3D12Callback() = default;
-
-			void message(nvrhi::MessageSeverity severity, const char* messageText) override
-			{
-				switch (severity)
-				{
-				case nvrhi::MessageSeverity::Info: D_LOG("{0}", messageText);
-					break;
-				case nvrhi::MessageSeverity::Warning: D_WARN("{0}", messageText);
-					break;
-				case nvrhi::MessageSeverity::Error: D_ERROR("{0}", messageText);
-					break;
-				case nvrhi::MessageSeverity::Fatal: D_ERROR("{0}", messageText);
-					break;
-				}
-			}
-		};
+		
 
 		constexpr D3D_FEATURE_LEVEL c_MinimumFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
 		ComPtr<IDXGIFactory2> g_DXGIFactory = nullptr;
-		ComPtr<IDXGISwapChain3> g_SwapChain = nullptr;
 		ComPtr<IDXGIAdapter> g_DXGIAdapter = nullptr;
 		ComPtr<D3D12Device> g_Device = nullptr;
 		ComPtr<ID3D12CommandQueue> g_GraphicsCommandQueue = nullptr;
@@ -182,7 +164,15 @@ namespace Raito::Renderer::D3D12::Core
 
 	void Shutdown()
 	{
-		
+		g_DeviceHandle = nullptr;
+
+		// TODO: Fence events clear
+
+		g_GraphicsCommandQueue = nullptr;
+		g_ComputeCommandQueue = nullptr;
+		g_CopyCommandQueue = nullptr;
+		g_Device = nullptr;
+
 	}
 
 	void SetDeferredReleasesFlags()

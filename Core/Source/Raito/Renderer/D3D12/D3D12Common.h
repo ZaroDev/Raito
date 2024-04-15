@@ -46,6 +46,8 @@ namespace Raito::Renderer::D3D12
     using D3D12Factory = IDXGIFactory7;
 }
 
+using namespace Microsoft::WRL;
+
 #define ENABLE_GPU_BASE_VALIDATION 0
 
 #ifndef DIST
