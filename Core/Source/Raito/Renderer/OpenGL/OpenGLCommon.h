@@ -47,6 +47,15 @@ namespace Raito::Renderer::OpenGL
 		u64 Handle = 0;
 		u32 Id = 0;
 	};
+
+	struct OpenGLMeshData
+	{
+		u32 VAO = 0;
+		u32 VBO = 0;
+		u32 EBO = 0;
+
+		GLsizei IndexCount = 0;
+	};
 }
 
 #ifndef DIST

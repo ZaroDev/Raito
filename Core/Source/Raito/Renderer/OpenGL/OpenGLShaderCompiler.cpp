@@ -29,7 +29,7 @@ SOFTWARE.
 
 namespace Raito::Renderer::OpenGL::ShaderCompiler
 {
-	namespace 
+	namespace
 	{
 		std::vector<Shader*> g_Shaders{};
 
@@ -39,6 +39,8 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		constexpr ShaderFileData c_ShaderFiles[]
 		{
 			{"DefaultMesh", EngineShader::DEFAULT_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"GBuffer", EngineShader::G_BUFFER,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"DeferredLight", EngineShader::DEFERRED,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"DefaultLight", EngineShader::DEFAULT_LIGHT, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"Skybox", EngineShader::SKYBOX, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"GaussianBlur", EngineShader::GAUSSIAN_BLUR, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
@@ -82,7 +84,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
-			if(success == GL_FALSE)
+			if (success == GL_FALSE)
 			{
 				char infoLog[512];
 				glGetShaderInfoLog(shader, 512, NULL, infoLog);
@@ -121,7 +123,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			glDeleteShader(vertex);
 		}
 
-		if(data.Type & OpenGLShaderType::FRAGMENT)
+		if (data.Type & OpenGLShaderType::FRAGMENT)
 		{
 			filePath.replace_extension(".frag");
 
@@ -131,7 +133,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			glDeleteShader(fragment);
 		}
 
-		if(data.Type & OpenGLShaderType::GEOMETRY)
+		if (data.Type & OpenGLShaderType::GEOMETRY)
 		{
 			filePath.replace_extension(".geo");
 
@@ -141,7 +143,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			glDeleteShader(geometry);
 		}
 
-		if(data.Type & OpenGLShaderType::COMPUTE)
+		if (data.Type & OpenGLShaderType::COMPUTE)
 		{
 			filePath.replace_extension(".geo");
 
@@ -156,7 +158,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		GLint success;
 		glGetProgramiv(programId, GL_LINK_STATUS, &success);
 
-		if(success == GL_FALSE)
+		if (success == GL_FALSE)
 		{
 			char infoLog[512];
 			glGetProgramInfoLog(programId, 512, NULL, infoLog);
@@ -172,7 +174,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		shader->m_FilePath = filePath;
 		shader->m_EngineType = data.Id;
 
-		if(g_Shaders.size() > data.Id && g_Shaders.at(data.Id) != nullptr)
+		if (g_Shaders.size() > data.Id && g_Shaders.at(data.Id) != nullptr)
 		{
 			delete g_Shaders.at(data.Id);
 			g_Shaders.erase(g_Shaders.begin() + data.Id);
@@ -198,7 +200,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 
 	ShaderFileData GetFileData(EngineShader id)
 	{
-		if(id >= EngineShader::ENGINE_SHADER_MAX)
+		if (id >= EngineShader::ENGINE_SHADER_MAX)
 		{
 			return ShaderFileData();
 		}

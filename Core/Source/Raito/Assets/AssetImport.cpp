@@ -152,14 +152,14 @@ namespace Raito::Assets
 				else
 				{
 					aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-					const u32 materialId = AddMaterial(Renderer::DEFAULT_MESH);
+					const u32 materialId = AddMaterial(Renderer::DEFERRED);
 					m->MaterialId = materialId;
 
 					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE);
-					LoadTexturesOfType(m, path, material, aiTextureType_NORMALS);
-					LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE);
-					LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP);
-					LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN);
+					//LoadTexturesOfType(m, path, material, aiTextureType_NORMALS);
+					//LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE);
+					//LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP);
+					//LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN);
 
 					g_Materials[mesh->mMaterialIndex] = materialId;
 				}

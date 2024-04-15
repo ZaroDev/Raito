@@ -33,7 +33,7 @@ namespace Raito::Renderer::OpenGL
 		GLint uniformCount;
 		glGetProgramiv(m_ShaderId, GL_ACTIVE_UNIFORMS, &uniformCount);
 
-		for(GLuint i = 0; i < uniformCount; i++)
+		for(GLint i = 0; i < uniformCount; i++)
 		{
 			GLchar name[512];
 			GLint size;
@@ -78,7 +78,7 @@ namespace Raito::Renderer::OpenGL
 		GLint attributeCount;
 		glGetProgramiv(m_ShaderId, GL_ACTIVE_ATTRIBUTES, &attributeCount);
 
-		for (u32 i = 0; i < attributeCount; i++)
+		for (GLint i = 0; i < attributeCount; i++)
 		{
 			GLchar name[512];
 			GLint size;

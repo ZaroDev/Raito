@@ -184,6 +184,9 @@ namespace Raito::Renderer::OpenGL
 				case FrameBufferTextureFormat::RGBA16F:
 					AttachColorTexture(m_ColorAttachments[i], m_Data.Samples, GL_RGBA16F, GL_RGBA, m_Data.Width, m_Data.Height, i);
 					break;
+				case FrameBufferTextureFormat::RGBA:
+					AttachColorTexture(m_ColorAttachments[i], m_Data.Samples, GL_RGBA, GL_RGBA, m_Data.Width, m_Data.Height, i);
+					break;
 				case FrameBufferTextureFormat::RED_INTEGER:
 					AttachColorTexture(m_ColorAttachments[i], m_Data.Samples, GL_R32I, GL_RED_INTEGER, m_Data.Width, m_Data.Height, i);
 					break;

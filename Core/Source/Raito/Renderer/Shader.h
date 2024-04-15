@@ -31,6 +31,8 @@ namespace Raito::Renderer
 	enum EngineShader : u32
 	{
 		DEFAULT_MESH = 0,
+		G_BUFFER,
+		DEFERRED,
 		DEFAULT_LIGHT,
 		SKYBOX,
 		GAUSSIAN_BLUR,
