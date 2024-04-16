@@ -56,6 +56,13 @@ namespace Raito::Renderer::OpenGL::Deferred
 			lightColors.push_back(glm::vec3(rColor, gColor, bColor));
 		}
 
+		const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
+		shader->Bind();
+		shader->SetUniform("gPosition", 0);
+		shader->SetUniform("gNormal", 1);
+		shader->SetUniform("gAlbedoSpec", 2);
+
+
 		return true;
 	}
 
@@ -93,43 +100,45 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 			material.UnBind();
 		}
+		
+		
+		glBindVertexArray(g_FrameBufferQuadVAO);
+		glDisable(GL_DEPTH_TEST);
 
-		//glBindVertexArray(g_FrameBufferQuadVAO);
-		//glDisable(GL_DEPTH_TEST);
+		const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
+		shader->Bind();
 
-		//const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
-		//shader->Bind();
-
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(1));
-		//glActiveTexture(GL_TEXTURE2);
-		//glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(2));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(1));
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(2));
 
 
-		//for (unsigned int i = 0; i < lightPositions.size(); i++)
-		//{
-		//	shader->SetUniformRef(std::string("lights[" + std::to_string(i) + "].Position").c_str(), lightPositions[i]);
-		//	shader->SetUniformRef(std::string("lights[" + std::to_string(i) + "].Color").c_str(), lightColors[i]);
-		//	// update attenuation parameters and calculate radius
-		//	const float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
-		//	const float linear = 0.7f;
-		//	const float quadratic = 1.8f;
-		//	shader->SetUniform(std::string("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
-		//	shader->SetUniform(std::string("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
-		//	// then calculate radius of light volume/sphere
-		//	const float maxBrightness = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
-		//	float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
-		//	shader->SetUniform(std::string("lights[" + std::to_string(i) + "].Radius").c_str(), radius);
-		//}
+		for (unsigned int i = 0; i < lightPositions.size(); i++)
+		{
+			shader->SetUniformRef(std::string("lights[" + std::to_string(i) + "].Position").c_str(), lightPositions[i]);
+			shader->SetUniformRef(std::string("lights[" + std::to_string(i) + "].Color").c_str(), lightColors[i]);
+			// update attenuation parameters and calculate radius
+			const float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+			const float linear = 0.7f;
+			const float quadratic = 1.8f;
+			shader->SetUniform(std::string("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
+			shader->SetUniform(std::string("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
+			// then calculate radius of light volume/sphere
+			const float maxBrightness = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
+			float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
+			shader->SetUniform(std::string("lights[" + std::to_string(i) + "].Radius").c_str(), radius);
+		}
 
-		//shader->SetUniformRef("u_ViewPos", camera->GetPosition());
+		shader->SetUniformRef("u_ViewPos", camera->GetPosition());
 
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		//shader->UnBind();
+		shader->UnBind();
 		buffer.UnBind();
+
 	}
 
 	void Shutdown()

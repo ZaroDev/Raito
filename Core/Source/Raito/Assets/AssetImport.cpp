@@ -152,7 +152,7 @@ namespace Raito::Assets
 				else
 				{
 					aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-					const u32 materialId = AddMaterial(Renderer::DEFERRED);
+					const u32 materialId = AddMaterial(Renderer::G_BUFFER);
 					m->MaterialId = materialId;
 
 					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE);
