@@ -176,6 +176,8 @@ namespace Raito::Renderer::OpenGL
 			memcpy(m_Uniforms[name].Value, &value, sizeof(T));
 		}
 
+
+		NODISCARD const ShaderValue& GetUniformValue(const std::string& name) { return m_Uniforms[name].Data; }
 	private:
 		u32 m_ShaderId;
 		std::unordered_map<std::string, UniformValue> m_Uniforms{};

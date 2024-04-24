@@ -105,6 +105,11 @@ namespace Raito::Renderer::OpenGL
 		NODISCARD u32 Id() const { return m_ShaderId; }
 
 
+		GLint GetUniformLocation(const std::string& uniformName) const
+		{
+			return GetUniformLocation(uniformName.c_str());
+		}
+
 		GLint GetUniformLocation(const char* uniformName) const
 		{
 			if(m_Uniforms.contains(uniformName))

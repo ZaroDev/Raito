@@ -20,5 +20,7 @@ namespace Editor
 	private:
 		std::vector<float> m_DeltaTimeLog{};
 		std::vector<float> m_FPSLog{};
+
+		bool m_Vsync = false;
 	};
 }

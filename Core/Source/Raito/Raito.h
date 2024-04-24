@@ -29,6 +29,8 @@ SOFTWARE.
 #include <Raito/Core/Assert.h>
 #include <Raito/Core/Common.h>
 #include <Raito/Core/Application.h>
+#include <Raito/Time/Time.h>
+#include <Raito/Time/ScopedTimer.h>
 // ECS
 #include <Raito/ECS/Scene.h>
 #include <Raito/ECS/Entity.h>

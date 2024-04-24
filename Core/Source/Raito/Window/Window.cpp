@@ -223,5 +223,14 @@ namespace Raito
 
 			return *g_RenderSurfaces[id].Window;
 		}
+
+		void SetFullScreen(bool value)
+		{
+		}
+
+		void SetVSync(bool value)
+		{
+			glfwSwapInterval(value);
+		}
 	}
 }
