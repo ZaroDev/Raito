@@ -14,10 +14,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
 		constexpr u32 c_MaxLights = 32;
-		std::vector<V3> g_LightPositions;
-		std::vector<V3> g_LightColors;
-
-
 
 		struct LightUniformLocations
 		{
@@ -56,20 +52,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 
-		for (unsigned int i = 0; i < c_MaxLights; i++)
-		{
-			// calculate slightly random offsets
-			float xPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
-			float yPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 4.0);
-			float zPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
-			g_LightPositions.push_back(glm::vec3(xPos, yPos, zPos));
-			// also calculate random color
-			float rColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-			float gColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-			float bColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
-			g_LightColors.push_back(glm::vec3(rColor, gColor, bColor));
-		}
-
 		{
 			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
 			shader->Bind();
@@ -105,7 +87,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 		auto& scene = Core::Application::Get().Scene;
 		const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
-		const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
 		for (auto& entity : view)
 		{
 			const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
@@ -144,10 +125,18 @@ namespace Raito::Renderer::OpenGL::Deferred
 		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(2));
 
 
-		for (unsigned int i = 0; i < g_LightPositions.size(); i++)
+		const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
+
+		u32 i = 0;
+		for (auto& light : lightView)
 		{
-			shader->SetUniformRef(g_UniformLocations[i].Position, g_LightPositions[i]);
-			shader->SetUniformRef(g_UniformLocations[i].Color, g_LightColors[i]);
+			const auto position = lightView.get<ECS::TransformComponent>(light).Translation;
+			const ECS::LightComponent& lightCmp = lightView.get<ECS::LightComponent>(light);
+
+
+
+			shader->SetUniformRef(g_UniformLocations[i].Position, position);
+			shader->SetUniformRef(g_UniformLocations[i].Color, lightCmp.Color);
 			// update attenuation parameters and calculate radius
 			const float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
 			const float linear = 0.7f;
@@ -155,9 +144,11 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->SetUniform(g_UniformLocations[i].Linear, linear);
 			shader->SetUniform(g_UniformLocations[i].Quadratic, quadratic);
 			// then calculate radius of light volume/sphere
-			const float maxBrightness = std::fmaxf(std::fmaxf(g_LightColors[i].r, g_LightColors[i].g), g_LightColors[i].b);
+			const float maxBrightness = std::fmaxf(std::fmaxf(lightCmp.Color.r, lightCmp.Color.g), lightCmp.Color.b);
 			float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
 			shader->SetUniform(g_UniformLocations[i].Radius, radius);
+
+			++i;
 		}
 
 		shader->SetUniformRef(g_ViewPosLocation, camera->GetPosition());

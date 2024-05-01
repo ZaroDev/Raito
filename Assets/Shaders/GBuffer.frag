@@ -16,6 +16,7 @@ in vec3 WorldPos;
 void main() {
     gPosition = vec4(WorldPos, 1.0);
     gNormal = vec4(normalize(Normal), 1.0);
-    gAlbedo = texture(u_Albedo, TexCoord);
+    gAlbedo.rgb = texture(u_Albedo, TexCoord).rgb;
+    gAlbedo.a = 1.0;
     gFinalColor = vec4(1.0);
 }
