@@ -1,6 +1,6 @@
 #version 460 core
 
-layout(location = 3) out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
@@ -17,39 +17,46 @@ struct Light {
     float Radius;
 };
 const int NR_LIGHTS = 32;
-uniform Light lights[NR_LIGHTS];
+uniform Light u_Lights[NR_LIGHTS];
+uniform int u_LightsNum;
 uniform vec3 u_ViewPos;
+
+vec3 CalcLight(Light light, vec3 diffuse, float specular, vec3 normal, vec3 fragPos, vec3 viewDir){
+    float distance = length(light.Position - fragPos);
+    if(distance < light.Radius) {
+        // Diffuse
+        vec3 lightDir = normalize(light.Position - fragPos);
+        vec3 lightDiffuse = max(dot(normal, lightDir), 0.0) * diffuse * light.Color;
+
+        // Specular
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        float lightSpec = pow(max(dot(normal, halfwayDir), 0.0), 16.0);
+        vec3 lightSpecular = light.Color * lightSpec * specular;
+
+        // Attenuation
+        float attenuation = 1.0 / (1.0 + light.Linear * distance + light.Quadratic * distance * distance);
+        lightDiffuse *= attenuation;
+        lightSpecular *= attenuation;
+
+        return (lightDiffuse + lightSpecular);
+    }
+
+    return vec3(0.0);
+}
 
 void main() {
     vec3 FragPos = texture(gPosition, TexCoord).rgb;
     vec3 Normal = texture(gNormal, TexCoord).rgb;
     vec3 Diffuse = texture(gAlbedoSpec, TexCoord).rgb;
     float Specular = texture(gAlbedoSpec, TexCoord).a;
+    vec3 ViewDir  = normalize(u_ViewPos - FragPos);
+
+    vec3 result = Diffuse * 0.1;
     
-    // then calculate lighting as usual
-    vec3 lighting  = Diffuse * 0.1; // hard-coded ambient component
-    vec3 viewDir  = normalize(u_ViewPos - FragPos);
-    for(int i = 0; i < NR_LIGHTS; ++i)
-    {
-        // calculate distance between light source and current fragment
-        float distance = length(lights[i].Position - FragPos);
-        if(distance < lights[i].Radius)
-        {
-            // diffuse
-            vec3 lightDir = normalize(lights[i].Position - FragPos);
-            vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * lights[i].Color;
-            // specular
-            vec3 halfwayDir = normalize(lightDir + viewDir);  
-            float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
-            vec3 specular = lights[i].Color * spec * Specular;
-            // attenuation
-            float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
-            diffuse *= attenuation;
-            specular *= attenuation;
-            lighting += diffuse + specular;
-        }
+    for(int i = 0; i < u_LightsNum; i++) {
+        result += CalcLight(u_Lights[i], Diffuse, Specular, Normal, FragPos, ViewDir);
     }
     
 
-    FragColor = vec4(lighting, 1.0);
+    FragColor = vec4(result, 1.0);
 }

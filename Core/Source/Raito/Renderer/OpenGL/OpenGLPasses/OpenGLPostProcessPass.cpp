@@ -35,6 +35,11 @@ namespace Raito::Renderer::OpenGL::PostProcess
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
+		const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
+		shader->Bind();
+		shader->SetUniform("u_ScreenTexture", 0);
+		shader->UnBind();
+
 		return true;
 	}
 
@@ -51,7 +56,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 		glDisable(GL_DEPTH_TEST);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(3));
+		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 

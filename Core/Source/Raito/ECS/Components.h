@@ -87,12 +87,19 @@ namespace Raito::ECS
 
 	struct LightComponent
 	{
+		enum class Type
+		{
+			DIRECTIONAL,
+			POINT_LIGHT,
+			SPOT_LIGHT
+		} LightType;
+
 		V3 Color = { 1.0f, 1.0f, 1.0f };
 
 		LightComponent() = default;
 		LightComponent(const LightComponent&) = default;
-		LightComponent(V3 color)
-			: Color(color){}
+		LightComponent(Type type ,V3 color)
+			: LightType(type),Color(color){}
 	};
 
 }

@@ -14,5 +14,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 {
 	bool Initialize();
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer);
+
 	void Shutdown();
+
+	NODISCARD u32 GetDeferredAttachment(u32 id);
 }

@@ -28,13 +28,13 @@ namespace Editor
 
 
 		ImGui::Text("Position buffer");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.ColorAttachment(), size, uv0, uv1);
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(), size, uv0, uv1);
 
 		ImGui::Text("Normal buffer");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.ColorAttachment(1), size, uv0, uv1);
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(1), size, uv0, uv1);
 
 		ImGui::Text("Albedo buffer");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.ColorAttachment(2), size, uv0, uv1);
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(2), size, uv0, uv1);
 
 		ImGui::Text("Depth buffer");
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DepthAttachment(), size, uv0, uv1);

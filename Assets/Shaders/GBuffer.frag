@@ -2,9 +2,8 @@
 #extension GL_ARB_bindless_texture: require
 
 layout(location = 0) out vec4 gPosition;
-layout(location = 1) out vec4 gNormal;
 layout(location = 2) out vec4 gAlbedo;
-layout(location = 3) out vec4 gFinalColor;
+layout(location = 1) out vec4 gNormal;
 
 layout(bindless_sampler) uniform sampler2D u_Albedo;
 
@@ -17,6 +16,5 @@ void main() {
     gPosition = vec4(WorldPos, 1.0);
     gNormal = vec4(normalize(Normal), 1.0);
     gAlbedo.rgb = texture(u_Albedo, TexCoord).rgb;
-    gAlbedo.a = 1.0;
-    gFinalColor = vec4(1.0);
+    gAlbedo.a = 0.5;
 }

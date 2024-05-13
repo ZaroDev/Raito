@@ -42,8 +42,9 @@ namespace Raito::Renderer::OpenGL
 		rhi.Surface.Resize = ResizeSurface;
 		rhi.Surface.Render = RenderSurface;
 		rhi.Surface.Height = SurfaceHeight;
-		rhi.Surface.GetColorAttachment = GetColorGetAttachment;
+		rhi.Surface.GetColorAttachment = GetColorAttachment;
 		rhi.Surface.GetDepthAttachment = GetDepthAttachment;
+		rhi.Surface.GetDeferredAttachment = GetDeferredBufferAttachment;
 		rhi.Surface.Width = SurfaceWidth;
 
 		rhi.Shader.GetShader = ShaderCompiler::GetShader;

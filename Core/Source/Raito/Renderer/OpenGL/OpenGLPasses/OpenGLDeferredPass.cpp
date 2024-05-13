@@ -25,11 +25,29 @@ namespace Raito::Renderer::OpenGL::Deferred
 		} g_UniformLocations[c_MaxLights];
 
 		GLint g_ViewPosLocation;
+		GLint g_LightNumLocation;
+
+		GLint g_LightCount = 0;
+
+		OpenGLFrameBuffer* g_FrameBuffer = nullptr;
 
 	}
 
 	bool Initialize()
 	{
+		g_FrameBuffer = new  OpenGLFrameBuffer(
+			FrameBufferData{
+				{
+					FrameBufferTextureFormat::RGBA16F,	// Position buffer
+					FrameBufferTextureFormat::RGBA16F,	// Normal buffer
+					FrameBufferTextureFormat::RGBA16F,	// Albedo buffer
+					FrameBufferTextureFormat::Depth		// Depth buffer
+				},
+				1920,
+				1080,
+				1
+			});
+
 		constexpr float quadVertices[] = {
 			// positions   // texCoords
 			-1.0f,  1.0f,  0.0f, 1.0f,
@@ -59,17 +77,17 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->SetUniform("gNormal", 1);
 			shader->SetUniform("gAlbedoSpec", 2);
 
-			for(u32 i = 0; i < c_MaxLights; i++)
+			for (u32 i = 0; i < c_MaxLights; i++)
 			{
-				g_UniformLocations[i].Position = shader->GetUniformLocation(std::string("lights[" + std::to_string(i) + "].Position"));
-				g_UniformLocations[i].Color = shader->GetUniformLocation(std::string("lights[" + std::to_string(i) + "].Color"));
-				g_UniformLocations[i].Linear = shader->GetUniformLocation(std::string("lights[" + std::to_string(i) + "].Linear"));
-				g_UniformLocations[i].Quadratic = shader->GetUniformLocation(std::string("lights[" + std::to_string(i) + "].Quadratic"));
-				g_UniformLocations[i].Radius = shader->GetUniformLocation(std::string("lights[" + std::to_string(i) + "].Radius"));
+				g_UniformLocations[i].Position = shader->GetUniformLocation(std::string("u_Lights[" + std::to_string(i) + "].Position"));
+				g_UniformLocations[i].Color = shader->GetUniformLocation(std::string("u_Lights[" + std::to_string(i) + "].Color"));
+				g_UniformLocations[i].Linear = shader->GetUniformLocation(std::string("u_Lights[" + std::to_string(i) + "].Linear"));
+				g_UniformLocations[i].Quadratic = shader->GetUniformLocation(std::string("u_Lights[" + std::to_string(i) + "].Quadratic"));
+				g_UniformLocations[i].Radius = shader->GetUniformLocation(std::string("u_Lights[" + std::to_string(i) + "].Radius"));
 			}
 
 			g_ViewPosLocation = shader->GetUniformLocation("u_ViewPos");
-
+			g_LightNumLocation = shader->GetUniformLocation("u_LightsNum");
 			shader->UnBind();
 		}
 
@@ -78,15 +96,18 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
 	{
-		buffer.Bind();
+		g_FrameBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
+		g_FrameBuffer->Bind();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
+		glDepthFunc(GL_LESS);
 		glDisable(GL_BLEND);
 
 		auto& scene = Core::Application::Get().Scene;
 		const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
+		const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
+
 		for (auto& entity : view)
 		{
 			const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
@@ -95,6 +116,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 			const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
 
 			OpenGLMaterial& material = GetMaterial(mesh.MaterialId);
+
 
 			material.SetValue("u_View", camera->GetView());
 			material.SetValue("u_Projection", camera->GetProjection());
@@ -109,7 +131,9 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 			material.UnBind();
 		}
+		g_FrameBuffer->UnBind();
 
+		buffer.Bind();
 
 		glBindVertexArray(g_FrameBufferQuadVAO);
 		glDisable(GL_DEPTH_TEST);
@@ -118,51 +142,53 @@ namespace Raito::Renderer::OpenGL::Deferred
 		shader->Bind();
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
+		glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment());
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(1));
+		glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(2));
+		glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(2));
 
 
-		const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
 
-		u32 i = 0;
+		GLint i = 0;
 		for (auto& light : lightView)
 		{
 			const auto position = lightView.get<ECS::TransformComponent>(light).Translation;
 			const ECS::LightComponent& lightCmp = lightView.get<ECS::LightComponent>(light);
 
-
-
 			shader->SetUniformRef(g_UniformLocations[i].Position, position);
 			shader->SetUniformRef(g_UniformLocations[i].Color, lightCmp.Color);
 			// update attenuation parameters and calculate radius
-			const float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
-			const float linear = 0.7f;
-			const float quadratic = 1.8f;
+			constexpr float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+			constexpr float linear = 0.7f;
+			constexpr float quadratic = 1.8f;
 			shader->SetUniform(g_UniformLocations[i].Linear, linear);
 			shader->SetUniform(g_UniformLocations[i].Quadratic, quadratic);
 			// then calculate radius of light volume/sphere
 			const float maxBrightness = std::fmaxf(std::fmaxf(lightCmp.Color.r, lightCmp.Color.g), lightCmp.Color.b);
-			float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
+			const float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
 			shader->SetUniform(g_UniformLocations[i].Radius, radius);
 
-			++i;
+			i++;
 		}
-
+		g_LightCount = i;
+		shader->SetUniform(g_LightNumLocation, g_LightCount);
 		shader->SetUniformRef(g_ViewPosLocation, camera->GetPosition());
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		shader->UnBind();
 		buffer.UnBind();
-
 	}
 
 	void Shutdown()
 	{
 		glDeleteVertexArrays(1, &g_FrameBufferQuadVAO);
 		glDeleteBuffers(1, &g_FrameBufferQuadVBO);
+	}
+
+	u32 GetDeferredAttachment(u32 id)
+	{
+		return g_FrameBuffer->ColorAttachment(id);
 	}
 }

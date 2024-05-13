@@ -45,7 +45,7 @@ namespace Editor
 			const float bColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
 
 			Raito::ECS::Entity entity = Scene.CreateEntity("Light");
-			entity.AddComponent<Raito::ECS::LightComponent>(Raito::V3{ rColor , gColor , bColor });
+			entity.AddComponent<Raito::ECS::LightComponent>(Raito::ECS::LightComponent::Type::POINT_LIGHT ,Raito::V3{ rColor , gColor , bColor });
 			entity.AddOrReplaceComponent<Raito::ECS::TransformComponent>(
 				Raito::V3{ xPos, yPos, zPos },
 				Raito::Quaternion{ Raito::V3(0.0f) },

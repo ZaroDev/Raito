@@ -126,10 +126,7 @@ namespace Raito::Renderer::OpenGL
 		// Deferred color attachments
 		data.Attachments =
 		{
-			FrameBufferTextureFormat::RGBA16F,	// Position color buffer
-			FrameBufferTextureFormat::RGBA16F,	// Normal color buffer
-			FrameBufferTextureFormat::RGBA16F,	// Albedo color buffer
-			FrameBufferTextureFormat::RGBA16F,	// Final color buffer
+			FrameBufferTextureFormat::RGBA16F,
 			FrameBufferTextureFormat::Depth		// Depth buffer
 		};
 		data.Width = window->Info.Width;
@@ -161,7 +158,7 @@ namespace Raito::Renderer::OpenGL
 		return g_Surfaces[id].Data().Height;
 	}
 
-	u32 GetColorGetAttachment(u32 target, u32 id)
+	u32 GetColorAttachment(u32 target, u32 id)
 	{
 		return g_Surfaces[target].ColorAttachment(id);
 	}
@@ -169,6 +166,11 @@ namespace Raito::Renderer::OpenGL
 	u32 GetDepthAttachment(u32 id)
 	{
 		return g_Surfaces[id].DepthAttachment();
+	}
+
+	u32 GetDeferredBufferAttachment(u32 id)
+	{
+		return Deferred::GetDeferredAttachment(id);
 	}
 
 	void RenderSurface(u32 id)
