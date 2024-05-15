@@ -24,6 +24,8 @@
 #include <Raito/Renderer/OpenGL/OpenGLPasses/OpenGLDeferredPass.h>
 
 
+#include "Assets/Mesh.h"
+#include "OpenGLPasses/OpenGLGridPass.h"
 #include "optick/include/optick.h"
 
 namespace Raito::Renderer::OpenGL
@@ -84,6 +86,7 @@ namespace Raito::Renderer::OpenGL
 		}
 
 		Forward::Initialize();
+		Grid::Initialize();
 		Deferred::Initialize();
 		PostProcess::Initialize();
 
@@ -182,6 +185,8 @@ namespace Raito::Renderer::OpenGL
 		g_Camera.OnResize(buffer.Data().Width, buffer.Data().Height);
 		g_Camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
 
+		
+
 		switch (g_Technique)
 		{
 			case LightTechnique::Forward: Forward::Update(&g_Camera, buffer); break;
@@ -194,6 +199,16 @@ namespace Raito::Renderer::OpenGL
 	u32 AddMesh(Assets::Mesh* mesh)
 	{
 		OpenGLMeshData data;
+
+		switch (mesh->RenderMode)
+		{
+		case Assets::RenderMode::TRIANGLE: data.RenderMode = GL_TRIANGLES;
+			break;
+		case Assets::RenderMode::TRIANGLE_STRIP: data.RenderMode = GL_TRIANGLE_STRIP;
+			break;
+		case Assets::RenderMode::TRIANGLE_FAN: data.RenderMode = GL_TRIANGLE_FAN;
+			break;
+		}
 
 		data.IndexCount = static_cast<u32>(mesh->Indices.size());
 

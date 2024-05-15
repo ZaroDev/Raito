@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Panel.h"
+#include "Raito/ECS/Entity.h"
 
 namespace Editor
 {
@@ -15,5 +16,14 @@ namespace Editor
 
 		void Update() override;
 		void Render() override;
+
+	private:
+		void DrawEntityNode(Raito::ECS::Entity entity);
+		void DrawComponents(Raito::ECS::Entity entity);
+		template<typename T>
+		void DisplayAddComponentEntry(const std::string& entryName);
+
+		Raito::ECS::Scene* m_Context;
+		Raito::ECS::Entity m_SelectionContext;
 	};
 }

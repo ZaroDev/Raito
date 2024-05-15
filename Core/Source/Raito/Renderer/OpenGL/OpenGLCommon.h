@@ -53,6 +53,7 @@ namespace Raito::Renderer::OpenGL
 		u32 VAO = 0;
 		u32 VBO = 0;
 		u32 EBO = 0;
+		u32 RenderMode = 0;
 
 		GLsizei IndexCount = 0;
 	};

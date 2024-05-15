@@ -122,6 +122,23 @@ namespace Raito::Renderer
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
+		const float ar = m_ViewportWidth / m_ViewportHeight;
+
+		if (ar >= 1.0)
+		{
+			m_Parameters.Left = -ar * m_ViewportWidth;
+			m_Parameters.Right = ar * m_ViewportWidth;
+			m_Parameters.Top = m_ViewportWidth;
+			m_Parameters.Bottom = -m_ViewportWidth;
+		}
+		else
+		{
+			m_Parameters.Left = -m_ViewportWidth;
+			m_Parameters.Right = m_ViewportWidth;
+			m_Parameters.Top =  m_ViewportWidth / ar;
+			m_Parameters.Bottom = -m_ViewportWidth / ar;
+		}
+
 		RecalculateProjection();
 	}
 
@@ -140,6 +157,8 @@ namespace Raito::Renderer
 	{
 		m_View = glm::lookAt(m_Position, m_Position + m_ForwardDirection, glm::vec3(0, 1, 0));
 		m_InverseView = glm::inverse(m_View);
+
+		
 	}
 
 }

@@ -31,6 +31,7 @@ SOFTWARE.
 // Modules
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
+#include "Assets/Assets.h"
 
 #include "Time/ScopedTimer.h"
 #include "Time/Time.h"
@@ -68,6 +69,12 @@ namespace Raito::Core
 		if (!Renderer::Initialize())
 		{
 			LOG("Application", "Failed to initialize renderer module");
+			return Failed();
+		}
+
+		if(!Assets::Initialize())
+		{
+			LOG("Application", "Failed to initialize assets module");
 			return Failed();
 		}
 

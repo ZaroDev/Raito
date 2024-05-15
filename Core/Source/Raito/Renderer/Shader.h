@@ -39,6 +39,7 @@ namespace Raito::Renderer
 		EQUIRECTANGULAR_TO_CUBEMAP,
 		IRRADIANCE,
 		POST_PROCESS,
+		GRID,
 		ENGINE_SHADER_MAX
 	};
 

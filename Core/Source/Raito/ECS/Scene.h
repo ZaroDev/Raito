@@ -23,9 +23,14 @@ SOFTWARE.
 */
 
 #pragma once
-#include "Core/UUID.h"
+#include <Raito/Core/UUID.h>
 #include "Entt/entt.hpp"
 
+
+namespace Editor
+{
+	class Hierarchy;
+}
 
 namespace Raito::ECS
 {
@@ -76,5 +81,6 @@ namespace Raito::ECS
 		std::unordered_map<UUID, entt::entity> m_Entities{}; /**< Registered entities map */
 
 		friend class Entity;
+		friend class Editor::Hierarchy;
 	};
 }

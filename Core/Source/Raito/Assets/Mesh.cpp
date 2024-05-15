@@ -34,6 +34,11 @@ namespace Raito::Assets
 
 	}
 
+	Mesh::Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices, Assets::RenderMode mode)
+		: Vertices(vertex), Indices(indices), RenderMode(mode)
+	{
+	}
+
 	Mesh::~Mesh()
 	{
 		Vertices.clear();

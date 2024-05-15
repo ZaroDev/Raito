@@ -47,6 +47,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			{"EquirectangularToCubemap", EngineShader::EQUIRECTANGULAR_TO_CUBEMAP, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{"Irradiance", EngineShader::IRRADIANCE, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"Grid", EngineShader::GRID,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT }
 		};
 
 		static_assert(_countof(c_ShaderFiles) == EngineShader::ENGINE_SHADER_MAX);

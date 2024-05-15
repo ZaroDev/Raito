@@ -27,6 +27,13 @@ SOFTWARE.
 
 namespace Raito::Assets
 {
+	enum class RenderMode
+	{
+		TRIANGLE,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN
+	};
+
 	struct Vertex
 	{
 		V3 Position;
@@ -38,6 +45,7 @@ namespace Raito::Assets
 	{
 		Mesh() = default;
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
+		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices, RenderMode mode);
 		~Mesh();
 	
 		std::vector<Vertex> Vertices{};
@@ -48,5 +56,6 @@ namespace Raito::Assets
 		std::string Name{};
 
 		u32 MaterialId;
+		RenderMode RenderMode = RenderMode::TRIANGLE;
 	};
 }

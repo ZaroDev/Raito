@@ -24,7 +24,7 @@ SOFTWARE.
 
 #pragma once
 
-#include "Math/MathTypes.h"
+#include <Raito/Math/MathTypes.h>
 
 namespace Raito::Math
 {

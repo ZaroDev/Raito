@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #pragma once
-#include "Core/BasicTypes.h"
+#include <Raito/Core/BasicTypes.h>
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL

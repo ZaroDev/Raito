@@ -26,8 +26,8 @@ SOFTWARE.
 
 #include <string>
 
-#include "Core/UUID.h"
-#include "Math/Math.h"
+#include <Raito/Core/UUID.h>
+#include <Raito/Math/Math.h>
 
 namespace Raito::ECS
 {
@@ -95,11 +95,15 @@ namespace Raito::ECS
 		} LightType;
 
 		V3 Color = { 1.0f, 1.0f, 1.0f };
+		V3 Direction = { 0.0f, 0.0f, 0.0f };
 
 		LightComponent() = default;
 		LightComponent(const LightComponent&) = default;
-		LightComponent(Type type ,V3 color)
-			: LightType(type),Color(color){}
+		LightComponent(const Type type, const V3 color)
+			: LightType(type), Color(color), Direction(0.0) {}
+
+		LightComponent(const Type type , const V3 color, const V3 direction)
+			: LightType(type),Color(color), Direction(direction){}
 	};
 
 }

@@ -32,7 +32,7 @@ namespace Editor
 		Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
 		//Raito::Assets::ImportModel("Meshes/Porsche911/scene.gltf");
 		//Raito::Assets::ImportModel("Meshes/WaterBottle/WaterBottle.gltf");
-
+		
 		for (u32 i = 0; i < 32; i++)
 		{
 			const float xPos = static_cast<float>(((rand() % 100) / 100.0) * 6.0 - 3.0);
@@ -44,14 +44,39 @@ namespace Editor
 			const float gColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
 			const float bColor = static_cast<float>(((rand() % 100) / 200.0f) + 0.5); // between 0.5 and 1.)
 
-			Raito::ECS::Entity entity = Scene.CreateEntity("Light");
-			entity.AddComponent<Raito::ECS::LightComponent>(Raito::ECS::LightComponent::Type::POINT_LIGHT ,Raito::V3{ rColor , gColor , bColor });
+			Raito::ECS::Entity entity = Scene.CreateEntity("Point Light");
+			entity.AddComponent<Raito::ECS::LightComponent>(
+				Raito::ECS::LightComponent::Type::POINT_LIGHT,
+				Raito::V3{ rColor , gColor , bColor }
+			);
+			entity.AddComponent<Raito::ECS::MeshComponent>(
+				Raito::Assets::GetDefaultSphere(),
+				Raito::Assets::GetChessMaterial()
+			);
 			entity.AddOrReplaceComponent<Raito::ECS::TransformComponent>(
 				Raito::V3{ xPos, yPos, zPos },
 				Raito::Quaternion{ Raito::V3(0.0f) },
 				Raito::V3(1.0f)
 			);
 		}
+		{
+			Raito::ECS::Entity entity = Scene.CreateEntity("Directional light");
+			entity.AddComponent<Raito::ECS::LightComponent>(
+				Raito::ECS::LightComponent::Type::DIRECTIONAL,
+				Raito::V3{ 1.0f , 1.0f , 1.0f },
+				Raito::V3{ 1.0f }
+			);
+			entity.AddComponent<Raito::ECS::MeshComponent>(
+				Raito::Assets::GetDefaultSphere(),
+				Raito::Assets::GetChessMaterial()
+			);
+			entity.AddOrReplaceComponent<Raito::ECS::TransformComponent>(
+				Raito::V3{ 0.0f, 0.0f, 0.0f },
+				Raito::Quaternion{ Raito::V3(0.0f) },
+				Raito::V3(1.0f)
+			);
+		}
+
 		return true;
 	}
 
