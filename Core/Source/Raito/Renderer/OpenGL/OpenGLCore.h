@@ -41,6 +41,7 @@ namespace Raito::Renderer::OpenGL
     NODISCARD u32 GetColorAttachment(u32 target, u32 id);
     NODISCARD u32 GetDepthAttachment(u32 id);
     NODISCARD u32 GetDeferredBufferAttachment(u32 id);
+    NODISCARD u32 GetDeferredBufferDepth();
 
     void RenderSurface(u32 id);
 

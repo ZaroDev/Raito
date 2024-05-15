@@ -45,6 +45,7 @@ namespace Raito::Renderer::OpenGL
 		rhi.Surface.GetColorAttachment = GetColorAttachment;
 		rhi.Surface.GetDepthAttachment = GetDepthAttachment;
 		rhi.Surface.GetDeferredAttachment = GetDeferredBufferAttachment;
+		rhi.Surface.GetDeferredDepth = GetDeferredBufferDepth;
 		rhi.Surface.Width = SurfaceWidth;
 
 		rhi.Shader.GetShader = ShaderCompiler::GetShader;

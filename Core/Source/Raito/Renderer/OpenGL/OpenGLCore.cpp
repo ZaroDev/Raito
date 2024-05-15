@@ -176,6 +176,11 @@ namespace Raito::Renderer::OpenGL
 		return Deferred::GetDeferredAttachment(id);
 	}
 
+	u32 GetDeferredBufferDepth()
+	{
+		return Deferred::GetDeferredDepth();
+	}
+
 	void RenderSurface(u32 id)
 	{
 		OPTICK_EVENT();

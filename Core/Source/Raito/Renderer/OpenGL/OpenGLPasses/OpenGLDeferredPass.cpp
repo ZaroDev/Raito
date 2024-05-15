@@ -232,4 +232,9 @@ namespace Raito::Renderer::OpenGL::Deferred
 	{
 		return g_FrameBuffer->ColorAttachment(id);
 	}
+
+	u32 GetDeferredDepth()
+	{
+		return g_FrameBuffer->DepthAttachment();
+	}
 }

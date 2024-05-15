@@ -152,9 +152,9 @@ namespace Editor
 	{
 		auto& tag = entity.GetComponent<Raito::ECS::TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_Leaf;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+		ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectionContext = entity;
@@ -175,6 +175,7 @@ namespace Editor
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
 		}
+		ImGui::TreePop();
 	}
 
 	void Hierarchy::DrawComponents(Raito::ECS::Entity entity)
@@ -214,6 +215,12 @@ namespace Editor
 				DrawVec3Control("Rotation", rotation);
 				component.Rotation = Raito::Quaternion(glm::radians(rotation));
 				DrawVec3Control("Scale", component.Scale, 1.0f);
+			});
+
+		DrawComponent<Raito::ECS::MeshComponent>("Transform", entity, [](auto& component)
+			{
+				ImGui::InputInt("Mesh id", reinterpret_cast<int*>(&component.MeshId));
+				ImGui::InputInt("Material id", reinterpret_cast<int*>(&component.MaterialId));
 			});
 
 		DrawComponent<Raito::ECS::LightComponent>("Light", entity, [](auto& component)

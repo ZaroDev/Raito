@@ -28,8 +28,8 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Assets>());
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
-		//Raito::Assets::ImportModel("Meshes/Sponza/NewSponza_Main_glTF_002.gltf");
-		Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
+		Raito::Assets::ImportModel("Meshes/Sponza/NewSponza_Main_glTF_002.gltf");
+		//Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
 		//Raito::Assets::ImportModel("Meshes/Porsche911/scene.gltf");
 		//Raito::Assets::ImportModel("Meshes/WaterBottle/WaterBottle.gltf");
 		

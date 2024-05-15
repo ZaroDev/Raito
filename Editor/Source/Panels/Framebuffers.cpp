@@ -37,7 +37,7 @@ namespace Editor
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(2), size, uv0, uv1);
 
 		ImGui::Text("Depth buffer");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DepthAttachment(), size, uv0, uv1);
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredDepth(), size, uv0, uv1);
 
 		
 
