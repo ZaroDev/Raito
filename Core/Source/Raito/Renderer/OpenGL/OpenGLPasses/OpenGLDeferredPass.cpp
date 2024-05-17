@@ -15,29 +15,27 @@ namespace Raito::Renderer::OpenGL::Deferred
 	{
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
-		constexpr u32 c_MaxPointLights = NUM_POINT;
-		constexpr u32 c_MaxDirLights = NUM_DIRECTIONAL;
-
 		struct DirectionalLightUniformLocations
 		{
-			GLint Position;
 			GLint Color;
 			GLint Direction;
-		} g_DirectionalUniformLocations[c_MaxDirLights];
+			GLint CameraPos;
+			GLint PixelSize;
+		} g_DirectionalUniformLocations;
 
 		struct PointLightUniformLocations
 		{
 			GLint Position;
 			GLint Color;
-			GLint Linear;
-			GLint Quadratic;
 			GLint Radius;
-		} g_PointUniformLocations[c_MaxPointLights];
+			GLint CameraPos;
+			GLint PixelSize;
+			GLint View;
+			GLint Projection;
+			GLint Model;
+		} g_PointUniformLocations;
 
-		GLint g_ViewPosLocation;
-		GLint g_PointLightNumLocation;
-		GLint g_DirectionalLightNumLocation;
-
+	
 		GLint g_PointLightCount = 0;
 		GLint g_DirectionalLightCount = 0;
 
@@ -100,6 +98,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->SetUniform("u_Diffuse", 0);
 			shader->SetUniform("u_Emissive", 1);
 			shader->SetUniform("u_Specular", 2);
+
+
 			shader->UnBind();
 		}
 		{
@@ -107,6 +107,17 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->Bind();
 			shader->SetUniform("u_Depth", 0);
 			shader->SetUniform("u_Normal", 1);
+
+			g_PointUniformLocations.View = shader->GetUniformLocation("u_View");
+			g_PointUniformLocations.Model = shader->GetUniformLocation("u_Model");
+			g_PointUniformLocations.Projection = shader->GetUniformLocation("u_Projection");
+			g_PointUniformLocations.CameraPos = shader->GetUniformLocation("u_CameraPos");
+			g_PointUniformLocations.PixelSize = shader->GetUniformLocation("u_PixelSize");
+			g_PointUniformLocations.Position = shader->GetUniformLocation("u_LightPos");
+			g_PointUniformLocations.Color = shader->GetUniformLocation("u_LightColor");
+			g_PointUniformLocations.Radius = shader->GetUniformLocation("u_LightRadius");
+
+
 			shader->UnBind();
 		}
 
@@ -115,6 +126,11 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->Bind();
 			shader->SetUniform("u_Depth", 0);
 			shader->SetUniform("u_Normal", 1);
+
+			g_DirectionalUniformLocations.CameraPos = shader->GetUniformLocation("u_CameraPos");
+			g_DirectionalUniformLocations.PixelSize = shader->GetUniformLocation("u_PixelSize");
+			g_DirectionalUniformLocations.Color = shader->GetUniformLocation("u_LightColor");
+			g_DirectionalUniformLocations.Direction = shader->GetUniformLocation("u_LightDirection");
 			shader->UnBind();
 		}
 		return true;
@@ -196,11 +212,11 @@ namespace Raito::Renderer::OpenGL::Deferred
 					glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
 					
 					auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
-					shader->SetUniformRef("u_CameraPos", camera->GetPosition());
-					shader->SetUniformRef("u_PixelSize", pixel);
+					shader->SetUniformRef(g_DirectionalUniformLocations.CameraPos, camera->GetPosition());
+					shader->SetUniformRef(g_DirectionalUniformLocations.PixelSize, pixel);
 					
-					shader->SetUniformRef("u_LightDirection", glm::radians(lightCmp.Direction));
-					shader->SetUniformRef("u_LightColor", lightCmp.Color);
+					shader->SetUniformRef(g_DirectionalUniformLocations.Direction, glm::radians(lightCmp.Direction));
+					shader->SetUniformRef(g_DirectionalUniformLocations.Color, lightCmp.Color);
 					
 					
 					glBindVertexArray(g_FrameBufferQuadVAO);
@@ -220,20 +236,20 @@ namespace Raito::Renderer::OpenGL::Deferred
 					glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
 
 					auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
-					shader->SetUniformRef("u_CameraPos", camera->GetPosition());
-					shader->SetUniformRef("u_PixelSize", pixel);
+					shader->SetUniformRef(g_PointUniformLocations.CameraPos, camera->GetPosition());
+					shader->SetUniformRef(g_PointUniformLocations.PixelSize, pixel);
 
 					const auto& transform = lightView.get<ECS::TransformComponent>(light);
 					const Mat4 model = transform.GetTransform();
 					const OpenGLMeshData& meshData = GetMesh(Assets::GetDefaultSphere());
 
-					shader->SetUniformRef("u_Model", model);
-					shader->SetUniformRef("u_View", camera->GetView());
-					shader->SetUniformRef("u_Projection", camera->GetProjection());
+					shader->SetUniformRef(g_PointUniformLocations.Model, model);
+					shader->SetUniformRef(g_PointUniformLocations.View, camera->GetView());
+					shader->SetUniformRef(g_PointUniformLocations.Projection, camera->GetProjection());
 					
-					shader->SetUniformRef("u_LightPos", transform.Translation);
-					shader->SetUniformRef("u_LightColor", lightCmp.Color);
-					shader->SetUniform("u_LightRadius", lightCmp.Radius);
+					shader->SetUniformRef(g_PointUniformLocations.Position, transform.Translation);
+					shader->SetUniformRef(g_PointUniformLocations.Color, lightCmp.Color);
+					shader->SetUniform(g_PointUniformLocations.Radius, lightCmp.Radius);
 
 
 					const float dist = glm::distance(transform.Translation, camera->GetPosition());
