@@ -115,6 +115,7 @@ namespace Raito
 				return U32_MAX;
 			}
 			glfwMakeContextCurrent(win);
+			glfwSwapInterval(false);
 
 			if (api == Renderer::API::OPENGL)
 			{

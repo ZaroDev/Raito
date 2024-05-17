@@ -52,6 +52,7 @@ namespace Raito
 			NODISCARD u32 Height() const;
 			NODISCARD u32 ColorAttachment(u32 id = 0) const;
 			NODISCARD u32 DeferredAttachment(u32 id = 0) const;
+			NODISCARD u32 DeferredLightAttachment(u32 id = 0) const;
 			NODISCARD u32 DeferredDepth() const;
 			NODISCARD u32 DepthAttachment() const;
 			void Render() const;

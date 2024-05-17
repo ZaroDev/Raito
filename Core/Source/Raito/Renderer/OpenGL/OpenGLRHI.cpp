@@ -28,6 +28,7 @@ SOFTWARE.
 #include "Renderer/RHI.h"
 #include "OpenGLCore.h"
 #include "OpenGLShaderCompiler.h"
+#include "OpenGLPasses/OpenGLDeferredPass.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -45,6 +46,7 @@ namespace Raito::Renderer::OpenGL
 		rhi.Surface.GetColorAttachment = GetColorAttachment;
 		rhi.Surface.GetDepthAttachment = GetDepthAttachment;
 		rhi.Surface.GetDeferredAttachment = GetDeferredBufferAttachment;
+		rhi.Surface.GetLightDeferredAttachment = Deferred::GetLightAttachment;
 		rhi.Surface.GetDeferredDepth = GetDeferredBufferDepth;
 		rhi.Surface.Width = SurfaceWidth;
 
