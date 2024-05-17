@@ -32,6 +32,11 @@ namespace Raito::Random
 		return (float)g_Distribution(g_RandomEngine) / (float)std::numeric_limits<uint32_t>::max();
 	}
 
+	float Float(float min, float max)
+	{
+		return Float()* (max - min) + min;
+	}
+
 	V3 Vec3()
 	{
 		return V3(Float(), Float(), Float());

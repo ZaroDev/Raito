@@ -152,6 +152,11 @@ namespace Raito::Renderer::OpenGL
 		glUniform1f(id, value);
 	}
 	template<>
+	inline void OpenGLShader::SetUniformRef<V2>(u32 id, const V2& value)
+	{
+		glUniform2fv(id, 1, glm::value_ptr(value));
+	}
+	template<>
 	inline void OpenGLShader::SetUniformRef<V3>(u32 id, const V3& value)
 	{
 		glUniform3fv(id, 1, glm::value_ptr(value));

@@ -16,5 +16,5 @@ void main() {
     gPosition = vec4(WorldPos, 1.0);
     gNormal = vec4(normalize(Normal), 1.0);
     gAlbedo.rgb = texture(u_Albedo, TexCoord).rgb;
-    gAlbedo.a = 0.5;
+    gAlbedo.a = 1;
 }

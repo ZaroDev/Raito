@@ -47,7 +47,7 @@ namespace Raito::Assets
 
     bool Initialize()
     {
-        const auto sphere = new Mesh(MeshGenerator::GenerateSphere(0.1f, 16));
+        const auto sphere = new Mesh(MeshGenerator::GenerateSphere(20.0f, 16));
         u32 g_DefaultSphereModel = Renderer::AddMesh(sphere);
 
         g_ChessMaterial = Renderer::AddMaterial(Renderer::G_BUFFER);

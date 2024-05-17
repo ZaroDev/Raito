@@ -40,14 +40,15 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		{
 			{"DefaultMesh", EngineShader::DEFAULT_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{"GBuffer", EngineShader::G_BUFFER,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
-			{"DeferredLight", EngineShader::DEFERRED,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"DeferredCombine", EngineShader::DEFERRED,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"DeferredPointLight", EngineShader::DEFERRED_POINT_LIGHT,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"DeferredDirectionalLight", EngineShader::DEFERRED_DIRECTIONAL_LIGHT,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"DefaultLight", EngineShader::DEFAULT_LIGHT, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"Skybox", EngineShader::SKYBOX, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"GaussianBlur", EngineShader::GAUSSIAN_BLUR, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{"EquirectangularToCubemap", EngineShader::EQUIRECTANGULAR_TO_CUBEMAP, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{"Irradiance", EngineShader::IRRADIANCE, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
-			{"Grid", EngineShader::GRID,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT }
 		};
 
 		static_assert(_countof(c_ShaderFiles) == EngineShader::ENGINE_SHADER_MAX);

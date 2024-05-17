@@ -25,7 +25,7 @@
 
 
 #include "Assets/Mesh.h"
-#include "OpenGLPasses/OpenGLGridPass.h"
+
 #include "optick/include/optick.h"
 
 namespace Raito::Renderer::OpenGL
@@ -86,7 +86,6 @@ namespace Raito::Renderer::OpenGL
 		}
 
 		Forward::Initialize();
-		Grid::Initialize();
 		Deferred::Initialize();
 		PostProcess::Initialize();
 

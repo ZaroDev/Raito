@@ -96,11 +96,12 @@ namespace Raito::ECS
 
 		V3 Color = { 1.0f, 1.0f, 1.0f };
 		V3 Direction = { 0.0f, 0.0f, 0.0f };
+		float Radius;
 
 		LightComponent() = default;
 		LightComponent(const LightComponent&) = default;
-		LightComponent(const Type type, const V3 color)
-			: LightType(type), Color(color), Direction(0.0) {}
+		LightComponent(const Type type, const V3 color, const float radius)
+			: LightType(type), Color(color), Direction(0.0), Radius(radius) {}
 
 		LightComponent(const Type type , const V3 color, const V3 direction)
 			: LightType(type),Color(color), Direction(direction){}

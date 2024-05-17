@@ -1,7 +1,6 @@
 #include <pch.h>
 #include "OpenGLDeferredPass.h"
 
-#include "OpenGLGridPass.h"
 #include "Raito.h"
 #include "Assets/MeshGenerator.h"
 #include "Core/Application.h"
@@ -17,7 +16,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
 		constexpr u32 c_MaxPointLights = NUM_POINT;
-		constexpr u32 c_MaxDirLights = 3;
+		constexpr u32 c_MaxDirLights = NUM_DIRECTIONAL;
 
 		struct DirectionalLightUniformLocations
 		{
@@ -43,6 +42,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 		GLint g_DirectionalLightCount = 0;
 
 		OpenGLFrameBuffer* g_FrameBuffer = nullptr;
+		OpenGLFrameBuffer* g_LightBuffer = nullptr;
 
 	}
 
@@ -56,6 +56,17 @@ namespace Raito::Renderer::OpenGL::Deferred
 					FrameBufferTextureFormat::RGBA16F,	// Albedo buffer
 					FrameBufferTextureFormat::Depth		// Depth buffer
 				},
+				1920,
+				1080,
+				1
+			});
+
+		g_LightBuffer = new OpenGLFrameBuffer(
+			FrameBufferData{
+				{
+					FrameBufferTextureFormat::RGBA16F,	// Emissive buffer
+					FrameBufferTextureFormat::RGBA16F,	// Specular buffer
+					},
 				1920,
 				1080,
 				1
@@ -86,142 +97,190 @@ namespace Raito::Renderer::OpenGL::Deferred
 		{
 			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
 			shader->Bind();
-			shader->SetUniform("gPosition", 0);
-			shader->SetUniform("gNormal", 1);
-			shader->SetUniform("gAlbedoSpec", 2);
-
-			for(u32 i = 0; i < c_MaxDirLights; i++)
-			{
-				g_DirectionalUniformLocations[i].Position = shader->GetUniformLocation(std::string("u_DirLights[" + std::to_string(i) + "].Position"));
-				g_DirectionalUniformLocations[i].Color = shader->GetUniformLocation(std::string("u_DirLights[" + std::to_string(i) + "].Color"));
-				g_DirectionalUniformLocations[i].Direction = shader->GetUniformLocation(std::string("u_DirLights[" + std::to_string(i) + "].Direction"));
-			}
-
-			for (u32 i = 0; i < NUM_POINT; i++)
-			{
-				g_PointUniformLocations[i].Position = shader->GetUniformLocation(std::string("u_PointLights[" + std::to_string(i) + "].Position"));
-				g_PointUniformLocations[i].Color = shader->GetUniformLocation(std::string("u_PointLights[" + std::to_string(i) + "].Color"));
-				g_PointUniformLocations[i].Linear = shader->GetUniformLocation(std::string("u_PointLights[" + std::to_string(i) + "].Linear"));
-				g_PointUniformLocations[i].Quadratic = shader->GetUniformLocation(std::string("u_PointLights[" + std::to_string(i) + "].Quadratic"));
-				g_PointUniformLocations[i].Radius = shader->GetUniformLocation(std::string("u_PointLights[" + std::to_string(i) + "].Radius"));
-			}
-
-			g_ViewPosLocation = shader->GetUniformLocation("u_ViewPos");
-
-			g_DirectionalLightNumLocation = shader->GetUniformLocation("u_DirLightsNum");
-			g_PointLightNumLocation = shader->GetUniformLocation("u_PointLightsNum");
-
+			shader->SetUniform("u_Diffuse", 0);
+			shader->SetUniform("u_Emissive", 1);
+			shader->SetUniform("u_Specular", 2);
+			shader->UnBind();
+		}
+		{
+			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_POINT_LIGHT));
+			shader->Bind();
+			shader->SetUniform("u_Depth", 0);
+			shader->SetUniform("u_Normal", 1);
 			shader->UnBind();
 		}
 
+		{
+			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_DIRECTIONAL_LIGHT));
+			shader->Bind();
+			shader->SetUniform("u_Depth", 0);
+			shader->SetUniform("u_Normal", 1);
+			shader->UnBind();
+		}
 		return true;
 	}
 
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
 	{
-		g_FrameBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
-		g_FrameBuffer->Bind();
-
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		glDisable(GL_BLEND);
-
 		auto& scene = Core::Application::Get().Scene;
-		const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
-		const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
 
-		for (auto& entity : view)
+		// Geometry pass
 		{
-			const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
-			const OpenGLMeshData& meshData = GetMesh(mesh.MeshId);
-			const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
-			const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
-
-			OpenGLMaterial& material = GetMaterial(mesh.MaterialId);
+			g_FrameBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
+			g_FrameBuffer->Bind();
 
 
-			material.SetValue("u_View", camera->GetView());
-			material.SetValue("u_Projection", camera->GetProjection());
-			material.SetValue("u_Model", model);
-			material.SetValue("u_NormalMatrix", normalMatrix);
+			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LESS);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			material.Bind();
+			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
+			
 
-			glBindVertexArray(meshData.VAO);
-			glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
-			glBindVertexArray(0);
-
-			material.UnBind();
-		}
-		g_FrameBuffer->UnBind();
-
-		buffer.Bind();
-
-		glBindVertexArray(g_FrameBufferQuadVAO);
-		glDisable(GL_DEPTH_TEST);
-
-		const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
-		shader->Bind();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment());
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(2));
-
-
-
-		
-		g_DirectionalLightCount = g_PointLightCount = 0;
-
-		for (auto& light : lightView)
-		{
-			const auto position = lightView.get<ECS::TransformComponent>(light).Translation;
-			const ECS::LightComponent& lightCmp = lightView.get<ECS::LightComponent>(light);
-
-			switch (lightCmp.LightType)
+			for (auto& entity : view)
 			{
-			case ECS::LightComponent::Type::DIRECTIONAL:
-			{
-				shader->SetUniformRef(g_DirectionalUniformLocations[g_DirectionalLightCount].Position, position);
-				shader->SetUniformRef(g_DirectionalUniformLocations[g_DirectionalLightCount].Color, lightCmp.Color);
-				shader->SetUniformRef(g_DirectionalUniformLocations[g_DirectionalLightCount].Direction, lightCmp.Direction);
+				const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
+				const OpenGLMeshData& meshData = GetMesh(mesh.MeshId);
+				const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
+				const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
 
-				g_DirectionalLightCount++;
-			}break;
-			case ECS::LightComponent::Type::POINT_LIGHT:
-			{
-				shader->SetUniformRef(g_PointUniformLocations[g_PointLightCount].Position, position);
-				shader->SetUniformRef(g_PointUniformLocations[g_PointLightCount].Color, lightCmp.Color);
-				// update attenuation parameters and calculate radius
-				constexpr float constant = 1.0f; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
-				constexpr float linear = 0.7f;
-				constexpr float quadratic = 1.8f;
-				shader->SetUniform(g_PointUniformLocations[g_PointLightCount].Linear, linear);
-				shader->SetUniform(g_PointUniformLocations[g_PointLightCount].Quadratic, quadratic);
-				// then calculate radius of light volume/sphere
-				const float maxBrightness = std::fmaxf(std::fmaxf(lightCmp.Color.r, lightCmp.Color.g), lightCmp.Color.b);
-				const float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
-				shader->SetUniform(g_PointUniformLocations[g_PointLightCount].Radius, radius);
-				g_PointLightCount++;
-			}break;
-			case ECS::LightComponent::Type::SPOT_LIGHT:
-				break;
+				OpenGLMaterial& material = GetMaterial(mesh.MaterialId);
+
+
+				material.SetValue("u_View", camera->GetView());
+				material.SetValue("u_Projection", camera->GetProjection());
+				material.SetValue("u_Model", model);
+				material.SetValue("u_NormalMatrix", normalMatrix);
+
+				material.Bind();
+
+				glBindVertexArray(meshData.VAO);
+				glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
+				glBindVertexArray(0);
+
+				material.UnBind();
 			}
+			g_FrameBuffer->UnBind();
 		}
+		// Light volumes pass
+		{
+			g_LightBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
+			g_LightBuffer->Bind();
 
-		shader->SetUniform(g_PointLightNumLocation, g_PointLightCount);
-		shader->SetUniform(g_DirectionalLightNumLocation, g_DirectionalLightCount);
+			glClearColor(0, 0, 0, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glBlendFunc(GL_ONE, GL_ONE);
+			
 
-		shader->SetUniformRef(g_ViewPosLocation, camera->GetPosition());
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+			g_DirectionalLightCount = g_PointLightCount = 0;
 
-		shader->UnBind();
-		buffer.UnBind();
+
+			const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
+			for (auto& light : lightView)
+			{
+				const ECS::LightComponent& lightCmp = lightView.get<ECS::LightComponent>(light);
+
+				switch (lightCmp.LightType)
+				{
+				case ECS::LightComponent::Type::DIRECTIONAL:
+				{
+					const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_DIRECTIONAL_LIGHT));
+					shader->Bind();
+
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->DepthAttachment());
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
+					
+					auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
+					shader->SetUniformRef("u_CameraPos", camera->GetPosition());
+					shader->SetUniformRef("u_PixelSize", pixel);
+					
+					shader->SetUniformRef("u_LightDirection", glm::radians(lightCmp.Direction));
+					shader->SetUniformRef("u_LightColor", lightCmp.Color);
+					
+					
+					glBindVertexArray(g_FrameBufferQuadVAO);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+					shader->UnBind();
+
+					g_DirectionalLightCount++;
+				}break;
+				case ECS::LightComponent::Type::POINT_LIGHT:
+				{
+					const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_POINT_LIGHT));
+					shader->Bind();
+
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->DepthAttachment());
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
+
+					auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
+					shader->SetUniformRef("u_CameraPos", camera->GetPosition());
+					shader->SetUniformRef("u_PixelSize", pixel);
+
+					const auto& transform = lightView.get<ECS::TransformComponent>(light);
+					const Mat4 model = transform.GetTransform();
+					const OpenGLMeshData& meshData = GetMesh(Assets::GetDefaultSphere());
+
+					shader->SetUniformRef("u_Model", model);
+					shader->SetUniformRef("u_View", camera->GetView());
+					shader->SetUniformRef("u_Projection", camera->GetProjection());
+					
+					shader->SetUniformRef("u_LightPos", transform.Translation);
+					shader->SetUniformRef("u_LightColor", lightCmp.Color);
+					shader->SetUniform("u_LightRadius", lightCmp.Radius);
+
+
+					const float dist = glm::distance(transform.Translation, camera->GetPosition());
+					if (dist < lightCmp.Radius)
+					{
+						glCullFace(GL_FRONT);
+					}
+					else
+					{
+						glCullFace(GL_BACK);
+					}
+
+					glBindVertexArray(meshData.VAO);
+					glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
+					glBindVertexArray(0);
+
+					shader->UnBind();
+					g_PointLightCount++;
+				}break;
+				case ECS::LightComponent::Type::SPOT_LIGHT:
+					break;
+				}
+			}
+			glCullFace(GL_BACK);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			g_LightBuffer->UnBind();
+		}
+		{
+			buffer.Bind();
+			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
+			shader->Bind();
+			glDisable(GL_DEPTH_TEST);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(2));
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, g_LightBuffer->ColorAttachment());
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, g_LightBuffer->ColorAttachment(1));
+
+			glBindVertexArray(g_FrameBufferQuadVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			shader->UnBind();
+			buffer.UnBind();
+		}
 	}
 
 	void Shutdown()
