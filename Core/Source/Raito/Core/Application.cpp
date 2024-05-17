@@ -37,6 +37,8 @@ SOFTWARE.
 #include "Time/Time.h"
 #include <optick/include/optick.h>
 
+#include "Random/Random.h"
+
 namespace Raito::Core
 {
 	
@@ -77,6 +79,8 @@ namespace Raito::Core
 			LOG("Application", "Failed to initialize assets module");
 			return Failed();
 		}
+
+		Random::Initialize();
 
 		OnInit();
 

@@ -56,3 +56,8 @@ SOFTWARE.
 #include <Raito/Assets/Model.h>
 #include <Raito/Assets/AssetImport.h>
 #include <Raito/Assets/Assets.h>
+
+// Random
+#include <Raito/Random/Random.h>
+
+#define NUM_POINT 64

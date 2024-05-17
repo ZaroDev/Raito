@@ -2,6 +2,7 @@
 #include "OpenGLDeferredPass.h"
 
 #include "OpenGLGridPass.h"
+#include "Raito.h"
 #include "Assets/MeshGenerator.h"
 #include "Core/Application.h"
 #include "ECS/Components.h"
@@ -15,14 +16,15 @@ namespace Raito::Renderer::OpenGL::Deferred
 	{
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
-		constexpr u32 c_MaxLights = 32;
+		constexpr u32 c_MaxPointLights = NUM_POINT;
+		constexpr u32 c_MaxDirLights = 3;
 
 		struct DirectionalLightUniformLocations
 		{
 			GLint Position;
 			GLint Color;
 			GLint Direction;
-		} g_DirectionalUniformLocations[c_MaxLights];
+		} g_DirectionalUniformLocations[c_MaxDirLights];
 
 		struct PointLightUniformLocations
 		{
@@ -31,7 +33,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 			GLint Linear;
 			GLint Quadratic;
 			GLint Radius;
-		} g_PointUniformLocations[c_MaxLights];
+		} g_PointUniformLocations[c_MaxPointLights];
 
 		GLint g_ViewPosLocation;
 		GLint g_PointLightNumLocation;
@@ -88,14 +90,14 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->SetUniform("gNormal", 1);
 			shader->SetUniform("gAlbedoSpec", 2);
 
-			for(u32 i = 0; i < c_MaxLights; i++)
+			for(u32 i = 0; i < c_MaxDirLights; i++)
 			{
 				g_DirectionalUniformLocations[i].Position = shader->GetUniformLocation(std::string("u_DirLights[" + std::to_string(i) + "].Position"));
 				g_DirectionalUniformLocations[i].Color = shader->GetUniformLocation(std::string("u_DirLights[" + std::to_string(i) + "].Color"));
 				g_DirectionalUniformLocations[i].Direction = shader->GetUniformLocation(std::string("u_DirLights[" + std::to_string(i) + "].Direction"));
 			}
 
-			for (u32 i = 0; i < c_MaxLights; i++)
+			for (u32 i = 0; i < NUM_POINT; i++)
 			{
 				g_PointUniformLocations[i].Position = shader->GetUniformLocation(std::string("u_PointLights[" + std::to_string(i) + "].Position"));
 				g_PointUniformLocations[i].Color = shader->GetUniformLocation(std::string("u_PointLights[" + std::to_string(i) + "].Color"));

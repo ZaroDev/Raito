@@ -45,9 +45,10 @@ namespace Raito::Assets
 {
 	namespace
 	{
+		
 		std::vector<Model*> g_Models{};
 		std::unordered_map<std::filesystem::path, Texture*> g_Textures{};
-		std::unordered_map<u32, u32> g_Materials{};
+		std::unordered_map<std::string, u32> g_Materials{};
 
 		void LoadTexturesOfType(Mesh* m, const std::filesystem::path& path, aiMaterial* material, aiTextureType type)
 		{
@@ -142,12 +143,12 @@ namespace Raito::Assets
 					indices.emplace_back(face.mIndices[j]);
 				}
 			}
-
 			if(mesh->mMaterialIndex >= 0)
 			{
-				if(g_Materials.contains(mesh->mMaterialIndex))
+				const auto materialHash = std::string(path.string() + std::to_string(mesh->mMaterialIndex));
+				if(g_Materials.contains(materialHash))
 				{
-					m->MaterialId = g_Materials[mesh->mMaterialIndex];
+					m->MaterialId = g_Materials[materialHash];
 				}
 				else
 				{
@@ -161,7 +162,7 @@ namespace Raito::Assets
 					//LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP);
 					//LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN);
 
-					g_Materials[mesh->mMaterialIndex] = materialId;
+					g_Materials[materialHash] = materialId;
 				}
 			}
 

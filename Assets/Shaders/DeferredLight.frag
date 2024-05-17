@@ -23,20 +23,20 @@ struct PointLight {
     float Quadratic;
     float Radius;
 };
-const int NR_LIGHTS = 32;
+const int MAX_DIRECTIONAL = 1;
+const int MAX_POINT = 32;
 
-uniform DirLight u_DirLights[NR_LIGHTS];
-uniform PointLight u_PointLights[NR_LIGHTS];
+uniform DirLight u_DirLights[MAX_DIRECTIONAL];
+uniform PointLight u_PointLights[MAX_POINT];
 
 uniform int u_DirLightsNum;
 uniform int u_PointLightsNum;
 uniform vec3 u_ViewPos;
 
 vec3 CalcDirLight(DirLight light, vec3 diffuse, float specular, vec3 normal, vec3 fragPos, vec3 viewDir) {
-    float distance = length(light.Position - fragPos);
+
     // diffuse
     vec3 lightDir = normalize(light.Position - fragPos);
-    float r = length(lightDir);
     vec3 lightDiffuse = max(dot(normal, lightDir), 0.0) * diffuse * light.Color;
     // specular
     vec3 halfwayDir = normalize(lightDir + viewDir);  
@@ -45,7 +45,6 @@ vec3 CalcDirLight(DirLight light, vec3 diffuse, float specular, vec3 normal, vec
 
     // spotlight (soft edges)
     float theta = dot(lightDir, normalize(-light.Direction)); 
-    //float epsilon = (0 - 0);
     float intensity = clamp((theta - 0) / 0.0, 0.0, 1.0);
     lightDiffuse  *= intensity;
     lightSpecular *= intensity;
