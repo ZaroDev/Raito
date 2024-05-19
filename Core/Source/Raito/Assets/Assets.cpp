@@ -47,15 +47,15 @@ namespace Raito::Assets
 
     bool Initialize()
     {
-        const auto sphere = new Mesh(MeshGenerator::GenerateSphere(20.0f, 16));
-        u32 g_DefaultSphereModel = Renderer::AddMesh(sphere);
+        //const auto sphere = new Mesh(MeshGenerator::GenerateSphere(20.0f, 16));
+        //u32 g_DefaultSphereModel = Renderer::AddMesh(sphere);
 
-        g_ChessMaterial = Renderer::AddMaterial(Renderer::G_BUFFER);
+        ////g_ChessMaterial = Renderer::AddMaterial(Renderer::G_BUFFER);
 
 
-        auto textureData = GenerateChessPixels(CHESS_TEXTURE_SIZE, CHESS_TEXTURE_SIZE);
-        g_ChessTexture = new Texture(CHESS_TEXTURE_SIZE, CHESS_TEXTURE_SIZE, 3, textureData.data(), DIFFUSE);
-        Renderer::SetMaterialValue(g_ChessMaterial, "u_Albedo", reinterpret_cast<ubyte*>(&g_ChessTexture->RenderData), sizeof(g_ChessTexture->RenderData));
+        //auto textureData = GenerateChessPixels(CHESS_TEXTURE_SIZE, CHESS_TEXTURE_SIZE);
+        //g_ChessTexture = new Texture(CHESS_TEXTURE_SIZE, CHESS_TEXTURE_SIZE, 3, textureData.data(), DIFFUSE);
+        //Renderer::SetMaterialValue(g_ChessMaterial, "u_Albedo", reinterpret_cast<ubyte*>(&g_ChessTexture->RenderData), sizeof(g_ChessTexture->RenderData));
 
         return true;
     }

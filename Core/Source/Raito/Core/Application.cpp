@@ -68,12 +68,6 @@ namespace Raito::Core
 			LOG("Application", "Failed to initialize window module");
 			return Failed();
 		}
-		if (!Renderer::Initialize())
-		{
-			LOG("Application", "Failed to initialize renderer module");
-			return Failed();
-		}
-
 		if(!Assets::Initialize())
 		{
 			LOG("Application", "Failed to initialize assets module");

@@ -26,8 +26,10 @@ SOFTWARE.
 #include "D3D12Core.h"
 #include "D3D12Common.h"
 #include "D3D12Objects/D3D12Callback.h"
+#include "D3D12Objects/D3D12Surface.h"
 
 #ifdef DEBUG
+#include <dxgidebug.h>
 #include <nvrhi/validation.h>
 #endif
 
@@ -39,16 +41,16 @@ namespace Raito::Renderer::D3D12::Core
 
 	namespace
 	{
-		
+		std::vector<D3D12Surface> g_Surfaces;
 
 		constexpr D3D_FEATURE_LEVEL c_MinimumFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
-		ComPtr<IDXGIFactory2> g_DXGIFactory = nullptr;
-		ComPtr<IDXGIAdapter> g_DXGIAdapter = nullptr;
-		ComPtr<D3D12Device> g_Device = nullptr;
-		ComPtr<ID3D12CommandQueue> g_GraphicsCommandQueue = nullptr;
-		ComPtr<ID3D12CommandQueue> g_ComputeCommandQueue = nullptr;
-		ComPtr<ID3D12CommandQueue> g_CopyCommandQueue = nullptr;
+		nvrhi::RefCountPtr<IDXGIFactory2> g_DXGIFactory = nullptr;
+		nvrhi::RefCountPtr<IDXGIAdapter> g_DXGIAdapter = nullptr;
+		nvrhi::RefCountPtr<D3D12Device> g_Device = nullptr;
+		nvrhi::RefCountPtr<ID3D12CommandQueue> g_GraphicsCommandQueue = nullptr;
+		nvrhi::RefCountPtr<ID3D12CommandQueue> g_ComputeCommandQueue = nullptr;
+		nvrhi::RefCountPtr<ID3D12CommandQueue> g_CopyCommandQueue = nullptr;
 
 		nvrhi::DeviceHandle g_DeviceHandle;
 
@@ -164,33 +166,44 @@ namespace Raito::Renderer::D3D12::Core
 
 	void Shutdown()
 	{
+		g_Surfaces.clear();
+
 		g_DeviceHandle = nullptr;
-
-		// TODO: Fence events clear
-
 		g_GraphicsCommandQueue = nullptr;
 		g_ComputeCommandQueue = nullptr;
 		g_CopyCommandQueue = nullptr;
 		g_Device = nullptr;
 
+#ifdef DEBUG
+
+#endif
 	}
 
 	void SetDeferredReleasesFlags()
 	{
 	}
 
-	ComPtr<D3D12Device> Device()
+	nvrhi::RefCountPtr<D3D12Device> Device()
 	{
 		return g_Device;
 	}
 
+	nvrhi::DeviceHandle NVDevice()
+	{
+		return g_DeviceHandle;
+	}
+
 	Surface CreateSurface(SysWindow* window)
 	{
-		return Surface();
+		D3D12Surface& surface = g_Surfaces.emplace_back(window);
+		surface.CreateSwapChain(g_DXGIFactory, g_GraphicsCommandQueue);
+
+		return Surface(g_Surfaces.size() - 1);
 	}
 
 	void RemoveSurface(u32 id)
 	{
+		g_Surfaces.erase(g_Surfaces.begin() + id);
 	}
 
 	void ResizeSurface(u32 id, u32 width, u32 height)
@@ -219,6 +232,11 @@ namespace Raito::Renderer::D3D12::Core
 
 	void RenderSurface(u32 id)
 	{
+		D3D12Surface& surface = g_Surfaces[id];
+
+		surface.BeginFrame();
+
+		surface.Present();
 	}
 
 

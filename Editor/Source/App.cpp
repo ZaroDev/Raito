@@ -21,7 +21,7 @@ namespace Editor
 	bool App::OnInit()
 	{
 		E_LOG("Application Initialized!");
-		ImGuiEditor::Init();
+		//ImGuiEditor::Init();
 
 		m_Panels.emplace_back(std::make_unique<Performance>());
 		m_Panels.emplace_back(std::make_unique<Shaders>());
@@ -29,7 +29,7 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Assets>());
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
-		Raito::Assets::ImportModel("Meshes/Sponza/Sponza.gltf");
+		//Raito::Assets::ImportModel("Meshes/Sponza/Sponza.gltf");
 		//Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
 		
 		for (u32 i = 0; i < NUM_POINT; i++)
@@ -82,7 +82,7 @@ namespace Editor
 		OPTICK_CATEGORY("Update App", Optick::Category::Scene);
 		for (const auto& p : m_Panels)
 		{
-			p->Update();
+			//p->Update();
 		}
 
 		return m_Running;
@@ -91,21 +91,21 @@ namespace Editor
 	bool App::OnRenderGUI()
 	{
 		OPTICK_CATEGORY("Update ImGui", Optick::Category::Debug);
-		ImGuiEditor::Begin();
+		//ImGuiEditor::Begin();
 
 		for (const auto& p : m_Panels)
 		{
-			p->Render();
+			//p->Render();
 		}
 
-		ImGuiEditor::End();
+		//ImGuiEditor::End();
 
 		return m_Running;
 	}
 	void App::OnShutdown()
 	{
-		ImGuiEditor::Shutdown();
+		//ImGuiEditor::Shutdown();
 	}
 }
 
-CREATE_AND_RUN(Editor::App, Raito::Core::ApplicationInfo("Editor", 1280, 720, Raito::Renderer::API::OPENGL, false))
+CREATE_AND_RUN(Editor::App, Raito::Core::ApplicationInfo("Editor", 1280, 720, Raito::Renderer::API::D3D12, false))

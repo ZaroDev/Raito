@@ -105,7 +105,7 @@ namespace Raito
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 			}
 
-
+			Renderer::Initialize();
 
 			// Create the GLFW g_Window
 			GLFWwindow* win = nullptr;
@@ -114,11 +114,11 @@ namespace Raito
 				F_ERR("Error while creating a g_Window {}", glfwGetError(NULL));
 				return U32_MAX;
 			}
-			glfwMakeContextCurrent(win);
-			glfwSwapInterval(false);
 
 			if (api == Renderer::API::OPENGL)
 			{
+				glfwSwapInterval(false);
+				glfwMakeContextCurrent(win);
 				if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 				{
 					ERR("Window", "Failed to initialize glad");
@@ -217,7 +217,7 @@ namespace Raito
 
 		SysWindow& GetWindow(const u32 id)
 		{
-			if(id == 0)
+			if (id == 0)
 			{
 				return *g_RenderSurfaces[g_MainWindow].Window;
 			}

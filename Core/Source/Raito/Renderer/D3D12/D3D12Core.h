@@ -74,7 +74,8 @@ namespace Raito::Renderer::D3D12::Core
 	    }
     }
 
-    Microsoft::WRL::ComPtr<D3D12Device> Device();
+    nvrhi::RefCountPtr<D3D12Device> Device();
+    nvrhi::DeviceHandle NVDevice();
 
     //! Surface creation function
     //! @param window window that the surface will be displayed on
