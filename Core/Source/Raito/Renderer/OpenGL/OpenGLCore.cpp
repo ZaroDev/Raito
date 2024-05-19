@@ -182,7 +182,7 @@ namespace Raito::Renderer::OpenGL
 
 	void RenderSurface(u32 id)
 	{
-		OPTICK_EVENT();
+		OPTICK_CATEGORY("Update Renderer", Optick::Category::Rendering);
 
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
 
@@ -214,6 +214,7 @@ namespace Raito::Renderer::OpenGL
 			break;
 		}
 
+		data.AABB = mesh->AABB;
 		data.IndexCount = static_cast<u32>(mesh->Indices.size());
 
 		glGenVertexArrays(1, &data.VAO);

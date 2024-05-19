@@ -30,6 +30,8 @@ SOFTWARE.
 #include <Core/Common.h>
 #include <glad/glad.h>
 
+#include <Raito/Math/AABB.h>
+
 #ifndef DIST
 #define O_LOG(...) LOG("OpenGL", __VA_ARGS__)
 #define O_WARN(...) WARN("OpenGL", __VA_ARGS__)
@@ -50,6 +52,8 @@ namespace Raito::Renderer::OpenGL
 
 	struct OpenGLMeshData
 	{
+		Math::AABB AABB;
+
 		u32 VAO = 0;
 		u32 VBO = 0;
 		u32 EBO = 0;

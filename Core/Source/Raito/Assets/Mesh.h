@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #pragma once
+#include "Math/AABB.h"
 #include "Math/MathTypes.h"
 
 namespace Raito::Assets
@@ -43,6 +44,7 @@ namespace Raito::Assets
 
 	struct Mesh final
 	{
+	public:
 		Mesh() = default;
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices, RenderMode mode);
@@ -50,12 +52,17 @@ namespace Raito::Assets
 	
 		std::vector<Vertex> Vertices{};
 		std::vector<u32> Indices{};
-		
+
+		Math::AABB AABB;
+
 		Mat4 Transform;
 
 		std::string Name{};
 
 		u32 MaterialId;
 		RenderMode RenderMode = RenderMode::TRIANGLE;
+
+	private:
+		void CalculateAABB();
 	};
 }

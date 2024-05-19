@@ -11,6 +11,7 @@
 
 #include <filesystem>
 
+#include "optick/src/optick.h"
 #include "Panels/Assets.h"
 #include "Panels/Framebuffers.h"
 
@@ -78,6 +79,7 @@ namespace Editor
 
 	bool App::OnUpdate()
 	{
+		OPTICK_CATEGORY("Update App", Optick::Category::Scene);
 		for (const auto& p : m_Panels)
 		{
 			p->Update();
@@ -88,6 +90,7 @@ namespace Editor
 
 	bool App::OnRenderGUI()
 	{
+		OPTICK_CATEGORY("Update ImGui", Optick::Category::Debug);
 		ImGuiEditor::Begin();
 
 		for (const auto& p : m_Panels)

@@ -5,6 +5,7 @@
 #include "Assets/MeshGenerator.h"
 #include "Core/Application.h"
 #include "ECS/Components.h"
+#include "optick/include/optick.h"
 #include "Renderer/Camera.h"
 #include "Renderer/OpenGL/OpenGLCore.h"
 
@@ -139,7 +140,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
 	{
 		auto& scene = Core::Application::Get().Scene;
-
+		OPTICK_CATEGORY("Update Deferred", Optick::Category::Rendering);
 		// Geometry pass
 		{
 			g_FrameBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
@@ -159,9 +160,21 @@ namespace Raito::Renderer::OpenGL::Deferred
 			{
 				const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
 				const OpenGLMeshData& meshData = GetMesh(mesh.MeshId);
-				const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
-				const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
+				const auto& transform = view.get<ECS::TransformComponent>(entity);
+				const Mat4 model = transform.GetTransform();
+				const V3 location = transform.Translation;
 
+				// Construct a AABB with the model translation
+				//const auto aabb = Math::AABB(meshData.AABB.GetMin() + location, meshData.AABB.GetMin() + location);
+
+
+				/*if(!camera->IsInsideFrustum(aabb))
+				{
+					continue;
+				}*/
+
+
+				const Mat3 normalMatrix = transpose(glm::inverse(Mat3(model)));
 				OpenGLMaterial& material = GetMaterial(mesh.MaterialId);
 
 
@@ -227,6 +240,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 				}break;
 				case ECS::LightComponent::Type::POINT_LIGHT:
 				{
+
+
 					const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_POINT_LIGHT));
 					shader->Bind();
 

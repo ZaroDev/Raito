@@ -26,6 +26,10 @@ SOFTWARE.
 
 #include <Math/MathTypes.h>
 
+#include <Raito/Math/Frustum.h>
+
+#include "Math/AABB.h"
+
 namespace Raito::Renderer
 {
 	struct CameraParameters
@@ -60,12 +64,18 @@ namespace Raito::Renderer
 		NODISCARD float GetTop() const { return m_Parameters.Top; }
 		NODISCARD float GetBottom() const { return m_Parameters.Bottom; }
 
-		float GetRotationSpeed();
+		NODISCARD float GetRotationSpeed();
+
+		NODISCARD bool IsInsideFrustum(const Math::AABB& boundingBox) const;
+
+		bool FrustumCulling = true;
+
 	private:
 		void RecalculateProjection();
 		void RecalculateView();
 
-	private:
+		Math::Frustum m_Frustum;
+
 		Mat4 m_Projection{ 1.0f };
 		Mat4 m_View{ 1.0f };
 		Mat4 m_InverseProjection{ 1.0f };

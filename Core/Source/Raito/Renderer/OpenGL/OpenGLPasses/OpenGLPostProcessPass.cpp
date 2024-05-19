@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "OpenGLPostProcessPass.h"
 
+#include "optick/include/optick.h"
 #include "Renderer/Camera.h"
 #include "Renderer/OpenGL/OpenGLObjects/OpenGLShader.h"
 
@@ -45,6 +46,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 	void Update(const OpenGLFrameBuffer& buffer)
 	{
+		OPTICK_CATEGORY("Update Postprocessing", Optick::Category::Rendering);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
