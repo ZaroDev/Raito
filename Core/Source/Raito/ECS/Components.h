@@ -26,8 +26,8 @@ SOFTWARE.
 
 #include <string>
 
-#include "Core/UUID.h"
-#include "Math/Math.h"
+#include <Raito/Core/UUID.h>
+#include <Raito/Math/Math.h>
 
 namespace Raito::ECS
 {
@@ -87,12 +87,24 @@ namespace Raito::ECS
 
 	struct LightComponent
 	{
+		enum class Type
+		{
+			DIRECTIONAL,
+			POINT_LIGHT,
+			SPOT_LIGHT
+		} LightType;
+
 		V3 Color = { 1.0f, 1.0f, 1.0f };
+		V3 Direction = { 0.0f, 0.0f, 0.0f };
+		float Radius;
 
 		LightComponent() = default;
 		LightComponent(const LightComponent&) = default;
-		LightComponent(V3 color)
-			: Color(color){}
+		LightComponent(const Type type, const V3 color, const float radius)
+			: LightType(type), Color(color), Direction(0.0), Radius(radius) {}
+
+		LightComponent(const Type type , const V3 color, const V3 direction)
+			: LightType(type),Color(color), Direction(direction){}
 	};
 
 }

@@ -41,4 +41,5 @@ SOFTWARE.
 #include <Raito/Core/Assert.h>
 #include <Raito/Core/Common.h>
 
+
 #include <Windows.h>

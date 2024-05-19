@@ -86,5 +86,13 @@ namespace Raito
 		//! @param id ID of the window to get returned
 		//! @return Window of the given ID
 		SysWindow& GetWindow(const u32 id = 0);
+
+		//! Sets the main window to be on fullscreen mode
+		//! @param value of the fullscreen mode
+		void SetFullScreen(bool value);
+
+		//! Sets the main window V-Sync mode
+		//! @param V-Sync value
+		void SetVSync(bool value);
 	}
 }

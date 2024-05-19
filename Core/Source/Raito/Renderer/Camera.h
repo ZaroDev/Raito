@@ -26,8 +26,20 @@ SOFTWARE.
 
 #include <Math/MathTypes.h>
 
+#include <Raito/Math/Frustum.h>
+
+#include "Math/AABB.h"
+
 namespace Raito::Renderer
 {
+	struct CameraParameters
+	{
+		float Top;
+		float Bottom;
+		float Left;
+		float Right;
+	};
+
 	class Camera
 	{
 	public:
@@ -36,21 +48,34 @@ namespace Raito::Renderer
 		bool OnUpdate(float ts);
 		void OnResize(u32 width, u32 height);
 
-		const Mat4& GetProjection() const { return m_Projection; }
-		const Mat4& GetInverseProjection() const { return m_InverseProjection; }
-		const Mat4& GetView() const { return m_View; }
-		const Mat4& GetInverseView() const { return m_InverseView; }
+		NODISCARD const Mat4& GetProjection() const { return m_Projection; }
+		NODISCARD const Mat4& GetInverseProjection() const { return m_InverseProjection; }
+		NODISCARD const Mat4& GetView() const { return m_View; }
+		NODISCARD const Mat4& GetInverseView() const { return m_InverseView; }
 
-		const V3& GetPosition() const { return m_Position; }
-		const V3& GetDirection() const { return m_ForwardDirection; }
+		NODISCARD const V3& GetPosition() const { return m_Position; }
+		NODISCARD const V3& GetDirection() const { return m_ForwardDirection; }
 
+		NODISCARD float GetNearClip() const { return m_NearClip; }
+		NODISCARD float GetNearFar() const { return m_FarClip; }
 
-		float GetRotationSpeed();
+		NODISCARD float GetLeft() const { return m_Parameters.Left; }
+		NODISCARD float GetRight() const { return m_Parameters.Right; }
+		NODISCARD float GetTop() const { return m_Parameters.Top; }
+		NODISCARD float GetBottom() const { return m_Parameters.Bottom; }
+
+		NODISCARD float GetRotationSpeed();
+
+		NODISCARD bool IsInsideFrustum(const Math::AABB& boundingBox) const;
+
+		bool FrustumCulling = true;
+
 	private:
 		void RecalculateProjection();
 		void RecalculateView();
 
-	private:
+		Math::Frustum m_Frustum;
+
 		Mat4 m_Projection{ 1.0f };
 		Mat4 m_View{ 1.0f };
 		Mat4 m_InverseProjection{ 1.0f };
@@ -66,5 +91,7 @@ namespace Raito::Renderer
 		V2 m_LastMousePosition{ 0.0f, 0.0f };
 
 		u32 m_ViewportWidth = 0, m_ViewportHeight = 0;
+
+		CameraParameters m_Parameters;
 	};
 }

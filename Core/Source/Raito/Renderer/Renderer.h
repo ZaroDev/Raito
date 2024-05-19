@@ -51,6 +51,9 @@ namespace Raito
 			NODISCARD u32 Width() const;
 			NODISCARD u32 Height() const;
 			NODISCARD u32 ColorAttachment(u32 id = 0) const;
+			NODISCARD u32 DeferredAttachment(u32 id = 0) const;
+			NODISCARD u32 DeferredLightAttachment(u32 id = 0) const;
+			NODISCARD u32 DeferredDepth() const;
 			NODISCARD u32 DepthAttachment() const;
 			void Render() const;
 		private:
@@ -70,6 +73,7 @@ namespace Raito
 			// Color
 			RGBA8,
 			RGBA16F,
+			RGBA,
 			RED_INTEGER,
 
 			// Depth/stencil
@@ -105,6 +109,11 @@ namespace Raito
 			bool SwapChainTarget = false;
 		};
 
+		enum class LightTechnique
+		{
+			Forward = 0,
+			Deferred,
+		};
 
 		//
 		//! @param api The desired api to be used 
@@ -122,16 +131,15 @@ namespace Raito
 		//! @return Current graphics API
 		NODISCARD API GetCurrentAPI();
 
-		Surface CreateSurface(SysWindow* window);
+		NODISCARD Surface CreateSurface(SysWindow* window);
 		void RemoveSurface(u32 id);
 
-		ShaderFileData GetFileData(EngineShader id);
+		NODISCARD ShaderFileData GetFileData(EngineShader id);
 		const std::vector<Shader*>& GetAllShaders();
 		u32 CompileShader(const ShaderFileData& data);
 
 		u32 AddMesh(Assets::Mesh* mesh);
 		void RemoveMesh(u32 id);
-
 
 		u32 AddTexture(Assets::Texture* texture, ubyte* data);
 		void RemoveTexture(u32 id);

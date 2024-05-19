@@ -115,6 +115,7 @@ namespace Raito
 				return U32_MAX;
 			}
 			glfwMakeContextCurrent(win);
+			glfwSwapInterval(false);
 
 			if (api == Renderer::API::OPENGL)
 			{
@@ -222,6 +223,15 @@ namespace Raito
 			}
 
 			return *g_RenderSurfaces[id].Window;
+		}
+
+		void SetFullScreen(bool value)
+		{
+		}
+
+		void SetVSync(bool value)
+		{
+			glfwSwapInterval(value);
 		}
 	}
 }

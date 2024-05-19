@@ -23,10 +23,18 @@ SOFTWARE.
 */
 
 #pragma once
+#include "Math/AABB.h"
 #include "Math/MathTypes.h"
 
 namespace Raito::Assets
 {
+	enum class RenderMode
+	{
+		TRIANGLE,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN
+	};
+
 	struct Vertex
 	{
 		V3 Position;
@@ -36,17 +44,25 @@ namespace Raito::Assets
 
 	struct Mesh final
 	{
+	public:
 		Mesh() = default;
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
+		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices, RenderMode mode);
 		~Mesh();
 	
 		std::vector<Vertex> Vertices{};
 		std::vector<u32> Indices{};
-		
+
+		Math::AABB AABB;
+
 		Mat4 Transform;
 
 		std::string Name{};
 
 		u32 MaterialId;
+		RenderMode RenderMode = RenderMode::TRIANGLE;
+
+	private:
+		void CalculateAABB();
 	};
 }

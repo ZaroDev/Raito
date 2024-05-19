@@ -26,6 +26,7 @@ SOFTWARE.
 #include "Camera.h"
 
 #include "Input/Input.h"
+#include "optick/src/optick.h"
 
 
 namespace Raito::Renderer
@@ -36,10 +37,13 @@ namespace Raito::Renderer
 		m_ForwardDirection = glm::vec3(0, 0, -1);
 		m_Position = glm::vec3(0, 0, 5);
 		RecalculateView();
+
+		m_Frustum = Math::Frustum(m_Projection * m_View);
 	}
 
 	bool Camera::OnUpdate(float ts)
 	{
+		OPTICK_CATEGORY("Update Camera", Optick::Category::Camera);
 		bool moved = false;
 		
 		V2 mousePos = Input::GetMousePosition();
@@ -122,6 +126,23 @@ namespace Raito::Renderer
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
+		const float ar = m_ViewportWidth / m_ViewportHeight;
+
+		if (ar >= 1.0)
+		{
+			m_Parameters.Left = -ar * m_ViewportWidth;
+			m_Parameters.Right = ar * m_ViewportWidth;
+			m_Parameters.Top = m_ViewportWidth;
+			m_Parameters.Bottom = -m_ViewportWidth;
+		}
+		else
+		{
+			m_Parameters.Left = -m_ViewportWidth;
+			m_Parameters.Right = m_ViewportWidth;
+			m_Parameters.Top =  m_ViewportWidth / ar;
+			m_Parameters.Bottom = -m_ViewportWidth / ar;
+		}
+
 		RecalculateProjection();
 	}
 
@@ -130,16 +151,28 @@ namespace Raito::Renderer
 		return 0.3f;
 	}
 
+	bool Camera::IsInsideFrustum(const Math::AABB& boundingBox) const
+	{
+		if(!FrustumCulling)
+		{
+			return true;
+		}
+
+		return m_Frustum.IsBoxVisible(boundingBox.GetMin(), boundingBox.GetMax());
+	}
+
 	void Camera::RecalculateProjection()
 	{
 		m_Projection = glm::perspectiveFov(glm::radians(m_VerticalFOV), (float)m_ViewportWidth, (float)m_ViewportHeight, m_NearClip, m_FarClip);
 		m_InverseProjection = glm::inverse(m_Projection);
+		m_Frustum = Math::Frustum(m_Projection * m_View);
 	}
 
 	void Camera::RecalculateView()
 	{
 		m_View = glm::lookAt(m_Position, m_Position + m_ForwardDirection, glm::vec3(0, 1, 0));
 		m_InverseView = glm::inverse(m_View);
+		m_Frustum = Math::Frustum(m_Projection * m_View);
 	}
 
 }

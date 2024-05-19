@@ -61,6 +61,20 @@ namespace Raito::Renderer
 		return g_GraphicsContext.Surface.GetColorAttachment(m_Id, id);
 	}
 
+	u32 Surface::DeferredAttachment(u32 id) const
+	{
+		return g_GraphicsContext.Surface.GetDeferredAttachment(id);
+	}
+
+	u32 Surface::DeferredLightAttachment(u32 id) const
+	{
+		return g_GraphicsContext.Surface.GetLightDeferredAttachment(id);
+	}
+	u32 Surface::DeferredDepth() const
+	{
+		return g_GraphicsContext.Surface.GetDeferredDepth();
+	}
+
 	u32 Surface::DepthAttachment() const
 	{
 		return g_GraphicsContext.Surface.GetDepthAttachment(m_Id);

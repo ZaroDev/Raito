@@ -1,7 +1,8 @@
 ﻿#include "Performance.h"
 #include <imgui.h>
 
-#include <Raito/Time/Time.h>
+#include <Raito/Raito.h>
+
 
 namespace Editor
 {
@@ -33,6 +34,13 @@ namespace Editor
 
 		ImGui::PlotLines("##dt_log", m_DeltaTimeLog.data(), m_DeltaTimeLog.size());
 		ImGui::PlotLines("##fps_log", m_FPSLog.data(), m_FPSLog.size());
+
+
+
+		if(ImGui::Checkbox("V-Sync", &m_Vsync))
+		{
+			Raito::Window::SetVSync(m_Vsync);
+		}
 
 		ImGui::End();
 	}

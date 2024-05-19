@@ -31,10 +31,13 @@ SOFTWARE.
 // Modules
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
+#include "Assets/Assets.h"
 
 #include "Time/ScopedTimer.h"
 #include "Time/Time.h"
 #include <optick/include/optick.h>
+
+#include "Random/Random.h"
 
 namespace Raito::Core
 {
@@ -59,17 +62,25 @@ namespace Raito::Core
 			LOG("Application", "Failed to set graphics API");
 			return Failed();
 		}
-		if (!Renderer::Initialize())
-		{
-			LOG("Application", "Failed to initialize renderer module");
-			return Failed();
-		}
+		
 		if (!Window::Initialize(m_Info.GraphicsAPI,{ .Title = m_Info.Name,.Height = m_Info.Height, .Width = m_Info.Width, .Fullscreen = m_Info.Fullscreen }))
 		{
 			LOG("Application", "Failed to initialize window module");
 			return Failed();
 		}
-		
+		if (!Renderer::Initialize())
+		{
+			LOG("Application", "Failed to initialize renderer module");
+			return Failed();
+		}
+
+		if(!Assets::Initialize())
+		{
+			LOG("Application", "Failed to initialize assets module");
+			return Failed();
+		}
+
+		Random::Initialize();
 
 		OnInit();
 

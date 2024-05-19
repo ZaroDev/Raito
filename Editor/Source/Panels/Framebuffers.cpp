@@ -27,14 +27,23 @@ namespace Editor
 		constexpr ImVec2 uv1 = { 1, 0 };
 
 
-		ImGui::Text("Color attachment 0");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.ColorAttachment(0), size, uv0, uv1);
+		ImGui::Text("Position buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(), size, uv0, uv1);
 
-		ImGui::Text("Color attachment 1");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.ColorAttachment(1), size, uv0, uv1);
+		ImGui::Text("Normal buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(1), size, uv0, uv1);
 
-		ImGui::Text("Depth");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DepthAttachment(), size, uv0, uv1);
+		ImGui::Text("Albedo buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(2), size, uv0, uv1);
+
+		ImGui::Text("Light diffuse buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredLightAttachment(), size, uv0, uv1);
+
+		ImGui::Text("Light specular buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredLightAttachment(1), size, uv0, uv1);
+
+		ImGui::Text("Depth buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredDepth(), size, uv0, uv1);
 
 		
 

@@ -24,7 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "OpenGLCommon.h"
-#include "Assets/Mesh.h"
+#include "OpenGLObjects/OpenGLMaterial.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -32,25 +32,28 @@ namespace Raito::Renderer::OpenGL
 	void Shutdown();
 
 
-    Surface CreateSurface(SysWindow* window);
+    NODISCARD Surface CreateSurface(SysWindow* window);
     void RemoveSurface(u32 id);
-
-
     void ResizeSurface(u32 id, u32 width, u32 height);
-    u32 SurfaceWidth(u32 id);
-    u32 SurfaceHeight(u32 id);
-    u32 GetColorGetAttachment(u32 target, u32 id);
-    u32 GetDepthAttachment(u32 id);
+    NODISCARD u32 SurfaceWidth(u32 id);
+    NODISCARD u32 SurfaceHeight(u32 id);
+
+    NODISCARD u32 GetColorAttachment(u32 target, u32 id);
+    NODISCARD u32 GetDepthAttachment(u32 id);
+    NODISCARD u32 GetDeferredBufferAttachment(u32 id);
+    NODISCARD u32 GetDeferredBufferDepth();
+
     void RenderSurface(u32 id);
 
     u32 AddMesh(Assets::Mesh* mesh);
+    const OpenGLMeshData& GetMesh(u32 id);
     void RemoveMesh(u32 id);
 
     u32 AddTexture(Assets::Texture* texture, ubyte* data);
     void RemoveTexture(u32 id);
 
-
     u32 AddMaterial(EngineShader shader);
     void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size);
+	OpenGLMaterial& GetMaterial(u32 id);
     void RemoveMaterial(u32 id);
 }

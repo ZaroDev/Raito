@@ -28,7 +28,10 @@ SOFTWARE.
 #include <Raito/Core/BasicTypes.h>
 #include <Raito/Core/Assert.h>
 #include <Raito/Core/Common.h>
+#include <Raito/Core/UUID.h>
 #include <Raito/Core/Application.h>
+#include <Raito/Time/Time.h>
+#include <Raito/Time/ScopedTimer.h>
 // ECS
 #include <Raito/ECS/Scene.h>
 #include <Raito/ECS/Entity.h>
@@ -52,3 +55,10 @@ SOFTWARE.
 #include <Raito/Assets/Mesh.h>
 #include <Raito/Assets/Model.h>
 #include <Raito/Assets/AssetImport.h>
+#include <Raito/Assets/Assets.h>
+
+// Random
+#include <Raito/Random/Random.h>
+
+#define NUM_POINT 64
+#define NUM_DIRECTIONAL 4
