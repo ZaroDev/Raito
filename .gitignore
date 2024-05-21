@@ -26,4 +26,5 @@ packages.config
 *.ini
 !Vendor/Binaries
 !Assets/Meshes/DamagedHelmet
+!Assets/Meshes/Sponza
 Assets/Meshes
