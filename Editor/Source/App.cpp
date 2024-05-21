@@ -30,7 +30,7 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
 		//Raito::Assets::ImportModel("Meshes/Sponza/Sponza.gltf");
-		//Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
+		Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
 		
 		for (u32 i = 0; i < NUM_POINT; i++)
 		{

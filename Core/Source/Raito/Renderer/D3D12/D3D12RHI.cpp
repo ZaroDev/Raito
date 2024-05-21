@@ -25,6 +25,7 @@ SOFTWARE.
 #include "pch.h"
 #include "D3D12RHI.h"
 
+#include "D3D12ContentUploader.h"
 #include "Renderer/RHI.h"
 #include "D3D12Core.h"
 
@@ -42,5 +43,10 @@ namespace Raito::Renderer::D3D12
 		rhi.Surface.Width = Core::SurfaceWidth;
 		rhi.Surface.GetColorAttachment = Core::GetColorGetAttachment;
 		rhi.Surface.GetDepthAttachment = Core::GetDepthAttachment;
+		rhi.Meshes.AddMesh = Upload::AddMesh;
+
+		rhi.Materials.AddMaterial = Upload::AddMaterial;
+		rhi.Materials.SetMaterialValue = Upload::SetMaterialValue;
+		rhi.Textures.AddTexture = Upload::AddTexture;
 	}
 }

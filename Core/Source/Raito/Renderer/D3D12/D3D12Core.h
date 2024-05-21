@@ -26,6 +26,11 @@ SOFTWARE.
 
 #include "D3D12Common.h"
 
+namespace Raito::Renderer::D3D12
+{
+	class D3D12Command;
+}
+
 namespace Raito::Renderer::D3D12::Core
 {
     //! D3D12 Renderer initialize function
@@ -52,7 +57,7 @@ namespace Raito::Renderer::D3D12::Core
     //! Releases and nulls the given object
     //! @param resource Resource to release
     template<typename T>
-    constexpr  void Release(T*& resource)
+    constexpr void Release(T*& resource)
     {
         if (resource)
         {
@@ -87,6 +92,10 @@ namespace Raito::Renderer::D3D12::Core
     //! @param id id of the surface to be removed
     void RemoveSurface(u32 id);
 
+
+
+    const D3D12Command& CopyCommand();
+    const D3D12Command& GraphicsCommand();
 
     void ResizeSurface(u32 id, u32 width, u32 height);
     u32 SurfaceWidth(u32 id);

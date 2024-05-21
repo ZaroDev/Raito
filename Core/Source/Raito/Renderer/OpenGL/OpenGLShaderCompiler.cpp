@@ -33,7 +33,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 	{
 		std::vector<Shader*> g_Shaders{};
 
-		constexpr const char* c_ShadersSourceFiles = "Shaders";
+		constexpr const char* c_ShadersSourceFiles = "Shaders/OpenGL";
 
 		// NOTE: This must be in the same order as EngineShader to have the ID's be the same as the enum values
 		constexpr ShaderFileData c_ShaderFiles[]

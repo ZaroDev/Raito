@@ -26,14 +26,20 @@ SOFTWARE.
 #include "D3D12Core.h"
 #include "D3D12Common.h"
 #include "D3D12Objects/D3D12Callback.h"
+#include "D3D12Objects/D3D12Command.h"
 #include "D3D12Objects/D3D12Surface.h"
 
+#include "D3D12Passes/D3D12DeferredPass.h"
+#include "nvrhi/utils.h"
+
 #ifdef DEBUG
+#define ENABLE_VALIDATION 
 #include <dxgidebug.h>
 #include <nvrhi/validation.h>
 #endif
 
 #define HR_RETURN(hr, msg) if(FAILED(hr)) { D_LOG(msg); return false; }
+
 
 namespace Raito::Renderer::D3D12::Core
 {
@@ -41,21 +47,27 @@ namespace Raito::Renderer::D3D12::Core
 
 	namespace
 	{
+		Camera g_Camera(45.0, 0.1f, 1000.0f);
+
 		std::vector<D3D12Surface> g_Surfaces;
 
 		constexpr D3D_FEATURE_LEVEL c_MinimumFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
-		nvrhi::RefCountPtr<IDXGIFactory2> g_DXGIFactory = nullptr;
+		nvrhi::RefCountPtr<IDXGIFactory7> g_DXGIFactory = nullptr;
 		nvrhi::RefCountPtr<IDXGIAdapter> g_DXGIAdapter = nullptr;
 		nvrhi::RefCountPtr<D3D12Device> g_Device = nullptr;
-		nvrhi::RefCountPtr<ID3D12CommandQueue> g_GraphicsCommandQueue = nullptr;
-		nvrhi::RefCountPtr<ID3D12CommandQueue> g_ComputeCommandQueue = nullptr;
-		nvrhi::RefCountPtr<ID3D12CommandQueue> g_CopyCommandQueue = nullptr;
+		D3D12Command g_GraphicsCommandQueue;
+		D3D12Command g_ComputeCommandQueue;
+		D3D12Command g_CopyCommandQueue;
 
 		nvrhi::DeviceHandle g_DeviceHandle;
 
 		D3D12Callback g_Callback{};
 
+
+		std::mutex g_DeferredReleaseMutex;
+		std::vector<IUnknown*> g_DeferredReleases[c_FrameBufferCount]{};
+		u32 g_DeferredReleasesFlags[c_FrameBufferCount]{};
 
 		D3D_FEATURE_LEVEL GetMaxFeatureLevel(IDXGIAdapter* adapter)
 		{
@@ -77,8 +89,25 @@ namespace Raito::Renderer::D3D12::Core
 		}
 	}
 
-	
-	
+
+	void __declspec(noinline) ProcessDeferredReleases(u32 frameIndex)
+	{
+		std::lock_guard lock{ g_DeferredReleaseMutex };
+		// NOTE: We clear this flag in the beginning. If we'd clear it at the end
+		// then it might overwrite some other thread that was trying to see it.
+		// it's fine it overwriting happens before processing items.
+		g_DeferredReleasesFlags[frameIndex] = 0;
+
+		std::vector<IUnknown*>& resources = g_DeferredReleases[frameIndex];
+		if (!resources.empty())
+		{
+			for (auto& resource : resources)
+			{
+				Release(resource);
+			}
+			resources.clear();
+		}
+	}
 
 
 	bool Initialize()
@@ -103,7 +132,7 @@ namespace Raito::Renderer::D3D12::Core
 		}
 
 
-		if(FAILED(g_DXGIFactory->EnumAdapters(0, &g_DXGIAdapter)))
+		if (FAILED(g_DXGIFactory->EnumAdapters(0, &g_DXGIAdapter)))
 		{
 			D_ERROR("Cannot find any DXGI adapters in the system");
 			return false;
@@ -120,67 +149,88 @@ namespace Raito::Renderer::D3D12::Core
 		}
 
 		DXCall(hr = D3D12CreateDevice(g_DXGIAdapter.Get(), maxFeatureLevel, IID_PPV_ARGS(&g_Device)));
-	
 
-		// Create all the command queues
-		D3D12_COMMAND_QUEUE_DESC queueDesc;
-		ZeroMemory(&queueDesc, sizeof(queueDesc));
-		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-		queueDesc.NodeMask = 1;
+		new (&g_GraphicsCommandQueue) D3D12Command(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
+		new (&g_ComputeCommandQueue) D3D12Command(g_Device, D3D12_COMMAND_LIST_TYPE_COMPUTE);
+		new (&g_CopyCommandQueue) D3D12Command(g_Device, D3D12_COMMAND_LIST_TYPE_COPY);
 
-		// Graphics queue
-		DXCall(hr = g_Device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&g_GraphicsCommandQueue)));
-		HR_RETURN(hr, "Failed to create graphics queue");
-		g_GraphicsCommandQueue->SetName(L"Graphics Queue");
-
-		// Compute queue
-		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
-		DXCall(hr = g_Device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&g_ComputeCommandQueue)));
-		HR_RETURN(hr, "Failed to create compute queue");
-		g_ComputeCommandQueue->SetName(L"Compute Queue");
-
-		// Copy queue
-		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_COPY;
-		DXCall(hr = g_Device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&g_CopyCommandQueue)));
-		HR_RETURN(hr, "Failed to create copy queue");
-		g_ComputeCommandQueue->SetName(L"Copy Queue");
 
 
 		nvrhi::d3d12::DeviceDesc deviceDesc;
 		deviceDesc.errorCB = &g_Callback;
 		deviceDesc.pDevice = g_Device.Get();
-		deviceDesc.pGraphicsCommandQueue = g_GraphicsCommandQueue.Get();
-		deviceDesc.pComputeCommandQueue = g_ComputeCommandQueue.Get();
-		deviceDesc.pCopyCommandQueue = g_CopyCommandQueue.Get();
+		deviceDesc.pGraphicsCommandQueue = g_GraphicsCommandQueue.CommandQueue();
+		deviceDesc.pComputeCommandQueue = g_ComputeCommandQueue.CommandQueue();
+		deviceDesc.pCopyCommandQueue = g_CopyCommandQueue.CommandQueue();
 
 		g_DeviceHandle = nvrhi::d3d12::createDevice(deviceDesc);
 
-#ifdef DEBUG
+		g_GraphicsCommandQueue.CreateCommandList();
+		g_ComputeCommandQueue.CreateCommandList();
+		g_CopyCommandQueue.CreateCommandList();
+
+#ifdef ENABLE_VALIDATION
 		const nvrhi::DeviceHandle validationLayer = nvrhi::validation::createValidationLayer(g_DeviceHandle);
 		g_DeviceHandle = validationLayer;
 #endif
+
+		Deferred::Initialize();
+
+		
 
 		return true;
 	}
 
 	void Shutdown()
 	{
+		g_GraphicsCommandQueue.Release();
+		g_ComputeCommandQueue.Release();
+		g_CopyCommandQueue.Release();
+
+		// NOTE: We don't call ProcessDeferredReleases at the end because
+		// some resources (such as swap chains) can't be released before
+		// their depending on resources are released
+		for (uint32_t i = 0; i < c_FrameBufferCount; i++)
+		{
+			ProcessDeferredReleases(i);
+		}
+		g_DXGIFactory = nullptr;
+
+		// NOTE: Some types only use deferred release for their resources during
+		// shutdown/reset/clear. To finally release these resources we call
+		// ProcessDeferredReleases once more.
+		ProcessDeferredReleases(0);
+
+		Deferred::Shutdown();
+
+
 		g_Surfaces.clear();
 
 		g_DeviceHandle = nullptr;
-		g_GraphicsCommandQueue = nullptr;
-		g_ComputeCommandQueue = nullptr;
-		g_CopyCommandQueue = nullptr;
-		g_Device = nullptr;
-
 #ifdef DEBUG
+		{
+			{
+				ComPtr<ID3D12InfoQueue> infoQueue;
+				DXCall(g_Device->QueryInterface(IID_PPV_ARGS(&infoQueue)))
+					infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, false);
+				infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, false);
+				infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, false);
+			}
+			ComPtr<ID3D12DebugDevice2> debugDevice;
+			DXCall(g_Device->QueryInterface(IID_PPV_ARGS(&debugDevice)))
 
+				g_Device = nullptr;
+			DXCall(debugDevice->ReportLiveDeviceObjects(
+				D3D12_RLDO_SUMMARY | D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL))
+		}
+#else
+		g_Device = nullptr;
 #endif
 	}
 
 	void SetDeferredReleasesFlags()
 	{
+		g_DeferredReleasesFlags[CurrentFrameIndex()] = 1;
 	}
 
 	nvrhi::RefCountPtr<D3D12Device> Device()
@@ -196,18 +246,31 @@ namespace Raito::Renderer::D3D12::Core
 	Surface CreateSurface(SysWindow* window)
 	{
 		D3D12Surface& surface = g_Surfaces.emplace_back(window);
-		surface.CreateSwapChain(g_DXGIFactory, g_GraphicsCommandQueue);
+		surface.CreateSwapChain(g_DXGIFactory, g_GraphicsCommandQueue.CommandQueue());
 
 		return Surface(g_Surfaces.size() - 1);
 	}
 
 	void RemoveSurface(u32 id)
 	{
+		g_GraphicsCommandQueue.Flush();
 		g_Surfaces.erase(g_Surfaces.begin() + id);
+	}
+
+	const D3D12Command& CopyCommand()
+	{
+		return g_CopyCommandQueue;
+	}
+
+	const D3D12Command& GraphicsCommand()
+	{
+		return g_GraphicsCommandQueue;
 	}
 
 	void ResizeSurface(u32 id, u32 width, u32 height)
 	{
+		g_GraphicsCommandQueue.Flush();
+		g_Surfaces[id].Resize();
 	}
 
 	u32 SurfaceWidth(u32 id)
@@ -232,21 +295,41 @@ namespace Raito::Renderer::D3D12::Core
 
 	void RenderSurface(u32 id)
 	{
-		D3D12Surface& surface = g_Surfaces[id];
+		g_GraphicsCommandQueue.BeginFrame();
+		const nvrhi::CommandListHandle& commandList = g_GraphicsCommandQueue.CommandList();
+		const uint32_t frameIndex = CurrentFrameIndex();
 
-		surface.BeginFrame();
+		if (g_DeferredReleasesFlags[frameIndex])
+		{
+			ProcessDeferredReleases(frameIndex);
+		}
+		const D3D12Surface& surface = g_Surfaces[id];
 
-		surface.Present();
+		//nvrhi::utils::ClearColorAttachment(g_GraphicsCommandQueue.CommandList(), surface.FrameBuffer(frameIndex), 0, nvrhi::Color(0.f));
+
+		//Deferred::Update(&g_Camera, surface, frameIndex);
+
+		/*const auto graphicsState = nvrhi::GraphicsState()
+			.setFramebuffer(surface.FrameBuffer(frameIndex))
+			.setViewport(nvrhi::ViewportState().addViewportAndScissorRect(nvrhi::Viewport(surface.Height(), surface.Width())));
+
+		commandList->setGraphicsState(graphicsState);*/
+
+
+		g_GraphicsCommandQueue.EndFrame(surface);
 	}
 
 
 	void DeferredRelease(IUnknown* resource)
 	{
-	
+		const u32 frameIndex = CurrentFrameIndex();
+		std::lock_guard lock{ g_DeferredReleaseMutex };
+		g_DeferredReleases[frameIndex].push_back(resource);
+		SetDeferredReleasesFlags();
 	}
 
 	u32 CurrentFrameIndex()
 	{
-		return 0;
+		return g_GraphicsCommandQueue.FrameIndex();
 	}
 }
