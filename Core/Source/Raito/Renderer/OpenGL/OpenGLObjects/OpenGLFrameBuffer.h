@@ -30,10 +30,12 @@ namespace Raito
 	struct SysWindow;
 	namespace Renderer::OpenGL
 	{
-		
 		class OpenGLFrameBuffer final
 		{
 		public:
+			DEFAULT_MOVE_AND_COPY(OpenGLFrameBuffer)
+
+			OpenGLFrameBuffer() = delete;
 			explicit OpenGLFrameBuffer(const FrameBufferData& spec);
 			~OpenGLFrameBuffer();
 
@@ -47,7 +49,7 @@ namespace Raito
 			NODISCARD const FrameBufferData& Data() const { return m_Data; }
 			NODISCARD u32 ColorAttachment(u32 index = 0) const { ASSERT(index < m_ColorAttachments.size()); return m_ColorAttachments[index]; }
 			NODISCARD u32 DepthAttachment() const { return m_DepthAttachment; }
-		private:
+		protected:
 
 			u32 m_RenderId = 0;
 			FrameBufferData m_Data;
