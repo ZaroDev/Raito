@@ -25,8 +25,8 @@ namespace Raito::Renderer::D3D12::Shaders
 
 		constexpr ShaderFileInfo ShaderFiles[]
 		{
-			{"VertexShader.hlsl", "VSMain", EngineShader::FULLSCREEN_TRIANGLE, ShaderType::VERTEX},
-			{"PixelShader.hlsl", "PSMain", EngineShader::FILL_COLOR_PS, ShaderType::PIXEL},
+			{"VertexShader.hlsl", "VSMain", EngineShader::VERTEX_SHADER, ShaderType::VERTEX},
+			{"PixelShader.hlsl", "PSMain", EngineShader::PIXEL_SHADER, ShaderType::PIXEL},
 		};
 		
 		static_assert(_countof(ShaderFiles) == EngineShader::MAX);

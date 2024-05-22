@@ -91,14 +91,30 @@ void Raito::Renderer::D3D12::D3D12Surface::CreateSwapChainTextures()
 			.setWidth(m_Window->Info.Width)
 			.setHeight(m_Window->Info.Height)
 			.setIsRenderTarget(true)
+			.setKeepInitialState(true)
+			.setInitialState(nvrhi::ResourceStates::Present)
 			.setDebugName("Swap chain texture");
 
 		data.RTV = Core::NVDevice()->createHandleForNativeTexture(nvrhi::ObjectTypes::D3D12_Resource,
 			nvrhi::Object(data.Resource),
 			textureDesc);
 
+		auto depthDesc = nvrhi::TextureDesc()
+			.setDimension(nvrhi::TextureDimension::Texture2D)
+			.setFormat(nvrhi::Format::D32)
+			.setWidth(m_Window->Info.Width)
+			.setHeight(m_Window->Info.Height)
+			.setIsRenderTarget(true)
+			.setInitialState(nvrhi::ResourceStates::Present)
+			.setKeepInitialState(true)
+			.setIsUAV(false)
+			.setDebugName("Depth texture");
+
+		auto depthText = Core::NVDevice()->createTexture(depthDesc);
+
 		auto frameBufferDesc = nvrhi::FramebufferDesc()
-			.addColorAttachment(data.RTV);
+			.addColorAttachment(data.RTV)
+			.setDepthAttachment(depthText);
 
 		m_FrameBuffer[i] = Core::NVDevice()->createFramebuffer(frameBufferDesc);
 	}

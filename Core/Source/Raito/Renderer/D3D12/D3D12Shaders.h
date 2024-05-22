@@ -25,8 +25,8 @@ namespace Raito::Renderer::D3D12::Shaders
     struct EngineShader {
         enum ID : uint32_t
         {
-            FULLSCREEN_TRIANGLE = 0,
-            FILL_COLOR_PS,
+            VERTEX_SHADER = 0,
+            PIXEL_SHADER,
             MAX
         };
     };

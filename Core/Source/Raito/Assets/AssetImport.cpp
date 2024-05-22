@@ -239,7 +239,7 @@ namespace Raito::Assets
 			stbi_set_flip_vertically_on_load(false);
 		}
 
-		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
+		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 4);
 
 		LOG("Textures", "Imported {0}", filePath.string());
 		auto* texture = new Texture(width, height, nChannels, data, type);

@@ -33,6 +33,7 @@ SOFTWARE.
 #include "D3D12Shaders.h"
 #include "D3D12Passes/D3D12DeferredPass.h"
 #include "nvrhi/utils.h"
+#include "Time/Time.h"
 
 #ifdef DEBUG
 #define ENABLE_VALIDATION 
@@ -176,6 +177,24 @@ namespace Raito::Renderer::D3D12::Core
 		g_DeviceHandle = validationLayer;
 #endif
 
+		D3D12_MESSAGE_ID disableMessageIDs[] = {
+			   D3D12_MESSAGE_ID_CLEARDEPTHSTENCILVIEW_MISMATCHINGCLEARVALUE,
+			   D3D12_MESSAGE_ID_COMMAND_LIST_STATIC_DESCRIPTOR_RESOURCE_DIMENSION_MISMATCH, // descriptor validation doesn't understand acceleration structures
+		};
+
+		nvrhi::RefCountPtr<ID3D12InfoQueue> pInfoQueue;
+		g_Device->QueryInterface(&pInfoQueue);
+		if (pInfoQueue)
+		{
+			pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+			pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+			D3D12_INFO_QUEUE_FILTER filter = {};
+			filter.DenyList.pIDList = disableMessageIDs;
+			filter.DenyList.NumIDs = sizeof(disableMessageIDs) / sizeof(disableMessageIDs[0]);
+			pInfoQueue->AddStorageFilterEntries(&filter);
+		}
+
+
 		Shaders::CompileShaders();
 		Shaders::Initialize();
 
@@ -309,6 +328,10 @@ namespace Raito::Renderer::D3D12::Core
 			ProcessDeferredReleases(frameIndex);
 		}
 		D3D12Surface& surface = g_Surfaces[id];
+
+		g_Camera.OnResize(surface.Width(), surface.Height());
+		g_Camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
+
 		Deferred::Update(&g_Camera, surface, frameIndex);
 
 
