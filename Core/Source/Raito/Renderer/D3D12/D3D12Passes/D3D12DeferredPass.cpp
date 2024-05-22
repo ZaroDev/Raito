@@ -2,15 +2,30 @@
 #include "D3D12DeferredPass.h"
 #include <Raito/Renderer/D3D12/D3D12Core.h>
 
+#include "nvrhi/utils.h"
+#include "Renderer/D3D12/D3D12Shaders.h"
+#include "Renderer/D3D12/D3D12Objects/D3D12Command.h"
+
 namespace Raito::Renderer::D3D12::Deferred
 {
 	namespace
 	{
 		nvrhi::FramebufferHandle g_GBuffer[c_FrameBufferCount];
+		struct Vertex {
+			float position[4];
+			float color[4];
+		};
+		Vertex vertex_data_array[] = {
+			  { { 0.0f, 0.25f * 16/9 , 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+			{ { 0.25f, -0.25f * 16 / 9, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+			{ { -0.25f, -0.25f * 16 / 9, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+		};
+		nvrhi::GraphicsPipelineHandle graphicsPipeline;
+		nvrhi::BufferHandle vertexBuffer;
 	}
 	bool Initialize()
 	{
-		for(u32 i = 0; i < c_FrameBufferCount; i++)
+		for (u32 i = 0; i < c_FrameBufferCount; i++)
 		{
 			auto posDesc = nvrhi::TextureDesc()
 				.setDimension(nvrhi::TextureDimension::Texture2D)
@@ -45,7 +60,7 @@ namespace Raito::Renderer::D3D12::Deferred
 				.setIsRenderTarget(true)
 				.setDebugName("Deferred depth");
 
-			auto posText =	Core::NVDevice()->createTexture(posDesc);
+			auto posText = Core::NVDevice()->createTexture(posDesc);
 			auto normalText = Core::NVDevice()->createTexture(normalDesc);
 			auto albedoText = Core::NVDevice()->createTexture(albedoDesc);
 			auto depthText = Core::NVDevice()->createTexture(depthDesc);
@@ -59,71 +74,34 @@ namespace Raito::Renderer::D3D12::Deferred
 			g_GBuffer[i] = Core::NVDevice()->createFramebuffer(gBufferDesc);
 		}
 
-		std::string vertex;
-		std::string pixel;
-		std::ifstream file;
-		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-		try
-		{
-			file.open("Shaders/D3D12/VertexShader.hlsl");
-
-			std::stringstream stream;
-			stream << file.rdbuf();
-
-			file.close();
-
-			vertex = stream.str();
-		}
-		catch (std::ifstream::failure e)
-		{
-			D_ERROR("Vertex shader not succesfully readed!");
-		}
-
-		try
-		{
-			file.open("Shaders/D3D12/PixelShader.hlsl");
-
-			std::stringstream stream;
-			stream << file.rdbuf();
-
-			file.close();
-
-			pixel = stream.str();
-		}
-		catch (std::ifstream::failure e)
-		{
-			D_ERROR("Vertex shader not succesfully readed!");
-		}
+		auto vertex = Shaders::GetEngineShader(Shaders::EngineShader::FULLSCREEN_TRIANGLE);
 
 		nvrhi::ShaderHandle vertexShader = Core::NVDevice()->createShader(
 			nvrhi::ShaderDesc(nvrhi::ShaderType::Vertex),
-			vertex.data(), vertex.size());
+			vertex.pShaderBytecode, vertex.BytecodeLength);
 
-		struct Vertex {
-			float position[3];
-			float color[3];
-		};
+	
 
 		nvrhi::VertexAttributeDesc attributes[] = {
 			  nvrhi::VertexAttributeDesc()
 				.setName("POSITION")
-				.setFormat(nvrhi::Format::RGB32_FLOAT)
+				.setFormat(nvrhi::Format::RGBA32_FLOAT)
 				.setOffset(offsetof(Vertex, position))
 				.setElementStride(sizeof(Vertex)),
 			nvrhi::VertexAttributeDesc()
 				.setName("COLOR")
-				.setFormat(nvrhi::Format::RGB32_FLOAT)
+				.setFormat(nvrhi::Format::RGBA32_FLOAT)
 				.setOffset(offsetof(Vertex, color))
 				.setElementStride(sizeof(Vertex)),
 		};
 
 		nvrhi::InputLayoutHandle inputLayout = Core::NVDevice()->createInputLayout(
-			attributes, u32(std::size(attributes)), vertexShader);
+			attributes, 2, vertexShader);
 
+		auto pixel = Shaders::GetEngineShader(Shaders::EngineShader::FILL_COLOR_PS);
 		nvrhi::ShaderHandle pixelShader = Core::NVDevice()->createShader(
 			nvrhi::ShaderDesc(nvrhi::ShaderType::Pixel),
-			pixel.data(), pixel.size());
+			pixel.pShaderBytecode, pixel.BytecodeLength);
 
 		auto layoutDesc = nvrhi::BindingLayoutDesc()
 			.setVisibility(nvrhi::ShaderType::All)
@@ -138,13 +116,50 @@ namespace Raito::Renderer::D3D12::Deferred
 			.setPixelShader(pixelShader)
 			.addBindingLayout(bindingLayout);
 
-		nvrhi::GraphicsPipelineHandle graphicsPipeline = Core::NVDevice()->createGraphicsPipeline(pipelineDesc, g_GBuffer[0]);
+		graphicsPipeline = Core::NVDevice()->createGraphicsPipeline(pipelineDesc, g_GBuffer[0]);
+
+		
+
+		auto vertexBufferDesc = nvrhi::BufferDesc()
+			.setByteSize(sizeof(vertex_data_array))
+			.setIsVertexBuffer(true)
+			.setInitialState(nvrhi::ResourceStates::VertexBuffer)
+			.setKeepInitialState(true)
+			.setDebugName("Triangle buffer");
+
+
+		vertexBuffer = Core::NVDevice()->createBuffer(vertexBufferDesc);
+
+		const nvrhi::CommandListHandle commandList = Core::GraphicsCommand().CommandList();
+		commandList->open();
+		commandList->writeBuffer(vertexBuffer, vertex_data_array, sizeof(vertex_data_array));
+		commandList->close();
+		Core::NVDevice()->executeCommandList(commandList);
 
 		return true;
 	}
 
 	void Update(Renderer::Camera* camera, D3D12Surface& surface, u32 frameIndex)
 	{
+		auto frameBuffer = surface.FrameBuffer(frameIndex);
+
+		auto commandList = Core::GraphicsCommand().CommandList();
+
+		nvrhi::utils::ClearColorAttachment(commandList, frameBuffer, 0, nvrhi::Color{ 1.0f });
+
+		auto buffer = nvrhi::VertexBufferBinding{ vertexBuffer };
+		auto graphicsState = nvrhi::GraphicsState()
+			.setPipeline(graphicsPipeline)
+			.setFramebuffer(frameBuffer)
+			.setViewport(nvrhi::ViewportState().addViewportAndScissorRect(nvrhi::Viewport(surface.Width(), surface.Height())))
+			.addVertexBuffer(buffer);
+
+		commandList->setGraphicsState(graphicsState);
+
+		auto drawArguments = nvrhi::DrawArguments()
+			.setVertexCount(std::size(vertex_data_array));
+
+		commandList->draw(drawArguments);
 	}
 
 

@@ -25,10 +25,12 @@ SOFTWARE.
 #include "pch.h"
 #include "D3D12Core.h"
 #include "D3D12Common.h"
+#include "D3D12ShaderCompilation.h"
 #include "D3D12Objects/D3D12Callback.h"
 #include "D3D12Objects/D3D12Command.h"
 #include "D3D12Objects/D3D12Surface.h"
 
+#include "D3D12Shaders.h"
 #include "D3D12Passes/D3D12DeferredPass.h"
 #include "nvrhi/utils.h"
 
@@ -174,6 +176,9 @@ namespace Raito::Renderer::D3D12::Core
 		g_DeviceHandle = validationLayer;
 #endif
 
+		Shaders::CompileShaders();
+		Shaders::Initialize();
+
 		Deferred::Initialize();
 
 		
@@ -303,17 +308,8 @@ namespace Raito::Renderer::D3D12::Core
 		{
 			ProcessDeferredReleases(frameIndex);
 		}
-		const D3D12Surface& surface = g_Surfaces[id];
-
-		//nvrhi::utils::ClearColorAttachment(g_GraphicsCommandQueue.CommandList(), surface.FrameBuffer(frameIndex), 0, nvrhi::Color(0.f));
-
-		//Deferred::Update(&g_Camera, surface, frameIndex);
-
-		/*const auto graphicsState = nvrhi::GraphicsState()
-			.setFramebuffer(surface.FrameBuffer(frameIndex))
-			.setViewport(nvrhi::ViewportState().addViewportAndScissorRect(nvrhi::Viewport(surface.Height(), surface.Width())));
-
-		commandList->setGraphicsState(graphicsState);*/
+		D3D12Surface& surface = g_Surfaces[id];
+		Deferred::Update(&g_Camera, surface, frameIndex);
 
 
 		g_GraphicsCommandQueue.EndFrame(surface);

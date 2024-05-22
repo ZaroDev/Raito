@@ -147,5 +147,9 @@ namespace Raito
 		u32 AddMaterial(EngineShader shader);
 		void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size);
 		void RemoveMaterial(u32 id);
+
+		// Get the location of compiled engine shaders relative to the executable
+		// The path is for the graphics API that's currently in use.
+		NODISCARD const char* GetEngineShadersPath(API API);
 	}
 }

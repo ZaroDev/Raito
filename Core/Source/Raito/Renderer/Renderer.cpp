@@ -38,6 +38,12 @@ namespace Raito::Renderer
 	{
 		API g_GraphicsAPI = API::NONE;
 		RHI g_GraphicsContext{};
+
+		constexpr const char* c_EngineShadersPaths[]
+		{
+			nullptr, // None
+			"Shaders\\D3D12\\Shaders.bin"
+		};
 	}
 
 
@@ -171,5 +177,10 @@ namespace Raito::Renderer
 	void RemoveMaterial(u32 id)
 	{
 		g_GraphicsContext.Materials.RemoveMaterial(id);
+	}
+
+	const char* GetEngineShadersPath(API API)
+	{
+		return c_EngineShadersPaths[static_cast<u32>(API)];
 	}
 }
