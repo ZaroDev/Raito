@@ -2,7 +2,6 @@
 #include "OpenGLDeferredPass.h"
 
 #include "Raito.h"
-#include "Assets/MeshGenerator.h"
 #include "Core/Application.h"
 #include "ECS/Components.h"
 #include "optick/include/optick.h"
@@ -94,7 +93,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 
 		{
-			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED));
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED));
 			shader->Bind();
 			shader->SetUniform("u_Diffuse", 0);
 			shader->SetUniform("u_Emissive", 1);
@@ -104,7 +103,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->UnBind();
 		}
 		{
-			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_POINT_LIGHT));
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_POINT_LIGHT));
 			shader->Bind();
 			shader->SetUniform("u_Depth", 0);
 			shader->SetUniform("u_Normal", 1);
@@ -123,7 +122,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 		}
 
 		{
-			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_DIRECTIONAL_LIGHT));
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_DIRECTIONAL_LIGHT));
 			shader->Bind();
 			shader->SetUniform("u_Depth", 0);
 			shader->SetUniform("u_Normal", 1);
@@ -201,11 +200,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			glBlendFunc(GL_ONE, GL_ONE);
-			
-
 
 			g_DirectionalLightCount = g_PointLightCount = 0;
-
 
 			const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
 			for (auto& light : lightView)
@@ -216,7 +212,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 				{
 				case ECS::LightComponent::Type::DIRECTIONAL:
 				{
-					const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_DIRECTIONAL_LIGHT));
+					const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_DIRECTIONAL_LIGHT));
 					shader->Bind();
 
 					glActiveTexture(GL_TEXTURE0);
@@ -240,9 +236,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 				}break;
 				case ECS::LightComponent::Type::POINT_LIGHT:
 				{
-
-
-					const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::DEFERRED_POINT_LIGHT));
+					const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_POINT_LIGHT));
 					shader->Bind();
 
 					glActiveTexture(GL_TEXTURE0);

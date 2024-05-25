@@ -11,8 +11,10 @@ namespace Raito::Renderer::OpenGL::PostProcess
 	{
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
-		constexpr u32 c_BloomMipLevels = 6;
+		constexpr u32 c_BloomMipLevels = 3;
 		u32 g_BloomFBO;
+		constexpr float c_BloomFilterRadius = 0.005f;
+
 
 		void InitPostProcessQuad()
 		{
@@ -40,6 +42,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
 			shader->Bind();
 			shader->SetUniform("u_ScreenTexture", 0);
+			shader->SetUniform("u_BloomTexture", 1);
 			shader->UnBind();
 		}
 
@@ -97,10 +100,16 @@ namespace Raito::Renderer::OpenGL::PostProcess
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			//Setup shader texture layout values
 			{
-				
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(BLOOM_DOWN_SAMPLE));
+				shader->Bind();
+				shader->SetUniform("u_ScreenTexture", 0);
+				shader->UnBind();
 			}
 			{
-				
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(BLOOM_UP_SAMPLE));
+				shader->Bind();
+				shader->SetUniform("u_ScreenTexture", 0);
+				shader->UnBind();
 			}
 			return true;
 		}
@@ -120,21 +129,91 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
 
-		shader->Bind();
+		// Bloom
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, g_BloomFBO);
 
-		glBindVertexArray(g_FrameBufferQuadVAO);
-		glDisable(GL_DEPTH_TEST);
+			// Bloom down-sample
+			{
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(BLOOM_DOWN_SAMPLE));
+				shader->Bind();
+				shader->SetUniformRef("u_Resolution", V2{ buffer.Data().Width, buffer.Data().Height });
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment(1));
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+				for (const auto& mip : g_BloomMipChains)
+				{
+					glViewport(0, 0, mip.Size.x, mip.Size.y);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mip.Texture, 0);
 
-		shader->UnBind();
+					glBindVertexArray(g_FrameBufferQuadVAO);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+					glBindVertexArray(0);
 
+					shader->SetUniformRef("u_Resolution", mip.Size);
+					glBindTexture(GL_TEXTURE_2D, mip.Texture);
+				}
 
+				shader->UnBind();
+			}
+
+			// Bloom up-sample
+			{
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(BLOOM_UP_SAMPLE));
+				shader->Bind();
+				shader->SetUniform("u_FilterRadius", c_BloomFilterRadius);
+
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_ONE, GL_ONE);
+				glBlendEquation(GL_FUNC_ADD);
+
+				for (u32 i = g_BloomMipChains.size() - 1; i > 0; i--)
+				{
+					const BloomMip& mip = g_BloomMipChains[i];
+					const BloomMip& nextMip = g_BloomMipChains[i - 1];
+
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, mip.Texture);
+
+					glViewport(0, 0, nextMip.Size.x, nextMip.Size.y);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+						GL_TEXTURE_2D, nextMip.Texture, 0);
+
+					// Render screen-filled quad of resolution of current mip
+					glBindVertexArray(g_FrameBufferQuadVAO);
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+					glBindVertexArray(0);
+				}
+				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // Restore if this was default
+				glDisable(GL_BLEND);
+				shader->UnBind();
+			}
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0, 0, buffer.Data().Width, buffer.Data().Height);
+		}
+
+		// Render to quad
+		{
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(POST_PROCESS));
+
+			shader->Bind();
+
+			glBindVertexArray(g_FrameBufferQuadVAO);
+			glDisable(GL_DEPTH_TEST);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, g_BloomMipChains[0].Texture);
+
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			shader->UnBind();
+		}
 	}
 
 	void Shutdown()

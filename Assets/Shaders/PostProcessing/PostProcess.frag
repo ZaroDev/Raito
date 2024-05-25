@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 layout(location = 0) uniform sampler2D u_ScreenTexture;
+layout(location = 1) uniform sampler2D u_BloomTexture;
 
 vec3 aces(vec3 x) {
   const float a = 2.51;
@@ -16,7 +17,10 @@ vec3 aces(vec3 x) {
 
 void main() {
   vec3 hdrColor = texture(u_ScreenTexture, TexCoords).rgb;
-  vec3 result = aces(hdrColor);
+  vec3 bloomColor = texture(u_BloomTexture, TexCoords).rgb;
+
+  vec3 result = hdrColor + bloomColor;
+  result = aces(result);
 
   FragColor = vec4(result, 1.0);
 }
