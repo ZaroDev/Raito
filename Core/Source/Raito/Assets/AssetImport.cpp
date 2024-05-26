@@ -31,7 +31,7 @@ SOFTWARE.
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <assimp/pbrmaterial.h>
+#include <assimp/material.h>
 
 #include "Time/ScopedTimer.h"
 
@@ -68,20 +68,23 @@ namespace Raito::Assets
 
 				switch (type)
 				{
-				case aiTextureType_DIFFUSE:
-					value = "u_Albedo"; textureType = TextureType::DIFFUSE;
+				case aiTextureType_BASE_COLOR:
+					value = "u_Albedo"; textureType = DIFFUSE;
 					break;
 				case aiTextureType_NORMALS:
-					value = "u_Normal"; textureType = TextureType::NORMAL;
+					value = "u_Normal"; textureType = NORMAL;
 					break;
-				case aiTextureType_EMISSIVE:
-					value = "u_Emissive"; textureType = TextureType::EMISSIVE;
+				case aiTextureType_EMISSION_COLOR:
+					value = "u_Emissive"; textureType = EMISSIVE;
 					break;
 				case aiTextureType_LIGHTMAP:
-					value = "u_AmbientOcclusion"; textureType = TextureType::AMBIENT_OCCLUSION;
+					value = "u_AmbientOcclusion"; textureType = AMBIENT_OCCLUSION;
 					break;
-				case aiTextureType_UNKNOWN:
-					value = "u_MetalRoughness"; textureType = TextureType::METAL_ROUGHNESS;
+				case aiTextureType_METALNESS:
+					value = "u_Metal"; textureType = METAL;
+					break;
+				case aiTextureType_DIFFUSE_ROUGHNESS:
+					value = "u_Roughness"; textureType = ROUGHNESS;
 					break;
 				default:
 					break;
@@ -156,11 +159,13 @@ namespace Raito::Assets
 					const u32 materialId = AddMaterial(Renderer::G_BUFFER);
 					m->MaterialId = materialId;
 
-					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE);
-					//LoadTexturesOfType(m, path, material, aiTextureType_NORMALS);
-					//LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE);
-					//LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP);
-					//LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN);
+					LoadTexturesOfType(m, path, material, aiTextureType_BASE_COLOR);
+					LoadTexturesOfType(m, path, material, aiTextureType_NORMAL_CAMERA);
+					LoadTexturesOfType(m, path, material, aiTextureType_EMISSION_COLOR);
+					LoadTexturesOfType(m, path, material, aiTextureType_AMBIENT_OCCLUSION);
+					LoadTexturesOfType(m, path, material, aiTextureType_METALNESS);
+					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE_ROUGHNESS);
+					
 
 					g_Materials[materialHash] = materialId;
 				}
@@ -239,7 +244,7 @@ namespace Raito::Assets
 			stbi_set_flip_vertically_on_load(false);
 		}
 
-		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 4);
+		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
 
 		LOG("Textures", "Imported {0}", filePath.string());
 		auto* texture = new Texture(width, height, nChannels, data, type);

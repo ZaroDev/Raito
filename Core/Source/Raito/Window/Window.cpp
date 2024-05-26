@@ -105,29 +105,29 @@ namespace Raito
 				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 			}
 
-			Renderer::Initialize();
+			
 
 			// Create the GLFW g_Window
 			GLFWwindow* win = nullptr;
 			if ((win = glfwCreateWindow((int)defaultInfo.Width, (int)defaultInfo.Height, defaultInfo.Title.c_str(), nullptr, nullptr)) == nullptr)
 			{
 				F_ERR("Error while creating a g_Window {}", glfwGetError(NULL));
-				return U32_MAX;
+				return false;
 			}
 
 			if (api == Renderer::API::OPENGL)
 			{
-				glfwSwapInterval(false);
 				glfwMakeContextCurrent(win);
-				if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+				if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
 				{
 					ERR("Window", "Failed to initialize glad");
 					return false;
 				}
+				glfwSwapInterval(false);
 			}
 
 			// Create and register the window
-			SysWindow* window = new SysWindow();
+			auto* window = new SysWindow();
 			window->Info = defaultInfo;
 			window->Window = win;
 			window->WindowHandle = glfwGetWin32Window(win);
@@ -143,6 +143,8 @@ namespace Raito
 			g_MainWindow = window->Id;
 
 			g_Initialized = true;
+
+			Renderer::Initialize();
 
 			return true;
 		}
@@ -227,6 +229,7 @@ namespace Raito
 
 		void SetFullScreen(bool value)
 		{
+			
 		}
 
 		void SetVSync(bool value)
