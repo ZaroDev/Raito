@@ -49,6 +49,7 @@ namespace Raito::Renderer::OpenGL
 		NONE = 0,
 		INT,
 		FLOAT,
+		VEC2,
 		VEC3,
 		VEC4,
 		MAT3,
@@ -69,14 +70,14 @@ namespace Raito::Renderer::OpenGL
 		virtual ~OpenGLShader();
 
 
-		DEFAULT_MOVE_AND_COPY(OpenGLShader)
+		DEFAULT_MOVE_AND_COPY(OpenGLShader);
 
 		void Bind() const;
 		void UnBind() const;
 
 
 		template<typename T>
-		void SetUniform(u32 id, const T value)
+		void SetUniform(u32 id, T value)
 		{
 			ASSERT(false);
 		}
@@ -87,7 +88,7 @@ namespace Raito::Renderer::OpenGL
 		}
 
 		template<typename T>
-		void SetUniform(const char* uniformName, const T value)
+		void SetUniform(const char* uniformName, T value)
 		{
 			SetUniform<T>(GetUniformLocation(uniformName), value);
 		}
@@ -112,7 +113,7 @@ namespace Raito::Renderer::OpenGL
 
 		GLint GetUniformLocation(const char* uniformName) const
 		{
-			if(m_Uniforms.contains(uniformName))
+			if (m_Uniforms.contains(uniformName))
 			{
 				return m_Uniforms.at(uniformName).Id;
 			}
@@ -131,30 +132,35 @@ namespace Raito::Renderer::OpenGL
 	};
 
 	template<>
-	inline void OpenGLShader::SetUniform<bool>(u32 id , const bool value)
+	inline void OpenGLShader::SetUniform<bool>(u32 id, bool value)
 	{
 		glUniform1i(id, value);
 	}
 
 	template<>
-	inline void OpenGLShader::SetUniform<i32>(u32 id, const i32 value)
+	inline void OpenGLShader::SetUniform<i32>(u32 id, i32 value)
 	{
 		glUniform1i(id, value);
 	}
 	template<>
-	inline void OpenGLShader::SetUniform<u32>(u32 id, const u32 value)
+	inline void OpenGLShader::SetUniform<u32>(u32 id, u32 value)
 	{
 		glUniform1ui(id, value);
 	}
 	template<>
-	inline void OpenGLShader::SetUniform<float>(u32 id,  const float value)
+	inline void OpenGLShader::SetUniform<float>(u32 id, float value)
 	{
 		glUniform1f(id, value);
 	}
 	template<>
+	inline void OpenGLShader::SetUniformRef<Iv2>(u32 id, const Iv2& value)
+	{
+		glUniform2i(id, value.x, value.y);
+	}
+	template<>
 	inline void OpenGLShader::SetUniformRef<V2>(u32 id, const V2& value)
 	{
-		glUniform2fv(id, 1, glm::value_ptr(value));
+		glUniform2f(id, value.x, value.y);
 	}
 	template<>
 	inline void OpenGLShader::SetUniformRef<V3>(u32 id, const V3& value)

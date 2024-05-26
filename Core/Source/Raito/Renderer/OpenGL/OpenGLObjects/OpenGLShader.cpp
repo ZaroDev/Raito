@@ -51,6 +51,9 @@ namespace Raito::Renderer::OpenGL
 			case GL_FLOAT:
 				uniform.Type = UniformType::FLOAT;
 				break;
+			case GL_FLOAT_VEC2:
+				uniform.Type = UniformType::VEC2;
+				break;
 			case GL_FLOAT_VEC3:
 				uniform.Type = UniformType::VEC3;
 				break;
@@ -95,6 +98,9 @@ namespace Raito::Renderer::OpenGL
 				break;
 			case GL_FLOAT:
 				attribute.Type = UniformType::FLOAT;
+				break;
+			case GL_FLOAT_VEC2:
+				attribute.Type = UniformType::VEC2;
 				break;
 			case GL_FLOAT_VEC3:
 				attribute.Type = UniformType::VEC3;

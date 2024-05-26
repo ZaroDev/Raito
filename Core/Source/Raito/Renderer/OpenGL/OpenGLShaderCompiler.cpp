@@ -38,17 +38,19 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		// NOTE: This must be in the same order as EngineShader to have the ID's be the same as the enum values
 		constexpr ShaderFileData c_ShaderFiles[]
 		{
-			{"DefaultMesh", EngineShader::DEFAULT_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
-			{"GBuffer", EngineShader::G_BUFFER,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
-			{"DeferredCombine", EngineShader::DEFERRED,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
-			{"DeferredPointLight", EngineShader::DEFERRED_POINT_LIGHT,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
-			{"DeferredDirectionalLight", EngineShader::DEFERRED_DIRECTIONAL_LIGHT,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"Mesh/DefaultMesh", EngineShader::DEFAULT_MESH, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"Deferred/GBuffer", EngineShader::G_BUFFER,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"Deferred/DeferredCombine", EngineShader::DEFERRED,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"Deferred/DeferredPointLight", EngineShader::DEFERRED_POINT_LIGHT,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
+			{"Deferred/DeferredDirectionalLight", EngineShader::DEFERRED_DIRECTIONAL_LIGHT,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"DefaultLight", EngineShader::DEFAULT_LIGHT, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
 			{"Skybox", EngineShader::SKYBOX, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT},
-			{"GaussianBlur", EngineShader::GAUSSIAN_BLUR, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{"PostProcessing/GaussianBlur", EngineShader::GAUSSIAN_BLUR, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{"EquirectangularToCubemap", EngineShader::EQUIRECTANGULAR_TO_CUBEMAP, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{"Irradiance", EngineShader::IRRADIANCE, OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
-			{ "PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "PostProcessing/PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "PostProcessing/BloomDownSample", EngineShader::BLOOM_DOWN_SAMPLE,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "PostProcessing/BloomUpSample", EngineShader::BLOOM_UP_SAMPLE,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 		};
 
 		static_assert(_countof(c_ShaderFiles) == EngineShader::ENGINE_SHADER_MAX);

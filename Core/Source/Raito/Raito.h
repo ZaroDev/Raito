@@ -60,5 +60,5 @@ SOFTWARE.
 // Random
 #include <Raito/Random/Random.h>
 
-#define NUM_POINT 64
-#define NUM_DIRECTIONAL 4
+#define NUM_POINT 32
+#define NUM_DIRECTIONAL 1

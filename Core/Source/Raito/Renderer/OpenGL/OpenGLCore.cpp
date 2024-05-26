@@ -128,7 +128,8 @@ namespace Raito::Renderer::OpenGL
 		// Deferred color attachments
 		data.Attachments =
 		{
-			FrameBufferTextureFormat::RGBA16F,
+			FrameBufferTextureFormat::RGBA16F,	// Color buffer
+			FrameBufferTextureFormat::RGBA16F,	// Bloom buffer
 			FrameBufferTextureFormat::Depth		// Depth buffer
 		};
 		data.Width = window->Info.Width;
