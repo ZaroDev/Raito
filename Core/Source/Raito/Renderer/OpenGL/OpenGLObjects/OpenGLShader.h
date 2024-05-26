@@ -59,6 +59,7 @@ namespace Raito::Renderer::OpenGL
 
 	struct ShaderValue
 	{
+		size_t Size = 0;
 		GLint Id = 0;
 		UniformType Type = UniformType::NONE;
 	};

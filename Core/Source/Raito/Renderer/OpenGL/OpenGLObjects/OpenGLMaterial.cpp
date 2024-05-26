@@ -35,7 +35,8 @@ namespace Raito::Renderer::OpenGL
 		const auto& shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShader(m_ShaderId));
 		for (const auto& uniform : shader->Uniforms())
 		{
-			m_Uniforms[uniform.first] = UniformValue{ uniform.second, nullptr, 0 };
+			auto* value = new ubyte[uniform.second.Size];
+			m_Uniforms[uniform.first] = UniformValue{ uniform.second, value, uniform.second.Size};
 		}
 	}
 

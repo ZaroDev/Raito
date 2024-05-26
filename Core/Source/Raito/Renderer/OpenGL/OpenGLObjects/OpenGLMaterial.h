@@ -156,10 +156,6 @@ namespace Raito::Renderer::OpenGL
 			{
 				return;
 			}
-			delete m_Uniforms[name].Value;
-
-			m_Uniforms[name].Value = new ubyte[size];
-			m_Uniforms[name].Size = size;
 			memcpy(m_Uniforms[name].Value, value, size);
 		}
 
@@ -170,9 +166,6 @@ namespace Raito::Renderer::OpenGL
 			{
 				return;
 			}
-			delete m_Uniforms[name].Value;
-			m_Uniforms[name].Value = new ubyte[sizeof(T)];
-			m_Uniforms[name].Size = sizeof(T);
 			memcpy(m_Uniforms[name].Value, &value, sizeof(T));
 		}
 

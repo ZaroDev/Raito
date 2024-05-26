@@ -42,29 +42,36 @@ namespace Raito::Renderer::OpenGL
 
 			ShaderValue uniform;
 			uniform.Id = glGetUniformLocation(m_ShaderId, name);
-			
+		
 			switch (type)
 			{
 			case GL_INT: 
 				uniform.Type = UniformType::INT;
+				uniform.Size = sizeof(i32);
 				break;
 			case GL_FLOAT:
 				uniform.Type = UniformType::FLOAT;
+				uniform.Size = sizeof(float);
 				break;
 			case GL_FLOAT_VEC2:
 				uniform.Type = UniformType::VEC2;
+				uniform.Size = sizeof(V2);
 				break;
 			case GL_FLOAT_VEC3:
 				uniform.Type = UniformType::VEC3;
+				uniform.Size = sizeof(V3);
 				break;
 			case GL_FLOAT_MAT3:
 				uniform.Type = UniformType::MAT3;
+				uniform.Size = sizeof(Mat3);
 				break;
 			case GL_FLOAT_MAT4:
 				uniform.Type = UniformType::MAT4;
+				uniform.Size = sizeof(Mat4);
 				break;
 			case GL_SAMPLER_2D:
 				uniform.Type = UniformType::SAMPLER_2D;
+				uniform.Size = sizeof(TextureData);
 				break;
 
 			default:
