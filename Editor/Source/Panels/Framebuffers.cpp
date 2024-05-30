@@ -27,14 +27,17 @@ namespace Editor
 		constexpr ImVec2 uv1 = { 1, 0 };
 
 
-		ImGui::Text("Position buffer");
+		ImGui::Text("Albedo buffer");
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(), size, uv0, uv1);
 
 		ImGui::Text("Normal buffer");
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(1), size, uv0, uv1);
 
-		ImGui::Text("Albedo buffer");
+		ImGui::Text("Roughness buffer");
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(2), size, uv0, uv1);
+
+		ImGui::Text("Metalness buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(3), size, uv0, uv1);
 
 		ImGui::Text("Light diffuse buffer");
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredLightAttachment(), size, uv0, uv1);

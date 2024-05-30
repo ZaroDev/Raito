@@ -107,12 +107,12 @@ namespace Raito::Renderer::OpenGL
 		NODISCARD u32 Id() const { return m_ShaderId; }
 
 
-		GLint GetUniformLocation(const std::string& uniformName) const
+		NODISCARD GLint GetUniformLocation(const std::string& uniformName) const
 		{
 			return GetUniformLocation(uniformName.c_str());
 		}
 
-		GLint GetUniformLocation(const char* uniformName) const
+		NODISCARD GLint GetUniformLocation(const char* uniformName) const
 		{
 			if (m_Uniforms.contains(uniformName))
 			{
@@ -166,12 +166,12 @@ namespace Raito::Renderer::OpenGL
 	template<>
 	inline void OpenGLShader::SetUniformRef<V3>(u32 id, const V3& value)
 	{
-		glUniform3fv(id, 1, glm::value_ptr(value));
+		glUniform3f(id, value.x, value.y, value.z);
 	}
 	template<>
 	inline void OpenGLShader::SetUniformRef<V4>(u32 id, const V4& value)
 	{
-		glUniform4fv(id, 1, glm::value_ptr(value));
+		glUniform4f(id, value.x, value.y, value.z, value.w);
 	}
 	template<>
 	inline void OpenGLShader::SetUniformRef<Mat3>(u32 id, const Mat3& value)

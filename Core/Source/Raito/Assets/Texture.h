@@ -36,8 +36,7 @@ namespace Raito::Assets
 		NORMAL,
 		EMISSIVE,
 		AMBIENT_OCCLUSION,
-		METAL,
-		ROUGHNESS,
+		METAL_ROUGHNESS,
 		HDR
 	};
 

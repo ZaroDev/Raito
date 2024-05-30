@@ -61,6 +61,10 @@ namespace Raito::Renderer::OpenGL
 				uniform.Type = UniformType::VEC3;
 				uniform.Size = sizeof(V3);
 				break;
+			case GL_FLOAT_VEC4:
+				uniform.Type = UniformType::VEC4;
+				uniform.Size = sizeof(V4);
+				break;
 			case GL_FLOAT_MAT3:
 				uniform.Type = UniformType::MAT3;
 				uniform.Size = sizeof(Mat3);
@@ -111,6 +115,9 @@ namespace Raito::Renderer::OpenGL
 				break;
 			case GL_FLOAT_VEC3:
 				attribute.Type = UniformType::VEC3;
+				break;
+			case GL_FLOAT_VEC4:
+				attribute.Type = UniformType::VEC4;
 				break;
 			case GL_FLOAT_MAT3:
 				attribute.Type = UniformType::MAT3;

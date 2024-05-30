@@ -39,6 +39,8 @@ namespace Raito::Assets
 	{
 		V3 Position;
 		V3 Normal;
+		V3 Tangent;
+		V3 BiTangent;
 		V2 TexCoords;
 	};
 

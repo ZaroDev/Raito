@@ -9,8 +9,6 @@
 #include "Panels/Shaders.h"
 #include "Panels/Hierarchy.h"
 
-#include <filesystem>
-
 #include "optick/src/optick.h"
 #include "Panels/Assets.h"
 #include "Panels/Framebuffers.h"
@@ -34,7 +32,7 @@ namespace Editor
 		
 		for (u32 i = 0; i < NUM_POINT; i++)
 		{
-			Raito::V3 position = Raito::Random::Vec3(-5.f, 5.f);
+			Raito::V3 position = Raito::Random::Vec3(-1.f, 1.f);
 			Raito::V3 color = Raito::Random::Vec3(0.5f, 1.0f);
 			position.y = Raito::Random::Float(0.f, 5.f);
 

@@ -32,6 +32,7 @@ SOFTWARE.
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <assimp/material.h>
+#include <assimp/GltfMaterial.h>
 
 #include "Time/ScopedTimer.h"
 
@@ -60,8 +61,6 @@ namespace Raito::Assets
 
 				p /= str.C_Str();
 
-				
-
 				std::string value{};
 
 				TextureType textureType{};
@@ -74,17 +73,14 @@ namespace Raito::Assets
 				case aiTextureType_NORMALS:
 					value = "u_Normal"; textureType = NORMAL;
 					break;
-				case aiTextureType_EMISSION_COLOR:
+				case aiTextureType_EMISSIVE:
 					value = "u_Emissive"; textureType = EMISSIVE;
 					break;
 				case aiTextureType_LIGHTMAP:
 					value = "u_AmbientOcclusion"; textureType = AMBIENT_OCCLUSION;
 					break;
-				case aiTextureType_METALNESS:
-					value = "u_Metal"; textureType = METAL;
-					break;
-				case aiTextureType_DIFFUSE_ROUGHNESS:
-					value = "u_Roughness"; textureType = ROUGHNESS;
+				case aiTextureType_UNKNOWN:
+					value = "u_MetalRoughness"; textureType = METAL_ROUGHNESS;
 					break;
 				default:
 					break;
@@ -126,6 +122,14 @@ namespace Raito::Assets
 				vertex.Normal.y = mesh->mNormals[i].y;
 				vertex.Normal.z = mesh->mNormals[i].z;
 
+				vertex.Tangent.x = mesh->mTangents[i].x;
+				vertex.Tangent.y = mesh->mTangents[i].y;
+				vertex.Tangent.z = mesh->mTangents[i].z;
+
+				vertex.BiTangent.x = mesh->mBitangents[i].x;
+				vertex.BiTangent.y = mesh->mBitangents[i].y;
+				vertex.BiTangent.z = mesh->mBitangents[i].z;
+
 				if(mesh->mTextureCoords[0])
 				{
 					vertex.TexCoords.x = mesh->mTextureCoords[0][i].x;
@@ -160,12 +164,10 @@ namespace Raito::Assets
 					m->MaterialId = materialId;
 
 					LoadTexturesOfType(m, path, material, aiTextureType_BASE_COLOR);
-					LoadTexturesOfType(m, path, material, aiTextureType_NORMAL_CAMERA);
-					LoadTexturesOfType(m, path, material, aiTextureType_EMISSION_COLOR);
-					LoadTexturesOfType(m, path, material, aiTextureType_AMBIENT_OCCLUSION);
-					LoadTexturesOfType(m, path, material, aiTextureType_METALNESS);
-					LoadTexturesOfType(m, path, material, aiTextureType_DIFFUSE_ROUGHNESS);
-					
+					LoadTexturesOfType(m, path, material, aiTextureType_NORMALS);
+					LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE);
+					LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP);
+					LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN);
 
 					g_Materials[materialHash] = materialId;
 				}
@@ -208,7 +210,7 @@ namespace Raito::Assets
 
 		ScopedTimer timer("Import asset");
 
-		const aiScene* scene = importer.ReadFile(filePath.string().c_str(), aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(filePath.string().c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{

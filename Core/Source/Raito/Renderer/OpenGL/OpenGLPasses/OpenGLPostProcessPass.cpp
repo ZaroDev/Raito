@@ -77,7 +77,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 				glGenTextures(1, &mip.Texture);
 				glBindTexture(GL_TEXTURE_2D, mip.Texture);
 
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, mipSize.x, mipSize.y, 0, GL_RGB, GL_FLOAT, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, mipIntSize.x, mipIntSize.y, 0, GL_RGB, GL_FLOAT, nullptr);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -125,7 +125,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 	void Update(const OpenGLFrameBuffer& buffer)
 	{
-		OPTICK_CATEGORY("Update Postprocessing", Optick::Category::Rendering);
+		OPTICK_CATEGORY("Update post processing", Optick::Category::Rendering);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -145,7 +145,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 				for (const auto& mip : g_BloomMipChains)
 				{
-					glViewport(0, 0, mip.Size.x, mip.Size.y);
+					glViewport(0, 0, mip.IntSize.x, mip.IntSize.y);
 					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mip.Texture, 0);
 
 					glBindVertexArray(g_FrameBufferQuadVAO);
@@ -177,7 +177,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, mip.Texture);
 
-					glViewport(0, 0, nextMip.Size.x, nextMip.Size.y);
+					glViewport(0, 0, nextMip.IntSize.x, nextMip.IntSize.y);
 					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 						GL_TEXTURE_2D, nextMip.Texture, 0);
 

@@ -18,7 +18,7 @@ namespace Raito::Assets::MeshGenerator
                 float yPos = (std::cos(ySegment * PI)) * radius;
                 float zPos = (std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI)) * radius;
 
-                vertices.push_back(Vertex{ { xPos, yPos, zPos }, { xPos, yPos, zPos }, { xSegment, ySegment } });
+                vertices.push_back(Vertex{ { xPos, yPos, zPos }, { xPos, yPos, zPos }, V3{}, V3{},{ xSegment, ySegment } });
             }
         }
 
