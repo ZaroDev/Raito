@@ -33,7 +33,7 @@ namespace Raito::Renderer::OpenGL
 {
 	namespace
 	{
-		Camera g_Camera(45.0, 0.1f, 1000.0f);
+		Camera g_Camera(45.0, 0.1f, 500.0f);
 
 
 		std::vector<OpenGLFrameBuffer>	g_Surfaces{};

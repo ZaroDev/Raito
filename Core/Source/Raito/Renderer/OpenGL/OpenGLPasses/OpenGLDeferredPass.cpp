@@ -131,6 +131,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 			g_CascadeUniforms.CascadeCount = shader->GetUniformLocation("u_ShadowMapData.Size");
 			g_CascadeUniforms.FarPlane = shader->GetUniformLocation("u_ShadowMapData.FarPlane");
+			g_CascadeUniforms.View = shader->GetUniformLocation("u_View");
 
 			g_LightCountUniform = shader->GetUniformLocation("u_NumLights");
 			g_InvProjectionUniform = shader->GetUniformLocation("u_InvProjection");
@@ -384,7 +385,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 				}
 				g_LightCount++;
 			}
-
+			shader->SetUniformRef(g_CascadeUniforms.View, camera->GetView());
 			shader->SetUniformRef("u_ViewPos", camera->GetPosition());
 
 
