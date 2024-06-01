@@ -9,6 +9,7 @@
 #include "Renderer/OpenGL/OpenGLCore.h"
 
 #include "OpenGLShadowPass.h"
+#include "OpenGLSkyboxPass.h"
 
 namespace Raito::Renderer::OpenGL::Deferred
 {
@@ -48,6 +49,16 @@ namespace Raito::Renderer::OpenGL::Deferred
 			GLint Position;
 			GLint Color;
 		} g_PointUniforms[NUM_POINT];
+
+		struct GBufferUniforms
+		{
+			GLint Position;
+			GLint Normal;
+			GLint Albedo;
+			GLint Emissive;
+			GLint RoughMetalAO;
+
+		} g_GBufferUniforms;
 
 		GLint g_LightCount = 0;
 
@@ -111,15 +122,20 @@ namespace Raito::Renderer::OpenGL::Deferred
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 
+
 		{
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED));
 			shader->Bind();
-			shader->SetUniform("u_GPosition", 0);
-			shader->SetUniform("u_GNormal", 1);
-			shader->SetUniform("u_GAlbedo", 2);
-			shader->SetUniform("u_GEmissive", 3);
-			shader->SetUniform("u_GRoughMetalAO", 4);
-			shader->SetUniform("u_ShadowMap", 5);
+			
+			shader->SetUniform("u_ShadowMap", 0);
+			shader->SetUniform("u_IrradianceMap", 1);
+
+
+			g_GBufferUniforms.Position = shader->GetUniformLocation("u_GPosition");
+			g_GBufferUniforms.Normal = shader->GetUniformLocation("u_GNormal");
+			g_GBufferUniforms.Albedo = shader->GetUniformLocation("u_GAlbedo");
+			g_GBufferUniforms.Emissive = shader->GetUniformLocation("u_GEmissive");
+			g_GBufferUniforms.RoughMetalAO = shader->GetUniformLocation("u_GRoughMetalAO");
 
 			g_DirectionalUniforms.Color = shader->GetUniformLocation("u_Directional.Color");
 			g_DirectionalUniforms.Direction = shader->GetUniformLocation("u_Directional.Direction");
@@ -225,6 +241,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 				material.UnBind();
 			}
+
+			Skybox::Update(camera);
 			g_FrameBuffer->UnBind();
 		}
 		{
@@ -331,25 +349,19 @@ namespace Raito::Renderer::OpenGL::Deferred
 			shader->Bind();
 			glDisable(GL_DEPTH_TEST);
 
+			glUniformHandleui64ARB(g_GBufferUniforms.Position, g_FrameBuffer->ColorHandle());
+			glUniformHandleui64ARB(g_GBufferUniforms.Normal, g_FrameBuffer->ColorHandle(1));
+			glUniformHandleui64ARB(g_GBufferUniforms.Albedo, g_FrameBuffer->ColorHandle(2));
+			glUniformHandleui64ARB(g_GBufferUniforms.Emissive, g_FrameBuffer->ColorHandle(3));
+			glUniformHandleui64ARB(g_GBufferUniforms.RoughMetalAO, g_FrameBuffer->ColorHandle(4));
+
+
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment());
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
-
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(2));
-
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(3));
-
-			glActiveTexture(GL_TEXTURE4);
-			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(4));
-
-			glActiveTexture(GL_TEXTURE5);
 			glBindTexture(GL_TEXTURE_2D_ARRAY, Shadows::GetShadowMap());
 
-			
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Skybox::GetIrradianceMap());
+
 
 			glBindBuffer(GL_UNIFORM_BUFFER, Shadows::GetLightSpaceMatricesUBO());
 

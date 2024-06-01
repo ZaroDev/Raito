@@ -205,6 +205,8 @@ namespace Raito::Assets
 				transform = transform * aiMatrix4x4ToGlm(&node->mParent->mTransformation);
 			}
 
+
+
 			// process all the node's meshes (if any)
 			for (u32 i = 0; i < node->mNumMeshes; i++)
 			{

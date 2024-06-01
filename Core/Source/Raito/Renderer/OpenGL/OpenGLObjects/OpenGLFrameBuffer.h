@@ -48,6 +48,7 @@ namespace Raito
 			NODISCARD u32 Id() const { return m_RenderId; }
 			NODISCARD const FrameBufferData& Data() const { return m_Data; }
 			NODISCARD u32 ColorAttachment(u32 index = 0) const { ASSERT(index < m_ColorAttachments.size()); return m_ColorAttachments[index]; }
+			NODISCARD u64 ColorHandle(u32 index = 0) const { ASSERT(index < m_ColorHandles.size()); return m_ColorHandles[index]; }
 			NODISCARD u32 DepthAttachment() const { return m_DepthAttachment; }
 		protected:
 
@@ -55,6 +56,7 @@ namespace Raito
 			FrameBufferData m_Data;
 
 			std::vector<u32> m_ColorAttachments;
+			std::vector<u64> m_ColorHandles;
 			std::vector<FrameBufferTextureData> m_ColorAttachmentData;
 
 			u32 m_DepthAttachment = 0;

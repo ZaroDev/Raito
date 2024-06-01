@@ -54,7 +54,9 @@ namespace Raito::Renderer::OpenGL
 		VEC4,
 		MAT3,
 		MAT4,
-		SAMPLER_2D
+		SAMPLER_2D,
+		SAMPLER_2D_ARRAY,
+		SAMPLER_CUBE
 	};
 
 	struct ShaderValue

@@ -77,7 +77,14 @@ namespace Raito::Renderer::OpenGL
 				uniform.Type = UniformType::SAMPLER_2D;
 				uniform.Size = sizeof(TextureData);
 				break;
-
+			case GL_SAMPLER_2D_ARRAY:
+				uniform.Type = UniformType::SAMPLER_2D_ARRAY;
+				uniform.Size = sizeof(u32);
+				break;
+			case GL_SAMPLER_CUBE:
+				uniform.Type = UniformType::SAMPLER_CUBE;
+				uniform.Size = sizeof(u32);
+				break;
 			default:
 				O_WARN("Uniform {0} of type {1} can't be parsed!", name, type);
 				continue;
@@ -128,7 +135,12 @@ namespace Raito::Renderer::OpenGL
 			case GL_SAMPLER_2D:
 				attribute.Type = UniformType::SAMPLER_2D;
 				break;
-
+			case GL_SAMPLER_2D_ARRAY:
+				attribute.Type = UniformType::SAMPLER_2D_ARRAY;
+				break;
+			case GL_SAMPLER_CUBE:
+				attribute.Type = UniformType::SAMPLER_CUBE;
+				break;
 			default:
 				O_WARN("Uniform {0} of type {1} can't be parsed!", name, type);
 				continue;

@@ -58,11 +58,11 @@ namespace Raito::Assets
 			return pixels;
 		}
 
-		Texture* g_ChessTexture = nullptr;
+		std::unique_ptr<Texture> g_ChessTexture = nullptr;
 		u32 g_DefaultSphereModel;
 		u32 g_ChessMaterial;
-		Texture* g_WhiteTexture = nullptr;
-		Texture* g_BlackTexture = nullptr;
+		std::unique_ptr<Texture> g_WhiteTexture = nullptr;
+		std::unique_ptr<Texture> g_BlackTexture = nullptr;
 	}
 
 	bool Initialize()
@@ -74,16 +74,16 @@ namespace Raito::Assets
 
 		{
 			auto textureData = GenerateChessPixels(CHESS_TEXTURE_SIZE, CHESS_TEXTURE_SIZE);
-			g_ChessTexture = new Texture(CHESS_TEXTURE_SIZE, CHESS_TEXTURE_SIZE, 4, textureData.data(), DIFFUSE);
+			g_ChessTexture = std::make_unique<Texture>(CHESS_TEXTURE_SIZE, CHESS_TEXTURE_SIZE, 4, textureData.data(), DIFFUSE);
 			//Renderer::SetMaterialValue(g_ChessMaterial, "u_Albedo", reinterpret_cast<ubyte*>(&g_ChessTexture->RenderData), sizeof(g_ChessTexture->RenderData));
 		}
 		{
 			auto textureData = GenerateTexture(1, 1, { 255, 255, 255 });
-			g_WhiteTexture = new Texture(1, 1, 4, textureData.data(), DIFFUSE);
+			g_WhiteTexture = std::make_unique<Texture>(1, 1, 4, textureData.data(), DIFFUSE);
 		}
 		{
 			auto textureData = GenerateTexture(1, 1, { 0, 0, 0 });
-			g_BlackTexture = new Texture(1, 1, 4, textureData.data(), DIFFUSE);
+			g_BlackTexture = std::make_unique<Texture>(1, 1, 4, textureData.data(), DIFFUSE);
 		}
 
 

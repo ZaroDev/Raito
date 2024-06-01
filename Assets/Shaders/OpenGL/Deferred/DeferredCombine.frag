@@ -1,4 +1,5 @@
 #version 460 core
+#extension GL_ARB_bindless_texture: require
 
 #define PI 3.1415926
 #define MAX_LIGHTS 1
@@ -7,12 +8,14 @@
 layout(location = 0) out vec4 FragColor;
 layout(location = 1) out vec4 BrightColor;
 
-layout(location = 0) uniform sampler2DArray u_ShadowMap;
-layout(location = 5) uniform sampler2D u_GPosition;
-layout(location = 6) uniform sampler2D u_GNormal;
-layout(location = 7) uniform sampler2D u_GAlbedo;
-layout(location = 8) uniform sampler2D u_GEmissive;
-layout(location = 9) uniform sampler2D u_GRoughMetalAO;
+uniform sampler2DArray u_ShadowMap;
+uniform samplerCube u_IrradianceMap;
+
+layout(bindless_sampler) uniform sampler2D u_GPosition;
+layout(bindless_sampler) uniform sampler2D u_GNormal;
+layout(bindless_sampler) uniform sampler2D u_GAlbedo;
+layout(bindless_sampler) uniform sampler2D u_GEmissive;
+layout(bindless_sampler) uniform sampler2D u_GRoughMetalAO;
 
 struct Material {
     vec3 Albedo;
@@ -194,16 +197,24 @@ void main(){
     vec3 V = normalize(u_ViewPos - FragPos);
 
     vec3 F0 = vec3(0.04);
-    F0 = mix(F0, m.Albedo, m.Metalness);
+    F0 = mix(F0, m.Albedo, 0);
 
     vec3 Lo = vec3(0.0);
-    vec3 R = reflect(-V, m.Normal);
 
-    vec3 F = FresnelSchlickRoughness(max(dot(m.Normal, V), 0.0), F0, m.Roughness);
 
     Lo += DirectionalRadiance(u_Directional, m, V, F0, FragPos);
 
-    vec3 ambient = vec3(0.03) * m.Albedo * m.Ambient;
+
+    vec3 F = FresnelSchlick(max(dot(m.Normal, V), 0.0), F0);
+    vec3 kS = F;
+    vec3 kD = 1.0 - kS;
+    kD *= 1.0 - m.Metalness;
+
+    vec3 irradiance = texture(u_IrradianceMap, m.Normal).rgb;
+    vec3 diffuse = irradiance * m.Albedo;
+
+
+    vec3 ambient = (kD * diffuse) * m.Ambient;
     vec3 color = Lo + ambient;
 
     	

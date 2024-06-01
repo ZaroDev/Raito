@@ -193,8 +193,7 @@ namespace Raito::Renderer::OpenGL::Shadows
 
 	void Update(Camera* camera)
 	{
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
+	
 		auto& scene = Core::Application::Get().Scene;
 		{
 			const auto lightView = scene.GetAllEntitiesWith<ECS::LightComponent>();
@@ -222,6 +221,8 @@ namespace Raito::Renderer::OpenGL::Shadows
 			glBindFramebuffer(GL_FRAMEBUFFER, g_LightFBO);
 
 			glViewport(0, 0, c_DepthMapResolution, c_DepthMapResolution);
+			glEnable(GL_DEPTH_TEST);
+			glDisable(GL_BLEND);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			glCullFace(GL_FRONT);
 

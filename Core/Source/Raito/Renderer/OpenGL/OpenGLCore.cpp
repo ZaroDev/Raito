@@ -26,6 +26,7 @@
 
 
 #include "Assets/Mesh.h"
+#include "OpenGLPasses/OpenGLSkyboxPass.h"
 
 #include "optick/include/optick.h"
 
@@ -86,6 +87,7 @@ namespace Raito::Renderer::OpenGL
 			return false;
 		}
 
+		Skybox::Initialize();
 		Shadows::Initialize();
 		Forward::Initialize();
 		Deferred::Initialize();
@@ -96,10 +98,32 @@ namespace Raito::Renderer::OpenGL
 		return true;
 	}
 
+	void RenderSurface(u32 id)
+	{
+		OPTICK_CATEGORY("Update Renderer", Optick::Category::Rendering);
+
+		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
+
+		g_Camera.OnResize(buffer.Data().Width, buffer.Data().Height);
+		g_Camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
+
+
+		Shadows::Update(&g_Camera);
+
+		switch (g_Technique)
+		{
+		case LightTechnique::Forward: Forward::Update(&g_Camera, buffer); break;
+		case LightTechnique::Deferred: Deferred::Update(&g_Camera, buffer); break;
+		}
+
+		PostProcess::Update(buffer);
+	}
+
 	void Shutdown()
 	{
 		ShaderCompiler::Shutdown();
-
+		Skybox::Shutdown();
+		Shadows::Shutdown();
 		Forward::Shutdown();
 		Deferred::Shutdown();
 		PostProcess::Shutdown();
@@ -184,25 +208,6 @@ namespace Raito::Renderer::OpenGL
 		return Deferred::GetDeferredDepth();
 	}
 
-	void RenderSurface(u32 id)
-	{
-		OPTICK_CATEGORY("Update Renderer", Optick::Category::Rendering);
-
-		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
-
-		g_Camera.OnResize(buffer.Data().Width, buffer.Data().Height);
-		g_Camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
-
-		Shadows::Update(&g_Camera);
-
-		switch (g_Technique)
-		{
-			case LightTechnique::Forward: Forward::Update(&g_Camera, buffer); break;
-			case LightTechnique::Deferred: Deferred::Update(&g_Camera, buffer); break;
-		}
-
-		PostProcess::Update(buffer);
-	}
 
 	u32 AddMesh(Assets::Mesh* mesh)
 	{
@@ -305,7 +310,7 @@ namespace Raito::Renderer::OpenGL
 			{
 				internalFormat = GL_SRGB;
 			}
-			else if(texture->Type == Assets::HDR)
+			else if (texture->Type == Assets::HDR)
 			{
 				internalFormat = GL_RGB16F;
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -345,6 +350,10 @@ namespace Raito::Renderer::OpenGL
 
 	void RemoveTexture(u32 id)
 	{
+		if (g_Textures.empty())
+		{
+			return;
+		}
 		glMakeImageHandleNonResidentARB(g_Textures[id].Handle);
 		glDeleteTextures(1, &g_Textures[id].Id);
 		g_Textures[id] = {};

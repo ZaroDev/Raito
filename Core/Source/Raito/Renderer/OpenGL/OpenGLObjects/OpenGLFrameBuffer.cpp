@@ -170,6 +170,7 @@ namespace Raito::Renderer::OpenGL
 		if(!m_ColorAttachmentData.empty())
 		{
 			m_ColorAttachments.resize(m_ColorAttachmentData.size());
+			m_ColorHandles.resize(m_ColorAttachmentData.size());
 			CreateTextures(multiSample, m_ColorAttachments.data(), m_ColorAttachments.size());
 
 			for(u32 i = 0; i < m_ColorAttachments.size(); i++)
@@ -191,6 +192,8 @@ namespace Raito::Renderer::OpenGL
 					AttachColorTexture(m_ColorAttachments[i], m_Data.Samples, GL_R32I, GL_RED_INTEGER, m_Data.Width, m_Data.Height, i);
 					break;
 				}
+				m_ColorHandles[i] = glGetTextureHandleARB(m_ColorAttachments[i]);
+				glMakeTextureHandleResidentARB(m_ColorHandles[i]);
 			}
 		}
 
