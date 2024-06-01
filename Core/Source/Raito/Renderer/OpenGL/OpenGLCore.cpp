@@ -22,6 +22,7 @@
 #include <Raito/Renderer/OpenGL/OpenGLPasses/OpenGLPostProcessPass.h>
 #include <Raito/Renderer/OpenGL/OpenGLPasses/OpenGLForwardPass.h>
 #include <Raito/Renderer/OpenGL/OpenGLPasses/OpenGLDeferredPass.h>
+#include <Raito/Renderer/OpenGL/OpenGLPasses/OpenGLShadowPass.h>
 
 
 #include "Assets/Mesh.h"
@@ -85,9 +86,11 @@ namespace Raito::Renderer::OpenGL
 			return false;
 		}
 
+		Shadows::Initialize();
 		Forward::Initialize();
 		Deferred::Initialize();
 		PostProcess::Initialize();
+
 
 
 		return true;
@@ -190,7 +193,7 @@ namespace Raito::Renderer::OpenGL
 		g_Camera.OnResize(buffer.Data().Width, buffer.Data().Height);
 		g_Camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
 
-		
+		Shadows::Update(&g_Camera);
 
 		switch (g_Technique)
 		{
@@ -366,5 +369,10 @@ namespace Raito::Renderer::OpenGL
 	void RemoveMaterial(u32 id)
 	{
 		g_Materials[id] = OpenGLMaterial(-1);
+	}
+
+	const Camera& GetMainCamera()
+	{
+		return g_Camera;
 	}
 }

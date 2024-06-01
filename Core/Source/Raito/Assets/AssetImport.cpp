@@ -38,6 +38,7 @@ SOFTWARE.
 
 
 #define STB_IMAGE_IMPLEMENTATION
+#include "Assets.h"
 #include "Texture.h"
 #include "Renderer/Renderer.h"
 #include "stb/stb_image.h"
@@ -53,39 +54,53 @@ namespace Raito::Assets
 
 		void LoadTexturesOfType(Mesh* m, const std::filesystem::path& path, aiMaterial* material, aiTextureType type)
 		{
-			for (u32 i = 0; i < material->GetTextureCount(type); i++)
+			const u32 textureCount = material->GetTextureCount(type);
+			TextureType textureType{};
+			std::string value{};
+			switch (type)
+			{
+			case aiTextureType_BASE_COLOR:
+				value = "u_Albedo"; textureType = DIFFUSE;
+				break;
+			case aiTextureType_NORMALS:
+				value = "u_Normal"; textureType = NORMAL;
+				break;
+			case aiTextureType_EMISSIVE:
+				value = "u_Emissive"; textureType = EMISSIVE;
+				break;
+			case aiTextureType_LIGHTMAP:
+				value = "u_AmbientOcclusion"; textureType = AMBIENT_OCCLUSION;
+				break;
+			case aiTextureType_UNKNOWN:
+				value = "u_MetalRoughness"; textureType = METAL_ROUGHNESS;
+				break;
+			default:
+				break;
+			}
+			if(textureCount == 0)
+			{
+				
+				if(textureType == METAL_ROUGHNESS || textureType == EMISSIVE)
+				{
+					Texture::TextureData texture = GetBlackTexture().RenderData;
+					Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&texture), sizeof(Texture::TextureData));
+				}
+				else
+				{
+					Texture::TextureData texture = GetWhiteTexture().RenderData;
+					Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&texture), sizeof(Texture::TextureData));
+				}
+				return;
+			}
+
+
+			for (u32 i = 0; i < textureCount; i++)
 			{
 				aiString str;
 				material->GetTexture(type, i, &str);
 				std::filesystem::path p = path.parent_path();
 
 				p /= str.C_Str();
-
-				std::string value{};
-
-				TextureType textureType{};
-
-				switch (type)
-				{
-				case aiTextureType_BASE_COLOR:
-					value = "u_Albedo"; textureType = DIFFUSE;
-					break;
-				case aiTextureType_NORMALS:
-					value = "u_Normal"; textureType = NORMAL;
-					break;
-				case aiTextureType_EMISSIVE:
-					value = "u_Emissive"; textureType = EMISSIVE;
-					break;
-				case aiTextureType_LIGHTMAP:
-					value = "u_AmbientOcclusion"; textureType = AMBIENT_OCCLUSION;
-					break;
-				case aiTextureType_UNKNOWN:
-					value = "u_MetalRoughness"; textureType = METAL_ROUGHNESS;
-					break;
-				default:
-					break;
-				} 
-
 				ImportTexture(p, textureType);
 
 				Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&g_Textures[p]->RenderData), sizeof(g_Textures[p]->RenderData));

@@ -48,7 +48,7 @@ namespace Raito::Assets
 		DEFAULT_MOVE_AND_COPY(Texture)
 
 		u32 Id = 0;
-		struct
+		struct TextureData
 		{
 			u64 Handle = 0;
 			u32 RenderId = 0;

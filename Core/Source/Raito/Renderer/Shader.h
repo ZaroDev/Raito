@@ -43,6 +43,7 @@ namespace Raito::Renderer
 		POST_PROCESS,
 		BLOOM_DOWN_SAMPLE,
 		BLOOM_UP_SAMPLE,
+		DEPTH,
 		ENGINE_SHADER_MAX
 	};
 

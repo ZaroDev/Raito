@@ -64,6 +64,8 @@ namespace Raito::Renderer
 		NODISCARD float GetTop() const { return m_Parameters.Top; }
 		NODISCARD float GetBottom() const { return m_Parameters.Bottom; }
 
+		NODISCARD float GetFOV() const { return m_VerticalFOV; }
+
 		NODISCARD float GetRotationSpeed();
 
 		NODISCARD bool IsInsideFrustum(const Math::AABB& boundingBox) const;

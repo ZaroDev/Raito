@@ -1,10 +1,11 @@
 #version 460 core
 #extension GL_ARB_bindless_texture: require
 
-layout(location = 0) out vec4 AlbedoOut;
-layout(location = 1) out vec4 NormalOut;
-layout(location = 2) out vec4 RoughnessOut;
-layout(location = 3) out vec4 MetalnessOut;
+layout(location = 0) out vec4 gPosition;
+layout(location = 1) out vec4 gNormal;
+layout(location = 2) out vec4 gAlbedo;
+layout(location = 3) out vec4 gEmissive;
+layout(location = 4) out vec4 gRoughMetalAO;
 
 layout(bindless_sampler) uniform sampler2D u_Albedo;
 layout(bindless_sampler) uniform sampler2D u_Normal;
@@ -22,53 +23,47 @@ struct FragmentOut {
     float AmbientOclussion;
 };
 
-
+in vec3 WorldPos;
 in vec3 Normal;
 in vec2 TexCoord;
-in mat4 ModelView;
 in vec3 Tangent;
 in vec3 BiTangent;
-
-vec4 AlbedoBase = vec4(1.0f);
-float RoughnessBase = 1.0f;
-float MetalnessBase = 0.0f;
-vec4 EmissiveBase = vec4(0.0);
-
-void TexturedMesh(out FragmentOut result){
-
-    mat3 tbn;
-    tbn[0] = Tangent;
-    tbn[1] = BiTangent;
-    tbn[2] = Normal;
+in vec3 ViewPos;
+in mat4 ModelView;
 
 
+vec3 FromNormalMap(){
+    mat3 TBN = mat3(Tangent, BiTangent, Normal);
+   
     vec3 normal;
     vec3 normalSample = texture(u_Normal, TexCoord).xyz * 2.0 - 1.0;
-    normal = tbn * normalSample;
+    normal = TBN * normalSample;
 
-    result.Normal = normalize(mat3(ModelView) * normal);
-    
-    result.Albedo = AlbedoBase;
-    result.Albedo *= texture(u_Albedo, TexCoord);
-
-    result.Roughness = RoughnessBase;
-    result.Roughness *= texture(u_MetalRoughness, TexCoord).g;
-    
-    result.Metalness = MetalnessBase;
-    result.Metalness += texture(u_MetalRoughness, TexCoord).b;
-
-    result.Emissive = EmissiveBase;
-    result.Emissive += texture(u_Emissive, TexCoord);
-
-    result.AmbientOclussion = 1.0f;
-    result.AmbientOclussion *= texture(u_AmbientOcclusion, TexCoord).r;
+    return normalize(mat3(ModelView) * normal);
 }
 
+
+
 void main() {
-    FragmentOut fragmentOut;
-    TexturedMesh(fragmentOut);
-    AlbedoOut = fragmentOut.Albedo;
-    NormalOut = vec4(fragmentOut.Normal, 1.0);
-    RoughnessOut =  fragmentOut.Emissive;
-    MetalnessOut = vec4(0.0, fragmentOut.Roughness, fragmentOut.Metalness, 1.0);
+    FragmentOut result;
+    result.Albedo = texture(u_Albedo, TexCoord);
+    result.Normal = FromNormalMap();
+    result.Roughness = texture(u_MetalRoughness, TexCoord).g;
+    result.Metalness = texture(u_MetalRoughness, TexCoord).b;
+    result.AmbientOclussion = texture(u_AmbientOcclusion, TexCoord).r;
+    result.Emissive = texture(u_Emissive, TexCoord);
+
+    gAlbedo = result.Albedo;
+    gNormal = vec4(result.Normal, 1.0);
+
+    gRoughMetalAO.r = result.Roughness;
+    gRoughMetalAO.g = result.Metalness;
+    gRoughMetalAO.b = result.AmbientOclussion;
+    gRoughMetalAO.a = 1.0;
+
+
+    gPosition.rgb = WorldPos;
+    gPosition.a = gl_FragCoord.z;
+
+    gEmissive = result.Emissive;
 }

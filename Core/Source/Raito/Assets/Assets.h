@@ -9,5 +9,7 @@ namespace Raito::Assets
 
 	u32 GetDefaultSphere();
 	const Texture& GetChessTexture();
+	const Texture& GetWhiteTexture();
+	const Texture& GetBlackTexture();
 	u32 GetChessMaterial();
 }

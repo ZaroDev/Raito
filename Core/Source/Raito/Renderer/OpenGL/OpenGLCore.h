@@ -26,6 +26,11 @@ SOFTWARE.
 #include "OpenGLCommon.h"
 #include "OpenGLObjects/OpenGLMaterial.h"
 
+namespace Raito::Renderer
+{
+	class Camera;
+}
+
 namespace Raito::Renderer::OpenGL
 {
 	bool Initialize();
@@ -56,4 +61,6 @@ namespace Raito::Renderer::OpenGL
     void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size);
 	OpenGLMaterial& GetMaterial(u32 id);
     void RemoveMaterial(u32 id);
+
+    const Camera& GetMainCamera();
 }

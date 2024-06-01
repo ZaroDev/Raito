@@ -17,6 +17,7 @@ out vec3 Normal;
 out vec2 TexCoord;
 out vec3 Tangent;
 out vec3 BiTangent;
+out vec3 ViewPos;
 out mat4 ModelView;
 
 void main() {
@@ -27,6 +28,8 @@ void main() {
 
     Tangent = aTangent;
     BiTangent = aBiTangent;
+
+    ViewPos = vec3(inverse(u_View)[3]);
 
     ModelView = u_View * u_Model;
 

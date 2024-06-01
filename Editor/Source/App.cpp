@@ -27,7 +27,7 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Assets>());
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
-		//Raito::Assets::ImportModel("Meshes/Sponza/Sponza.gltf");
+		Raito::Assets::ImportModel("Meshes/Sponza/Sponza.gltf");
 		Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
 		
 		for (u32 i = 0; i < NUM_POINT; i++)
@@ -52,13 +52,13 @@ namespace Editor
 		for(u32 i = 0; i< NUM_DIRECTIONAL; i++)
 		{
 			Raito::ECS::Entity entity = Scene.CreateEntity("Directional light" + std::to_string(i));
-			Raito::V3 color = Raito::Random::Vec3(0.1f, 0.5f);
+			Raito::V3 color = Raito::Random::Vec3(1.0f, 1.0f);
 			Raito::V3 direction = Raito::Random::Vec3(1.0, 10.0);
 
 			entity.AddComponent<Raito::ECS::LightComponent>(
 				Raito::ECS::LightComponent::Type::DIRECTIONAL,
 				color,
-				direction
+				Raito::V3{20, 50, 20}
 			);
 			const float posX = Raito::Random::Float(-40.f, -20.f);
 			const float posZ = Raito::Random::Float(-40.f, -20.f);

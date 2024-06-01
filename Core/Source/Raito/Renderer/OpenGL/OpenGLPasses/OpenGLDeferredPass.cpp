@@ -8,6 +8,7 @@
 #include "Renderer/Camera.h"
 #include "Renderer/OpenGL/OpenGLCore.h"
 
+#include "OpenGLShadowPass.h"
 
 namespace Raito::Renderer::OpenGL::Deferred
 {
@@ -36,18 +37,27 @@ namespace Raito::Renderer::OpenGL::Deferred
 		} g_PointUniformLocations;
 
 
-		struct LightUniformLocations
+		struct DirectionalUniform
+		{
+			GLint Direction;
+			GLint Color;
+		} g_DirectionalUniforms;
+
+		struct PointUniform
 		{
 			GLint Position;
 			GLint Color;
-		} g_LightUniforms[NUM_DIRECTIONAL + NUM_POINT];
+		} g_PointUniforms[NUM_POINT];
 
 		GLint g_LightCount = 0;
 
 		GLint g_LightCountUniform;
+		GLint g_InvProjectionUniform;
 
 		OpenGLFrameBuffer* g_FrameBuffer = nullptr;
 		OpenGLFrameBuffer* g_LightBuffer = nullptr;
+
+		Shadows::CascadeUniforms g_CascadeUniforms;
 
 	}
 
@@ -56,10 +66,11 @@ namespace Raito::Renderer::OpenGL::Deferred
 		g_FrameBuffer = new  OpenGLFrameBuffer(
 			FrameBufferData{
 				{
-					FrameBufferTextureFormat::RGBA16F,	// Albedo buffer
+					FrameBufferTextureFormat::RGBA16F,	// Position buffer
 					FrameBufferTextureFormat::RGBA16F,	// Normal buffer
-					FrameBufferTextureFormat::RGBA16F,	// Roughness buffer
-					FrameBufferTextureFormat::RGBA16F,	// Metalness buffer
+					FrameBufferTextureFormat::RGBA16F,	// Albedo buffer
+					FrameBufferTextureFormat::RGBA16F,	// Emissive buffer
+					FrameBufferTextureFormat::RGBA16F,	// RougMetalAO buffer
 					FrameBufferTextureFormat::Depth		// Depth buffer
 				},
 				1920,
@@ -103,20 +114,26 @@ namespace Raito::Renderer::OpenGL::Deferred
 		{
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED));
 			shader->Bind();
-			shader->SetUniform("u_GBufferAlbedo", 0);
-			shader->SetUniform("u_GBufferNormal", 1);
-			shader->SetUniform("u_GBufferRoughness", 2);
-			shader->SetUniform("u_GBufferMetalness", 3);
-			shader->SetUniform("u_GBufferDepth", 4);
+			shader->SetUniform("u_GPosition", 0);
+			shader->SetUniform("u_GNormal", 1);
+			shader->SetUniform("u_GAlbedo", 2);
+			shader->SetUniform("u_GEmissive", 3);
+			shader->SetUniform("u_GRoughMetalAO", 4);
+			shader->SetUniform("u_ShadowMap", 5);
 
-			for (u32 i = 0; i < NUM_DIRECTIONAL + NUM_POINT; i++)
+			g_DirectionalUniforms.Color = shader->GetUniformLocation("u_Directional.Color");
+			g_DirectionalUniforms.Direction = shader->GetUniformLocation("u_Directional.Direction");
+
+			for(u32 i = 0; i < NUM_POINT; i++)
 			{
-				g_LightUniforms[i].Position = shader->GetUniformLocation(std::string("u_Lights[" + std::to_string(i) + "].Position"));
-				g_LightUniforms[i].Color = shader->GetUniformLocation(std::string("u_Lights[" + std::to_string(i) + "].Color"));
-			
+				
 			}
 
+			g_CascadeUniforms.CascadeCount = shader->GetUniformLocation("u_ShadowMapData.Size");
+			g_CascadeUniforms.FarPlane = shader->GetUniformLocation("u_ShadowMapData.FarPlane");
+
 			g_LightCountUniform = shader->GetUniformLocation("u_NumLights");
+			g_InvProjectionUniform = shader->GetUniformLocation("u_InvProjection");
 			shader->UnBind();
 		}
 		{
@@ -167,6 +184,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 			glDepthFunc(GL_LESS);
+			glViewport(0, 0, buffer.Data().Width, buffer.Data().Height);
 
 			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
 
@@ -208,100 +226,102 @@ namespace Raito::Renderer::OpenGL::Deferred
 			}
 			g_FrameBuffer->UnBind();
 		}
-		//// Light volumes pass
-		//{
-		//	g_LightBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
-		//	g_LightBuffer->Bind();
+		{
+			//// Light volumes pass
+			//{
+			//	g_LightBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
+			//	g_LightBuffer->Bind();
 
-		//	glClearColor(0, 0, 0, 1);
-		//	glClear(GL_COLOR_BUFFER_BIT);
-		//	glBlendFunc(GL_ONE, GL_ONE);
+			//	glClearColor(0, 0, 0, 1);
+			//	glClear(GL_COLOR_BUFFER_BIT);
+			//	glBlendFunc(GL_ONE, GL_ONE);
 
-		//	g_LightCount = 0;
+			//	g_LightCount = 0;
 
-		//	const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
-		//	for (auto& light : lightView)
-		//	{
-		//		const ECS::LightComponent& lightCmp = lightView.get<ECS::LightComponent>(light);
+			//	const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
+			//	for (auto& light : lightView)
+			//	{
+			//		const ECS::LightComponent& lightCmp = lightView.get<ECS::LightComponent>(light);
 
-		//		switch (lightCmp.LightType)
-		//		{
-		//		case ECS::LightComponent::Type::DIRECTIONAL:
-		//		{
-		//			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_DIRECTIONAL_LIGHT));
-		//			shader->Bind();
+			//		switch (lightCmp.LightType)
+			//		{
+			//		case ECS::LightComponent::Type::DIRECTIONAL:
+			//		{
+			//			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_DIRECTIONAL_LIGHT));
+			//			shader->Bind();
 
-		//			glActiveTexture(GL_TEXTURE0);
-		//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->DepthAttachment());
-		//			glActiveTexture(GL_TEXTURE1);
-		//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
-		//			
-		//			auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
-		//			shader->SetUniformRef(g_DirectionalUniformLocations.CameraPos, camera->GetPosition());
-		//			shader->SetUniformRef(g_DirectionalUniformLocations.PixelSize, pixel);
-		//			
-		//			shader->SetUniformRef(g_DirectionalUniformLocations.Direction, glm::radians(lightCmp.Direction));
-		//			shader->SetUniformRef(g_DirectionalUniformLocations.Color, lightCmp.Color);
-		//			
-		//			
-		//			glBindVertexArray(g_FrameBufferQuadVAO);
-		//			glDrawArrays(GL_TRIANGLES, 0, 6);
-		//			shader->UnBind();
+			//			glActiveTexture(GL_TEXTURE0);
+			//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->DepthAttachment());
+			//			glActiveTexture(GL_TEXTURE1);
+			//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
+			//			
+			//			auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
+			//			shader->SetUniformRef(g_DirectionalUniformLocations.CameraPos, camera->GetPosition());
+			//			shader->SetUniformRef(g_DirectionalUniformLocations.PixelSize, pixel);
+			//			
+			//			shader->SetUniformRef(g_DirectionalUniformLocations.Direction, glm::radians(lightCmp.Direction));
+			//			shader->SetUniformRef(g_DirectionalUniformLocations.Color, lightCmp.Color);
+			//			
+			//			
+			//			glBindVertexArray(g_FrameBufferQuadVAO);
+			//			glDrawArrays(GL_TRIANGLES, 0, 6);
+			//			shader->UnBind();
 
-		//		}break;
-		//		case ECS::LightComponent::Type::POINT_LIGHT:
-		//		{
-		//			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_POINT_LIGHT));
-		//			shader->Bind();
+			//		}break;
+			//		case ECS::LightComponent::Type::POINT_LIGHT:
+			//		{
+			//			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED_POINT_LIGHT));
+			//			shader->Bind();
 
-		//			glActiveTexture(GL_TEXTURE0);
-		//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->DepthAttachment());
-		//			glActiveTexture(GL_TEXTURE1);
-		//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
+			//			glActiveTexture(GL_TEXTURE0);
+			//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->DepthAttachment());
+			//			glActiveTexture(GL_TEXTURE1);
+			//			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(1));
 
-		//			auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
-		//			shader->SetUniformRef(g_PointUniformLocations.CameraPos, camera->GetPosition());
-		//			shader->SetUniformRef(g_PointUniformLocations.PixelSize, pixel);
+			//			auto pixel = V3{ 1.0f / buffer.Data().Width, 1.0f / buffer.Data().Height, 0.0 };
+			//			shader->SetUniformRef(g_PointUniformLocations.CameraPos, camera->GetPosition());
+			//			shader->SetUniformRef(g_PointUniformLocations.PixelSize, pixel);
 
-		//			const auto& transform = lightView.get<ECS::TransformComponent>(light);
-		//			const Mat4 model = transform.GetTransform();
-		//			const OpenGLMeshData& meshData = GetMesh(Assets::GetDefaultSphere());
+			//			const auto& transform = lightView.get<ECS::TransformComponent>(light);
+			//			const Mat4 model = transform.GetTransform();
+			//			const OpenGLMeshData& meshData = GetMesh(Assets::GetDefaultSphere());
 
-		//			shader->SetUniformRef(g_PointUniformLocations.Model, model);
-		//			shader->SetUniformRef(g_PointUniformLocations.View, camera->GetView());
-		//			shader->SetUniformRef(g_PointUniformLocations.Projection, camera->GetProjection());
-		//			
-		//			shader->SetUniformRef(g_PointUniformLocations.Position, transform.Translation);
-		//			shader->SetUniformRef(g_PointUniformLocations.Color, lightCmp.Color);
-		//			shader->SetUniform(g_PointUniformLocations.Radius, lightCmp.Radius);
+			//			shader->SetUniformRef(g_PointUniformLocations.Model, model);
+			//			shader->SetUniformRef(g_PointUniformLocations.View, camera->GetView());
+			//			shader->SetUniformRef(g_PointUniformLocations.Projection, camera->GetProjection());
+			//			
+			//			shader->SetUniformRef(g_PointUniformLocations.Position, transform.Translation);
+			//			shader->SetUniformRef(g_PointUniformLocations.Color, lightCmp.Color);
+			//			shader->SetUniform(g_PointUniformLocations.Radius, lightCmp.Radius);
 
 
-		//			const float dist = glm::distance(transform.Translation, camera->GetPosition());
-		//			if (dist < lightCmp.Radius)
-		//			{
-		//				glCullFace(GL_FRONT);
-		//			}
-		//			else
-		//			{
-		//				glCullFace(GL_BACK);
-		//			}
+			//			const float dist = glm::distance(transform.Translation, camera->GetPosition());
+			//			if (dist < lightCmp.Radius)
+			//			{
+			//				glCullFace(GL_FRONT);
+			//			}
+			//			else
+			//			{
+			//				glCullFace(GL_BACK);
+			//			}
 
-		//			glBindVertexArray(meshData.VAO);
-		//			glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
-		//			glBindVertexArray(0);
+			//			glBindVertexArray(meshData.VAO);
+			//			glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
+			//			glBindVertexArray(0);
 
-		//			shader->UnBind();
-		//		}break;
-		//		case ECS::LightComponent::Type::SPOT_LIGHT:
-		//			break;
-		//		}
-		//		g_LightCount++;
-		//	}
-		//	glCullFace(GL_BACK);
-		//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//			shader->UnBind();
+			//		}break;
+			//		case ECS::LightComponent::Type::SPOT_LIGHT:
+			//			break;
+			//		}
+			//		g_LightCount++;
+			//	}
+			//	glCullFace(GL_BACK);
+			//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		//	g_LightBuffer->UnBind();
-		//}
+			//	g_LightBuffer->UnBind();
+			//}
+		}
 		{
 
 
@@ -323,8 +343,22 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(3));
 
 			glActiveTexture(GL_TEXTURE4);
-			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->DepthAttachment());
+			glBindTexture(GL_TEXTURE_2D, g_FrameBuffer->ColorAttachment(4));
 
+			glActiveTexture(GL_TEXTURE5);
+			glBindTexture(GL_TEXTURE_2D_ARRAY, Shadows::GetShadowMap());
+
+			
+
+			glBindBuffer(GL_UNIFORM_BUFFER, Shadows::GetLightSpaceMatricesUBO());
+
+			const auto& cascadeLevels = Shadows::GetCascadeLevels();
+			for (u32 i = 0; i < cascadeLevels.size(); i++)
+			{
+				shader->SetUniform<float>(std::string("u_ShadowMapData.CascadePlanes[" + std::to_string(i) + "].Plane").c_str(), cascadeLevels[i]);
+			}
+			shader->SetUniform(g_CascadeUniforms.CascadeCount, static_cast<i32>(cascadeLevels.size()));
+			shader->SetUniform(g_CascadeUniforms.FarPlane, camera->GetNearFar());
 
 
 			g_LightCount = 0;
@@ -334,28 +368,28 @@ namespace Raito::Renderer::OpenGL::Deferred
 			{
 				const ECS::LightComponent& lightCmp = lightView.get<ECS::LightComponent>(light);
 				const ECS::TransformComponent& transform = lightView.get<ECS::TransformComponent>(light);
-				V4 position = V4{ transform.Translation, 0.0 };
 				switch (lightCmp.LightType)
 				{
 				case ECS::LightComponent::Type::DIRECTIONAL:
 				{
-					position.w = 0.0;
+					
+					shader->SetUniformRef(g_DirectionalUniforms.Direction, lightCmp.Direction);
+					shader->SetUniformRef(g_DirectionalUniforms.Color, lightCmp.Color);
 				}break;
 				case ECS::LightComponent::Type::POINT_LIGHT:
 				{
-					position.w = 1.0;
 				}break;
 				case ECS::LightComponent::Type::SPOT_LIGHT:
 					break;
 				}
-				shader->SetUniformRef(g_LightUniforms[g_LightCount].Position, position);
-				shader->SetUniformRef(g_LightUniforms[g_LightCount].Color, lightCmp.Color);
 				g_LightCount++;
 			}
 
+			shader->SetUniformRef("u_ViewPos", camera->GetPosition());
 
-			shader->SetUniform(g_LightCountUniform, g_LightCount);
-			shader->SetUniformRef("u_InvProjection", camera->GetInverseProjection());
+
+			//shader->SetUniform(g_LightCountUniform, g_LightCount);
+			//shader->SetUniformRef(g_InvProjectionUniform, camera->GetInverseProjection());
 
 
 			glBindVertexArray(g_FrameBufferQuadVAO);
@@ -363,6 +397,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 			shader->UnBind();
 			buffer.UnBind();
+
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		}
 	}
 
@@ -370,6 +406,9 @@ namespace Raito::Renderer::OpenGL::Deferred
 	{
 		glDeleteVertexArrays(1, &g_FrameBufferQuadVAO);
 		glDeleteBuffers(1, &g_FrameBufferQuadVBO);
+
+		delete g_LightBuffer;
+		delete g_FrameBuffer;
 	}
 
 	u32 GetDeferredAttachment(u32 id)

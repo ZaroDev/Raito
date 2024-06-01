@@ -51,6 +51,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			{ "PostProcessing/PostProcess", EngineShader::POST_PROCESS,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcessing/BloomDownSample", EngineShader::BLOOM_DOWN_SAMPLE,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcessing/BloomUpSample", EngineShader::BLOOM_UP_SAMPLE,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "Shadows/Depth", EngineShader::DEPTH,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT | OpenGLShaderType::GEOMETRY },
 		};
 
 		static_assert(_countof(c_ShaderFiles) == EngineShader::ENGINE_SHADER_MAX);
@@ -74,7 +75,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			}
 			catch (std::ifstream::failure e)
 			{
-				O_ERROR("Vertex shader not succesfully readed!");
+				O_ERROR("Shader file not succesfully readed!");
 			}
 
 			const char* cCode = code.c_str();
@@ -141,7 +142,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		{
 			filePath.replace_extension(".geo");
 
-			const u32 geometry = CreateShader(filePath, GL_FRAGMENT_SHADER);
+			const u32 geometry = CreateShader(filePath, GL_GEOMETRY_SHADER);
 
 			glAttachShader(programId, geometry);
 			glDeleteShader(geometry);
@@ -151,7 +152,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 		{
 			filePath.replace_extension(".geo");
 
-			const u32 compute = CreateShader(filePath, GL_FRAGMENT_SHADER);
+			const u32 compute = CreateShader(filePath, GL_COMPUTE_SHADER);
 
 			glAttachShader(programId, compute);
 			glDeleteShader(compute);
