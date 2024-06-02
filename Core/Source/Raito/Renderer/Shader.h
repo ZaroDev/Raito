@@ -44,6 +44,8 @@ namespace Raito::Renderer
 		BLOOM_DOWN_SAMPLE,
 		BLOOM_UP_SAMPLE,
 		DEPTH,
+		SSAO,
+		SSAO_BLUR,
 		ENGINE_SHADER_MAX
 	};
 

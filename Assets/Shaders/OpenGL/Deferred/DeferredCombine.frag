@@ -29,16 +29,15 @@ struct Directional{
     vec3 Direction;
     vec3 Color;
 };
+
 struct CascadePlane{
     float Plane;
 };
-
 
 struct ShadowMapData{
     CascadePlane CascadePlanes[16];
     int Size;
     float FarPlane;
-
 };
 
 layout (std140, binding = 0) uniform LightSpaceMatrices
@@ -52,7 +51,6 @@ uniform vec3 u_ViewPos;
 uniform ShadowMapData u_ShadowMapData;
 uniform Directional u_Directional;
 uniform mat4 u_View;
-uniform mat4 u_Projection;
 
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -184,7 +182,23 @@ vec3 DirectionalRadiance(Directional directional, Material m, vec3 V, vec3 F0, v
     return (kD * m.Albedo / PI + specular) * radiance * NdotL * (1 - ShadowCalculationDirectional(FragPos, directional.Direction, m.Normal));
 }
 
+vec3 IBLAmbientIrradiance(vec3 N, vec3 V, Material m, vec3 F0){
+
+    vec3 irradiance = texture(u_IrradianceMap, N).xyz;
+
+    float NdV = max(0.001, dot(N, V));
+    vec3 kS = FresnelSchlickRoughness(NdV, F0, m.Roughness);
+    vec3 kD = 1.0 - kS;
+
+    vec3 diffuseBrdf = m.Albedo * (1.0 - m.Metalness);
+    vec3 diffuse = kD * diffuseBrdf * irradiance;
+
+
+    return diffuse * m.Ambient;
+}
+
 void main(){
+
     vec3 FragPos = texture(u_GPosition, TexCoord).rgb;
     Material m;
     
@@ -193,31 +207,17 @@ void main(){
     m.Roughness = texture(u_GRoughMetalAO, TexCoord).r;
     m.Metalness = texture(u_GRoughMetalAO, TexCoord).g;
     m.Ambient = texture(u_GRoughMetalAO, TexCoord).b;
-
+    
     vec3 V = normalize(u_ViewPos - FragPos);
 
     vec3 F0 = vec3(0.04);
-    F0 = mix(F0, m.Albedo, 0);
+    F0 = mix(F0, m.Albedo, m.Metalness);
 
-    vec3 Lo = vec3(0.0);
-
-
-    Lo += DirectionalRadiance(u_Directional, m, V, F0, FragPos);
-
-
-    vec3 F = FresnelSchlick(max(dot(m.Normal, V), 0.0), F0);
-    vec3 kS = F;
-    vec3 kD = 1.0 - kS;
-    kD *= 1.0 - m.Metalness;
-
-    vec3 irradiance = texture(u_IrradianceMap, m.Normal).rgb;
-    vec3 diffuse = irradiance * m.Albedo;
+    vec3 color = vec3(0.0);
+    color += DirectionalRadiance(u_Directional, m, V, F0, FragPos);
+    color += IBLAmbientIrradiance(m.Normal, V, m, F0);
 
 
-    vec3 ambient = (kD * diffuse) * m.Ambient;
-    vec3 color = Lo + ambient;
-
-    	
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));  
     

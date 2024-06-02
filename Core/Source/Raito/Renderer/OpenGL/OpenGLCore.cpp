@@ -102,6 +102,9 @@ namespace Raito::Renderer::OpenGL
 	{
 		OPTICK_CATEGORY("Update Renderer", Optick::Category::Rendering);
 
+		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
 
 		g_Camera.OnResize(buffer.Data().Width, buffer.Data().Height);
@@ -115,7 +118,7 @@ namespace Raito::Renderer::OpenGL
 		case LightTechnique::Forward: Forward::Update(&g_Camera, buffer); break;
 		case LightTechnique::Deferred: Deferred::Update(&g_Camera, buffer); break;
 		}
-
+		Skybox::Update(&g_Camera);
 		PostProcess::Update(buffer);
 	}
 

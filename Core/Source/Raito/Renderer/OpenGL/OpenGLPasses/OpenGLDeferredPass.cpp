@@ -195,13 +195,13 @@ namespace Raito::Renderer::OpenGL::Deferred
 		{
 			g_FrameBuffer->Resize(buffer.Data().Width, buffer.Data().Height);
 			g_FrameBuffer->Bind();
-
-
 			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 			glDepthFunc(GL_LESS);
 			glViewport(0, 0, buffer.Data().Width, buffer.Data().Height);
+
+			
 
 			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
 
@@ -241,8 +241,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 				material.UnBind();
 			}
+			
 
-			Skybox::Update(camera);
 			g_FrameBuffer->UnBind();
 		}
 		{
@@ -343,8 +343,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 		}
 		{
 
-
 			buffer.Bind();
+			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED));
 			shader->Bind();
 			glDisable(GL_DEPTH_TEST);
@@ -409,6 +409,9 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
 			shader->UnBind();
+
+			
+			
 			buffer.UnBind();
 
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);

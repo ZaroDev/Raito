@@ -127,9 +127,6 @@ namespace Raito::Renderer::OpenGL::PostProcess
 	{
 		OPTICK_CATEGORY("Update post processing", Optick::Category::Rendering);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
 		// Bloom
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, g_BloomFBO);
@@ -197,8 +194,9 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 		// Render to quad
 		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(POST_PROCESS));
-
 			shader->Bind();
 
 			glBindVertexArray(g_FrameBufferQuadVAO);

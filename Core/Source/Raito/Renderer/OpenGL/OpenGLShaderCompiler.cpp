@@ -52,6 +52,8 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			{ "PostProcessing/BloomDownSample", EngineShader::BLOOM_DOWN_SAMPLE,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PostProcessing/BloomUpSample", EngineShader::BLOOM_UP_SAMPLE,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "Shadows/Depth", EngineShader::DEPTH,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT | OpenGLShaderType::GEOMETRY },
+			{ "Deferred/SSAO", EngineShader::SSAO,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT  },
+			{ "Deferred/SSAOBlur", EngineShader::SSAO_BLUR,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 		};
 
 		static_assert(_countof(c_ShaderFiles) == EngineShader::ENGINE_SHADER_MAX);

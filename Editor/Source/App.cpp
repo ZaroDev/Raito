@@ -58,7 +58,7 @@ namespace Editor
 			entity.AddComponent<Raito::ECS::LightComponent>(
 				Raito::ECS::LightComponent::Type::DIRECTIONAL,
 				color,
-				Raito::V3{20, 50, 20}
+				Raito::V3{20, 200, 20}
 			);
 			const float posX = Raito::Random::Float(-40.f, -20.f);
 			const float posZ = Raito::Random::Float(-40.f, -20.f);
