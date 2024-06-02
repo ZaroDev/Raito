@@ -56,6 +56,7 @@ namespace Raito::Renderer
 			u32(*GetDeferredAttachment)(u32);
 			u32(*GetDeferredDepth)();
 			u32(*GetLightDeferredAttachment)(u32);
+			u32(*GetSSAOAttachment)();
 		} Surface;
 
 		struct

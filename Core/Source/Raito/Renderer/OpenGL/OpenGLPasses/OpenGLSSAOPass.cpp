@@ -89,7 +89,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 			g_BlurBuffer = new OpenGLFrameBuffer(
 				FrameBufferData{
 				{
-					FrameBufferTextureFormat::RED_INTEGER,	// Position buffer
+					FrameBufferTextureFormat::RGBA16F,	// Position buffer
 				},
 				1920,
 				1080,
@@ -195,6 +195,11 @@ namespace Raito::Renderer::OpenGL::SSAO
 	u64 GetSSAOHandle()
 	{
 		return g_BlurBuffer->ColorHandle();
+	}
+
+	u32 GetSSAOAttachment()
+	{
+		return g_BlurBuffer->ColorAttachment();
 	}
 
 	void Shutdown()
