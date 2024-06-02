@@ -27,10 +27,17 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Assets>());
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
 
+		Raito::Assets::ImportModel("Meshes/Bricks/bricks.gltf");
 		Raito::Assets::ImportModel("Meshes/Sponza/Sponza.gltf");
 		Raito::Assets::ImportModel("Meshes/DamagedHelmet/DamagedHelmet.gltf");
-		Raito::Assets::ImportModel("Meshes/Bricks/bricks.gltf");
 		
+		// Manually import the fking texture: pavlito
+		Raito::Assets::ImportTexture("Meshes/Bricks/bump.jpg", Raito::Assets::TextureType::HEIGHT);
+
+		Raito::Assets::Texture::TextureData tex = Raito::Assets::GetTexture("Meshes/Bricks/bump.jpg")->RenderData;
+
+		Raito::Renderer::SetMaterialValue(0, "u_HeightMap", reinterpret_cast<ubyte*>(&tex), sizeof(tex));
+
 		for (u32 i = 0; i < NUM_POINT; i++)
 		{
 			Raito::V3 position = Raito::Random::Vec3(-1.f, 1.f);
