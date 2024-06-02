@@ -38,5 +38,5 @@ namespace Raito::Math
 
 	void DecomposeTransform(const Mat4& matrix, V3& translation, Quaternion& rotation, V3& scale);
 
-	NODISCARD inline float Lerp(float a, float b, float f);
+	NODISCARD float Lerp(float a, float b, float f);
 }

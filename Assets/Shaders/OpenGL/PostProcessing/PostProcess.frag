@@ -1,10 +1,11 @@
 #version 460 core
+#extension GL_ARB_bindless_texture: require
 out vec4 FragColor;
 
 in vec2 TexCoords;
 
-layout(location = 0) uniform sampler2D u_ScreenTexture;
-layout(location = 1) uniform sampler2D u_BloomTexture;
+layout(bindless_sampler) uniform sampler2D u_ScreenTexture;
+layout(bindless_sampler) uniform sampler2D u_BloomTexture;
 
 vec3 aces(vec3 x) {
   const float a = 2.51;

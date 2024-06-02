@@ -5,28 +5,43 @@
 #include "Renderer/OpenGL/OpenGLObjects/OpenGLShader.h"
 #include <Raito/Math/Math.h>
 
+#include "Renderer/Camera.h"
+#include "Renderer/OpenGL/OpenGLCore.h"
+
 namespace Raito::Renderer::OpenGL::SSAO
 {
 	namespace
 	{
-		u32 g_SSAOBuffer;
-		u32 g_SSAOTexture;
-		u64 g_SSAOHandle;
+		OpenGLFrameBuffer* g_FrameBuffer;
+		OpenGLFrameBuffer* g_BlurBuffer;
 
-		u32 g_SSAOBlurBuffer;
-		u32 g_SSAOBlurTexture;
-		u64 g_SSAOBlurHandle;
+		u32 g_NoiseTexture;
+		u64 g_NoiseHandle;
 
-		constexpr u32 g_KernelSize = 64;
+		constexpr i32 c_KernelSize = 64;
 		std::vector<V3> g_SSAOKernel;
 
-		constexpr u32 g_NoiseSize = 16;
+		constexpr u32 c_NoiseSize = 16;
 		std::vector<V3> g_SSAONoise;
+
+
+		struct SSAOUniforms
+		{
+			GLint Projection;
+			GLint Position;
+			GLint Normal;
+			GLint Noise;
+			GLint Size;
+			GLint View;
+		} g_SSAOUniforms;
+
+		GLint g_SSAOTextureUniform;
+		GLint g_SamplesUniforms[c_KernelSize];
 
 		void FillKernel()
 		{
-			g_SSAOKernel.reserve(g_KernelSize);
-			for(u32 i = 0; i < g_KernelSize; i++)
+			g_SSAOKernel.reserve(c_KernelSize);
+			for(u32 i = 0; i < c_KernelSize; i++)
 			{
 				V3 sample = V3
 				{
@@ -38,7 +53,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 				sample *= glm::normalize(sample);
 				sample *= Random::Float(0.0, 1.0);
 
-				float scale = static_cast<float>(i) / static_cast<float>(g_KernelSize);
+				float scale = static_cast<float>(i) / static_cast<float>(c_KernelSize);
 
 				scale = Math::Lerp(0.1f, 1.0f, scale * scale);
 				sample *= scale;
@@ -48,55 +63,143 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 		void FillNoise()
 		{
-			g_SSAONoise.reserve(g_NoiseSize);
-			for(u32 i = 0; i < g_NoiseSize; i++)
+			g_SSAONoise.reserve(c_NoiseSize);
+			for(u32 i = 0; i < c_NoiseSize; i++)
 			{
-				g_SSAONoise[i] = V3
+				g_SSAONoise[i] = glm::normalize(V3
 				{
 					Random::Float(0.0, 1.0) * 2.0 - 1.0,
 					Random::Float(0.0, 1.0) * 2.0 - 1.0,
 					0.0f
-				};
+				});
 			}
 		}
 
 		void CreateBuffer()
 		{
-			glGenFramebuffers(1, &g_SSAOBuffer);
-			glBindFramebuffer(GL_FRAMEBUFFER, g_SSAOBuffer);
-			glGenTextures(1, &g_SSAOTexture);
-			glBindTexture(GL_TEXTURE_2D, g_SSAOTexture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1920, 1080, 0, GL_RED, GL_FLOAT, NULL);
+			g_FrameBuffer = new OpenGLFrameBuffer(
+				FrameBufferData{
+				{
+					FrameBufferTextureFormat::RED_INTEGER,	// Position buffer
+				},
+				1920,
+				1080,
+				1
+				});
+			g_BlurBuffer = new OpenGLFrameBuffer(
+				FrameBufferData{
+				{
+					FrameBufferTextureFormat::RED_INTEGER,	// Position buffer
+				},
+				1920,
+				1080,
+				1
+				});
+		}
+
+		void CreateNoiseTexture()
+		{
+			glGenTextures(1, &g_NoiseTexture);
+			glBindTexture(GL_TEXTURE_2D, g_NoiseTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, 4, 4, 0, GL_RGB, GL_FLOAT, g_SSAONoise.data());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+			g_NoiseHandle = glGetTextureHandleARB(g_NoiseTexture);
+			glMakeTextureHandleResidentARB(g_NoiseHandle);
 		}
 
 	}
+
+
 
 	bool Initialize()
 	{
 		FillKernel();
 		FillNoise();
+		CreateBuffer();
 
+		CreateNoiseTexture();
+
+		{
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
+			shader->Bind();
+
+			g_SSAOUniforms.Projection = shader->GetUniformLocation("u_Projection");
+			g_SSAOUniforms.Position = shader->GetUniformLocation("u_Position");
+			g_SSAOUniforms.Normal = shader->GetUniformLocation("u_Normal");
+			g_SSAOUniforms.Noise = shader->GetUniformLocation("u_Noise");
+			g_SSAOUniforms.Size = shader->GetUniformLocation("u_KernelSize");
+			g_SSAOUniforms.View = shader->GetUniformLocation("u_View");
+
+			for(u32 i = 0; i < c_KernelSize; i++)
+			{
+				g_SamplesUniforms[i] = shader->GetUniformLocation("u_Samples[" + std::to_string(i) + "].Data");
+			}
+
+			shader->UnBind();
+		}
+		{
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(SSAO_BLUR));
+			shader->Bind();
+			g_SSAOTextureUniform = shader->GetUniformLocation("u_Texture");
+			shader->UnBind();
+		}
 		return true;
 	}
 
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, g_SSAOBuffer);
-		glClear(GL_COLOR_BUFFER_BIT);
-		const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
-		shader->Bind();
-
-		for(u32 i = 0; i < 64; i++)
 		{
-			
-		}
+			g_FrameBuffer->Bind();
+			glClear(GL_COLOR_BUFFER_BIT);
+			glViewport(0, 0, 1920, 1080);
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
+			shader->Bind();
 
-		shader->UnBind();
+			for (u32 i = 0; i < c_KernelSize; i++)
+			{
+				shader->SetUniformRef(g_SamplesUniforms[i], g_SSAOKernel[i]);
+			}
+			shader->SetUniformRef(g_SSAOUniforms.Projection, camera->GetProjection());
+			shader->SetUniform(g_SSAOUniforms.Size, c_KernelSize);
+			shader->SetUniformRef(g_SSAOUniforms.View, camera->GetView());
+
+
+			glUniformHandleui64ARB(g_SSAOUniforms.Position, buffer.ColorHandle());
+			glUniformHandleui64ARB(g_SSAOUniforms.Normal, buffer.ColorHandle(1));
+			glUniformHandleui64ARB(g_SSAOUniforms.Noise, g_NoiseHandle);
+
+			RenderFullScreenQuad();
+
+			shader->UnBind();
+			g_FrameBuffer->UnBind();
+		}
+		{
+			g_BlurBuffer->Bind();
+			glClear(GL_COLOR_BUFFER_BIT);
+			glViewport(0, 0, 1920, 1080);
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(SSAO_BLUR));
+			shader->Bind();
+			glUniformHandleui64ARB(g_SSAOTextureUniform, g_FrameBuffer->ColorHandle());
+
+			RenderFullScreenQuad();
+
+			shader->UnBind();
+			g_BlurBuffer->UnBind();
+		}
+	}
+
+	u64 GetSSAOHandle()
+	{
+		return g_BlurBuffer->ColorHandle();
 	}
 
 	void Shutdown()
 	{
+		delete g_FrameBuffer;
+		delete g_BlurBuffer;
 	}
 }

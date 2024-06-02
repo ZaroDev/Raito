@@ -10,6 +10,7 @@
 
 #include "OpenGLShadowPass.h"
 #include "OpenGLSkyboxPass.h"
+#include "OpenGLSSAOPass.h"
 
 namespace Raito::Renderer::OpenGL::Deferred
 {
@@ -55,7 +56,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 			GLint Normal;
 			GLint Albedo;
 			GLint Emissive;
-			GLint RoughMetalAO;
+			GLint RoughMetal;
+			GLint Ambient;
 
 		} g_GBufferUniforms;
 
@@ -115,7 +117,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 			g_GBufferUniforms.Normal = shader->GetUniformLocation("u_GNormal");
 			g_GBufferUniforms.Albedo = shader->GetUniformLocation("u_GAlbedo");
 			g_GBufferUniforms.Emissive = shader->GetUniformLocation("u_GEmissive");
-			g_GBufferUniforms.RoughMetalAO = shader->GetUniformLocation("u_GRoughMetalAO");
+			g_GBufferUniforms.RoughMetal = shader->GetUniformLocation("u_GRoughMetalAO");
+			g_GBufferUniforms.Ambient = shader->GetUniformLocation("u_SSAO");
 
 			g_DirectionalUniforms.Color = shader->GetUniformLocation("u_Directional.Color");
 			g_DirectionalUniforms.Direction = shader->GetUniformLocation("u_Directional.Direction");
@@ -164,6 +167,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 			g_DirectionalUniformLocations.Direction = shader->GetUniformLocation("u_LightDirection");
 			shader->UnBind();
 		}
+
+		SSAO::Initialize();
 		return true;
 	}
 
@@ -224,6 +229,9 @@ namespace Raito::Renderer::OpenGL::Deferred
 			
 
 			g_FrameBuffer->UnBind();
+		}
+		{
+			SSAO::Update(camera, *g_FrameBuffer);
 		}
 		{
 			//// Light volumes pass
@@ -333,7 +341,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glUniformHandleui64ARB(g_GBufferUniforms.Normal, g_FrameBuffer->ColorHandle(1));
 			glUniformHandleui64ARB(g_GBufferUniforms.Albedo, g_FrameBuffer->ColorHandle(2));
 			glUniformHandleui64ARB(g_GBufferUniforms.Emissive, g_FrameBuffer->ColorHandle(3));
-			glUniformHandleui64ARB(g_GBufferUniforms.RoughMetalAO, g_FrameBuffer->ColorHandle(4));
+			glUniformHandleui64ARB(g_GBufferUniforms.RoughMetal, g_FrameBuffer->ColorHandle(4));
+			glUniformHandleui64ARB(g_GBufferUniforms.Ambient, SSAO::GetSSAOHandle());
 
 
 			glActiveTexture(GL_TEXTURE0);
@@ -399,7 +408,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 	void Shutdown()
 	{
-	
+		SSAO::Shutdown();
 
 		delete g_LightBuffer;
 		delete g_FrameBuffer;

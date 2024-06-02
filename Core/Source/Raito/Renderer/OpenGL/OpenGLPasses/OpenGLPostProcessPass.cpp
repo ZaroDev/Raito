@@ -16,12 +16,15 @@ namespace Raito::Renderer::OpenGL::PostProcess
 		u32 g_BloomFBO;
 		constexpr float c_BloomFilterRadius = 0.005f;
 
+		u32 g_BloomTextureUniform;
+		u32 g_ColorTextureUniform;
 
 
 		struct BloomMip
 		{
 			V2 Size;
 			Iv2 IntSize;
+			u64 Handle;
 			GLuint Texture;
 		};
 		std::vector<BloomMip> g_BloomMipChains{};
@@ -49,11 +52,16 @@ namespace Raito::Renderer::OpenGL::PostProcess
 				glGenTextures(1, &mip.Texture);
 				glBindTexture(GL_TEXTURE_2D, mip.Texture);
 
+			
+
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, mipIntSize.x, mipIntSize.y, 0, GL_RGB, GL_FLOAT, nullptr);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+				mip.Handle = glGetTextureHandleARB(mip.Texture);
+				glMakeTextureHandleResidentARB(mip.Handle);
 				g_BloomMipChains.emplace_back(mip);
 			}
 
@@ -83,6 +91,14 @@ namespace Raito::Renderer::OpenGL::PostProcess
 				shader->SetUniform("u_ScreenTexture", 0);
 				shader->UnBind();
 			}
+			{
+				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(POST_PROCESS));
+				shader->Bind();
+				g_BloomTextureUniform = shader->GetUniformLocation("u_BloomTexture");
+				g_ColorTextureUniform = shader->GetUniformLocation("u_ScreenTexture");
+				shader->UnBind();
+			}
+
 			return true;
 		}
 	}
@@ -170,11 +186,8 @@ namespace Raito::Renderer::OpenGL::PostProcess
 			
 			glDisable(GL_DEPTH_TEST);
 
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, buffer.ColorAttachment());
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, g_BloomMipChains[0].Texture);
+			glUniformHandleui64ARB(g_ColorTextureUniform, buffer.ColorHandle());
+			glUniformHandleui64ARB(g_BloomTextureUniform, g_BloomMipChains[0].Handle);
 
 			RenderFullScreenQuad();
 

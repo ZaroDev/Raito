@@ -16,6 +16,7 @@ layout(bindless_sampler) uniform sampler2D u_GNormal;
 layout(bindless_sampler) uniform sampler2D u_GAlbedo;
 layout(bindless_sampler) uniform sampler2D u_GEmissive;
 layout(bindless_sampler) uniform sampler2D u_GRoughMetalAO;
+layout(bindless_sampler) uniform sampler2D u_SSAO;
 
 struct Material {
     vec3 Albedo;
@@ -206,7 +207,7 @@ void main(){
     m.Albedo = pow(texture(u_GAlbedo, TexCoord).rgb, vec3(2.2));
     m.Roughness = texture(u_GRoughMetalAO, TexCoord).r;
     m.Metalness = texture(u_GRoughMetalAO, TexCoord).g;
-    m.Ambient = texture(u_GRoughMetalAO, TexCoord).b;
+    m.Ambient = texture(u_SSAO, TexCoord).r;
     
     vec3 V = normalize(u_ViewPos - FragPos);
 
