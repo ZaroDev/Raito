@@ -42,4 +42,9 @@ namespace Raito::Math
 
 		glm::decompose(m, scale, rotation, translation, view, pers);
 	}
+
+	float Lerp(float a, float b, float f)
+	{
+		return a + f * (b - a);
+	}
 }

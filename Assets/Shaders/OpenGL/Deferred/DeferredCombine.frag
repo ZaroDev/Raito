@@ -179,7 +179,7 @@ vec3 DirectionalRadiance(Directional directional, Material m, vec3 V, vec3 F0, v
 
     float NdotL = max(dot(m.Normal, L), 0.0);
     
-    return (kD * m.Albedo / PI + specular) * radiance * NdotL * (1 - ShadowCalculationDirectional(FragPos, directional.Direction, m.Normal));
+    return ((kD * m.Albedo / PI + specular) * radiance * NdotL) * (1 - ShadowCalculationDirectional(FragPos, directional.Direction, m.Normal));
 }
 
 vec3 IBLAmbientIrradiance(vec3 N, vec3 V, Material m, vec3 F0){
@@ -215,7 +215,7 @@ void main(){
 
     vec3 color = vec3(0.0);
     color += DirectionalRadiance(u_Directional, m, V, F0, FragPos);
-    //color += IBLAmbientIrradiance(m.Normal, V, m, F0);
+    color += (IBLAmbientIrradiance(m.Normal, V, m, F0) * 0.1);
 
 
     color = color / (color + vec3(1.0));
