@@ -53,10 +53,22 @@ namespace Raito::ECS
 	}
 	Entity Scene::FindEntityByName(std::string_view name)
 	{
-		return Entity();
+		auto view = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const TagComponent& tc = view.get<TagComponent>(entity);
+			if (tc.Tag == name)
+				return Entity{ entity, this };
+		}
+		return {};
 	}
 	Entity Scene::GetEntityByUUID(UUID uuid)
 	{
-		return Entity();
+		if (m_Entities.find(uuid) != m_Entities.end())
+		{
+			return { m_Entities.at(uuid), this };
+		}
+
+		return {};
 	}
 }
