@@ -35,11 +35,11 @@ in mat4 ModelView;
 in vec3 TangentViewPos;
 in vec3 TangentFragPos;
 
-vec3 FromNormalMap(){
+vec3 FromNormalMap(vec2 tex_coords){
     mat3 TBN = mat3(Tangent, BiTangent, Normal);
    
     vec3 normal;
-    vec3 normalSample = texture(u_Normal, TexCoord).xyz * 2.0 - 1.0;
+    vec3 normalSample = texture(u_Normal, tex_coords).xyz * 2.0 - 1.0;
     normal = TBN * normalSample;
 
     return normalize(mat3(ModelView) * normal);
@@ -48,8 +48,8 @@ vec3 FromNormalMap(){
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
     float height =  texture(u_HeightMap, texCoords).r;    
-    vec2 p = viewDir.xy / viewDir.z * (height * 1.0f);
-    return texCoords - p;    
+    vec2 p = viewDir.xy / viewDir.z * (height * 0.1);
+    return texCoords - p;
 }
 
 void main() {
@@ -58,7 +58,7 @@ void main() {
 
     FragmentOut result;
     result.Albedo = texture(u_Albedo, tex_coords);
-    result.Normal = FromNormalMap();
+    result.Normal = FromNormalMap(tex_coords);
     result.Roughness = texture(u_MetalRoughness, tex_coords).g;
     result.Metalness = texture(u_MetalRoughness, tex_coords).b;
     result.AmbientOclussion = texture(u_AmbientOcclusion, tex_coords).r;
