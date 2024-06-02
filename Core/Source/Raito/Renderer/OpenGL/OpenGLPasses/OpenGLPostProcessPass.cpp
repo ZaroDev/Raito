@@ -2,6 +2,7 @@
 #include "OpenGLPostProcessPass.h"
 
 #include "optick/include/optick.h"
+#include "Renderer/OpenGL/OpenGLCore.h"
 #include "Renderer/OpenGL/OpenGLObjects/OpenGLShader.h"
 #include "Window/Window.h"
 
@@ -9,42 +10,13 @@ namespace Raito::Renderer::OpenGL::PostProcess
 {
 	namespace
 	{
-		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
+	
 
 		constexpr u32 c_BloomMipLevels = 3;
 		u32 g_BloomFBO;
 		constexpr float c_BloomFilterRadius = 0.005f;
 
 
-		void InitPostProcessQuad()
-		{
-			constexpr float quadVertices[] = {
-				// positions   // texCoords
-				-1.0f,  1.0f,  0.0f, 1.0f,
-				-1.0f, -1.0f,  0.0f, 0.0f,
-				1.0f, -1.0f,  1.0f, 0.0f,
-
-				-1.0f,  1.0f,  0.0f, 1.0f,
-				1.0f, -1.0f,  1.0f, 0.0f,
-				1.0f,  1.0f,  1.0f, 1.0f
-			};
-
-			glGenVertexArrays(1, &g_FrameBufferQuadVAO);
-			glGenBuffers(1, &g_FrameBufferQuadVBO);
-			glBindVertexArray(g_FrameBufferQuadVAO);
-			glBindBuffer(GL_ARRAY_BUFFER, g_FrameBufferQuadVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-			const auto shader = dynamic_cast<OpenGL::OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::POST_PROCESS));
-			shader->Bind();
-			shader->SetUniform("u_ScreenTexture", 0);
-			shader->SetUniform("u_BloomTexture", 1);
-			shader->UnBind();
-		}
 
 		struct BloomMip
 		{
@@ -118,7 +90,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 	bool Initialize()
 	{
-		InitPostProcessQuad();
+		
 		InitBloomBuffer();
 		return true;
 	}
@@ -145,10 +117,8 @@ namespace Raito::Renderer::OpenGL::PostProcess
 					glViewport(0, 0, mip.IntSize.x, mip.IntSize.y);
 					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mip.Texture, 0);
 
-					glBindVertexArray(g_FrameBufferQuadVAO);
-					glDrawArrays(GL_TRIANGLES, 0, 6);
-					glBindVertexArray(0);
-
+					RenderFullScreenQuad();
+					
 					shader->SetUniformRef("u_Resolution", mip.Size);
 					glBindTexture(GL_TEXTURE_2D, mip.Texture);
 				}
@@ -179,9 +149,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 						GL_TEXTURE_2D, nextMip.Texture, 0);
 
 					// Render screen-filled quad of resolution of current mip
-					glBindVertexArray(g_FrameBufferQuadVAO);
-					glDrawArrays(GL_TRIANGLES, 0, 6);
-					glBindVertexArray(0);
+					RenderFullScreenQuad();
 				}
 				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // Restore if this was default
 				glDisable(GL_BLEND);
@@ -199,7 +167,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(POST_PROCESS));
 			shader->Bind();
 
-			glBindVertexArray(g_FrameBufferQuadVAO);
+			
 			glDisable(GL_DEPTH_TEST);
 
 			glActiveTexture(GL_TEXTURE0);
@@ -208,7 +176,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, g_BloomMipChains[0].Texture);
 
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			RenderFullScreenQuad();
 
 			shader->UnBind();
 		}
@@ -216,8 +184,6 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 	void Shutdown()
 	{
-		glDeleteVertexArrays(1, &g_FrameBufferQuadVAO);
-		glDeleteBuffers(1, &g_FrameBufferQuadVBO);
 
 		for (int i = 0; i < g_BloomMipChains.size(); i++)
 		{

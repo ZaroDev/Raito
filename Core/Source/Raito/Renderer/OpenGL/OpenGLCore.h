@@ -36,6 +36,7 @@ namespace Raito::Renderer::OpenGL
 	bool Initialize();
 	void Shutdown();
 
+    void RenderFullScreenQuad();
 
     NODISCARD Surface CreateSurface(SysWindow* window);
     void RemoveSurface(u32 id);

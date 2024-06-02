@@ -15,7 +15,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 {
 	namespace
 	{
-		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
 		struct DirectionalLightUniformLocations
 		{
@@ -100,26 +99,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 				1
 			});
 
-		constexpr float quadVertices[] = {
-			// positions   // texCoords
-			-1.0f,  1.0f,  0.0f, 1.0f,
-			-1.0f, -1.0f,  0.0f, 0.0f,
-			1.0f, -1.0f,  1.0f, 0.0f,
-
-			-1.0f,  1.0f,  0.0f, 1.0f,
-			1.0f, -1.0f,  1.0f, 0.0f,
-			1.0f,  1.0f,  1.0f, 1.0f
-		};
-
-		glGenVertexArrays(1, &g_FrameBufferQuadVAO);
-		glGenBuffers(1, &g_FrameBufferQuadVBO);
-		glBindVertexArray(g_FrameBufferQuadVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, g_FrameBufferQuadVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+		
 
 
 
@@ -405,8 +385,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 			//shader->SetUniformRef(g_InvProjectionUniform, camera->GetInverseProjection());
 
 
-			glBindVertexArray(g_FrameBufferQuadVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			RenderFullScreenQuad();
 
 			shader->UnBind();
 
@@ -420,8 +399,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 	void Shutdown()
 	{
-		glDeleteVertexArrays(1, &g_FrameBufferQuadVAO);
-		glDeleteBuffers(1, &g_FrameBufferQuadVBO);
+	
 
 		delete g_LightBuffer;
 		delete g_FrameBuffer;

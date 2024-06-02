@@ -10,6 +10,9 @@ namespace Raito::Renderer::OpenGL::SSAO
 		u32 g_SSAOBuffer;
 		u32 g_SSAOBlurBuffer;
 		u32 g_SSAOTexture;
+		u64 g_SSAOHandle;
+
+		
 
 		void CreateBuffer()
 		{
@@ -28,12 +31,14 @@ namespace Raito::Renderer::OpenGL::SSAO
 		glBindFramebuffer(GL_FRAMEBUFFER, g_SSAOBuffer);
 		glClear(GL_COLOR_BUFFER_BIT);
 		const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
-
+		shader->Bind();
 
 		for(u32 i = 0; i < 64; i++)
 		{
 			
 		}
+
+		shader->UnBind();
 	}
 
 	void Shutdown()

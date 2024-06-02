@@ -215,7 +215,7 @@ void main(){
 
     vec3 color = vec3(0.0);
     color += DirectionalRadiance(u_Directional, m, V, F0, FragPos);
-    color += IBLAmbientIrradiance(m.Normal, V, m, F0);
+    //color += IBLAmbientIrradiance(m.Normal, V, m, F0);
 
 
     color = color / (color + vec3(1.0));

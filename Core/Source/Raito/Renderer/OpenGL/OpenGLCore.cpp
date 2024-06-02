@@ -36,6 +36,7 @@ namespace Raito::Renderer::OpenGL
 	{
 		Camera g_Camera(45.0, 0.1f, 500.0f);
 
+		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
 		std::vector<OpenGLFrameBuffer>	g_Surfaces{};
 		std::vector<OpenGLMeshData>		g_Meshes{};
@@ -86,6 +87,27 @@ namespace Raito::Renderer::OpenGL
 			O_ERROR("Couldn't initalize shader compilation");
 			return false;
 		}
+
+		constexpr float quadVertices[] = {
+			// positions   // texCoords
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			1.0f, -1.0f,  1.0f, 0.0f,
+
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			1.0f, -1.0f,  1.0f, 0.0f,
+			1.0f,  1.0f,  1.0f, 1.0f
+		};
+
+		glGenVertexArrays(1, &g_FrameBufferQuadVAO);
+		glGenBuffers(1, &g_FrameBufferQuadVBO);
+		glBindVertexArray(g_FrameBufferQuadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, g_FrameBufferQuadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 		Skybox::Initialize();
 		Shadows::Initialize();
@@ -148,6 +170,17 @@ namespace Raito::Renderer::OpenGL
 			glDeleteVertexArrays(1, &mesh.VAO);
 		}
 		g_Meshes.clear();
+
+
+		glDeleteVertexArrays(1, &g_FrameBufferQuadVAO);
+		glDeleteBuffers(1, &g_FrameBufferQuadVBO);
+	}
+
+	void RenderFullScreenQuad()
+	{
+		glBindVertexArray(g_FrameBufferQuadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
 
 	}
 
