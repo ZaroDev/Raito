@@ -65,7 +65,7 @@ namespace Raito::Assets
 			case aiTextureType_NORMALS:
 				value = "u_Normal"; textureType = NORMAL;
 				break;
-			case aiTextureType_HEIGHT:
+			case aiTextureType_DISPLACEMENT:
 				value = "u_HeightMap"; textureType = HEIGHT;
 				break;
 			case aiTextureType_EMISSIVE:
