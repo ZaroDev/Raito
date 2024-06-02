@@ -40,7 +40,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 		void FillKernel()
 		{
-			g_SSAOKernel.reserve(c_KernelSize);
+			g_SSAOKernel.resize(c_KernelSize);
 			for(u32 i = 0; i < c_KernelSize; i++)
 			{
 				V3 sample = V3
@@ -63,7 +63,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 		void FillNoise()
 		{
-			g_SSAONoise.reserve(c_NoiseSize);
+			g_SSAONoise.resize(c_NoiseSize);
 			for(u32 i = 0; i < c_NoiseSize; i++)
 			{
 				g_SSAONoise[i] = glm::normalize(V3
