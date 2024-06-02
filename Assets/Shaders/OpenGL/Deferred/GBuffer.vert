@@ -20,6 +20,9 @@ out vec3 BiTangent;
 out vec3 ViewPos;
 out mat4 ModelView;
 
+out vec3 TangentViewPos;
+out vec3 TangentFragPos;
+
 void main() {
     TexCoord = aTexCoord;
 
@@ -32,6 +35,14 @@ void main() {
     ViewPos = vec3(inverse(u_View)[3]);
 
     ModelView = u_View * u_Model;
+
+    vec3 T   = normalize(mat3(u_Model) * aTangent);
+    vec3 B   = normalize(mat3(u_Model) * aBiTangent);
+    vec3 N   = normalize(mat3(u_Model) * aNormal);
+    mat3 TBN = transpose(mat3(T, B, N));
+
+    TangentViewPos  = TBN * ViewPos;
+    TangentFragPos  = TBN * WorldPos;
 
     gl_Position = u_Projection * u_View * vec4(WorldPos, 1.0);
 }

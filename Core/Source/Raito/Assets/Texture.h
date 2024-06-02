@@ -34,6 +34,7 @@ namespace Raito::Assets
 	{
 		DIFFUSE,
 		NORMAL,
+		HEIGHT,
 		EMISSIVE,
 		AMBIENT_OCCLUSION,
 		METAL_ROUGHNESS,

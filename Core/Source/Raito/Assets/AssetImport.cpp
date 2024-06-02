@@ -65,6 +65,9 @@ namespace Raito::Assets
 			case aiTextureType_NORMALS:
 				value = "u_Normal"; textureType = NORMAL;
 				break;
+			case aiTextureType_HEIGHT:
+				value = "u_HeightMap"; textureType = HEIGHT;
+				break;
 			case aiTextureType_EMISSIVE:
 				value = "u_Emissive"; textureType = EMISSIVE;
 				break;
@@ -80,7 +83,7 @@ namespace Raito::Assets
 			if(textureCount == 0)
 			{
 				
-				if(textureType == METAL_ROUGHNESS || textureType == EMISSIVE)
+				if(textureType == METAL_ROUGHNESS || textureType == EMISSIVE || textureType == HEIGHT)
 				{
 					Texture::TextureData texture = GetBlackTexture().RenderData;
 					Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&texture), sizeof(Texture::TextureData));
