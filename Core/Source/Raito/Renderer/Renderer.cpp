@@ -86,11 +86,6 @@ namespace Raito::Renderer
 		return g_GraphicsContext.Surface.GetDepthAttachment(m_Id);
 	}
 
-	u32 Surface::SSAOAttachment() const
-	{
-		return g_GraphicsContext.Surface.GetSSAOAttachment();
-	}
-
 	void Surface::Render() const
 	{
 

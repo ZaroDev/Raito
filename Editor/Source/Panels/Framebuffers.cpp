@@ -43,9 +43,11 @@ namespace Editor
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredAttachment(4), size, uv0, uv1);
 
 
-		ImGui::Text("SSAO buffer");
-		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.SSAOAttachment(), size, uv0, uv1);
+		ImGui::Text("Light diffuse buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredLightAttachment(), size, uv0, uv1);
 
+		ImGui::Text("Light specular buffer");
+		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredLightAttachment(1), size, uv0, uv1);
 
 		ImGui::Text("Depth buffer");
 		ImGui::Image((ImTextureID)(intptr_t)window.Surface->Surface.DeferredDepth(), size, uv0, uv1);
