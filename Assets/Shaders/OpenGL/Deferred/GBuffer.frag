@@ -12,6 +12,7 @@ layout(bindless_sampler) uniform sampler2D u_Normal;
 layout(bindless_sampler) uniform sampler2D u_Emissive;
 layout(bindless_sampler) uniform sampler2D u_MetalRoughness;
 layout(bindless_sampler) uniform sampler2D u_AmbientOcclusion;
+layout(bindless_sampler) uniform sampler2D u_HeightMap;
 
 
 struct FragmentOut {   
@@ -31,6 +32,8 @@ in vec3 BiTangent;
 in vec3 ViewPos;
 in mat4 ModelView;
 
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
 
 vec3 FromNormalMap(){
     mat3 TBN = mat3(Tangent, BiTangent, Normal);
@@ -42,16 +45,24 @@ vec3 FromNormalMap(){
     return normalize(mat3(ModelView) * normal);
 }
 
-
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float height =  texture(u_HeightMap, texCoords).r;    
+    vec2 p = viewDir.xy / viewDir.z * (height * 1.0f);
+    return texCoords - p;    
+}
 
 void main() {
+    vec3 view_dir = normalize(TangentViewPos - TangentFragPos);
+    vec2 tex_coords = ParallaxMapping(TexCoord, view_dir);
+
     FragmentOut result;
-    result.Albedo = texture(u_Albedo, TexCoord);
+    result.Albedo = texture(u_Albedo, tex_coords);
     result.Normal = FromNormalMap();
-    result.Roughness = texture(u_MetalRoughness, TexCoord).g;
-    result.Metalness = texture(u_MetalRoughness, TexCoord).b;
-    result.AmbientOclussion = texture(u_AmbientOcclusion, TexCoord).r;
-    result.Emissive = texture(u_Emissive, TexCoord);
+    result.Roughness = texture(u_MetalRoughness, tex_coords).g;
+    result.Metalness = texture(u_MetalRoughness, tex_coords).b;
+    result.AmbientOclussion = texture(u_AmbientOcclusion, tex_coords).r;
+    result.Emissive = texture(u_Emissive, tex_coords);
 
     gAlbedo = result.Albedo;
     gNormal = vec4(result.Normal, 1.0);
