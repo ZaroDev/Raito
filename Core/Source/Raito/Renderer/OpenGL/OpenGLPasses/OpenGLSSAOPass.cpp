@@ -80,7 +80,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 			g_FrameBuffer = new OpenGLFrameBuffer(
 				FrameBufferData{
 				{
-					FrameBufferTextureFormat::RED_INTEGER,	// Position buffer
+					FrameBufferTextureFormat::RGBA16F,	// Position buffer
 				},
 				1920,
 				1080,
@@ -155,7 +155,6 @@ namespace Raito::Renderer::OpenGL::SSAO
 		{
 			g_FrameBuffer->Bind();
 			glClear(GL_COLOR_BUFFER_BIT);
-			glViewport(0, 0, 1920, 1080);
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
 			shader->Bind();
 

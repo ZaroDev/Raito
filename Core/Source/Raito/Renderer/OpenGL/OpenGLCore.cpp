@@ -126,6 +126,7 @@ namespace Raito::Renderer::OpenGL
 
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		glViewport(0, 0, 1920, 1080);
 
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
 

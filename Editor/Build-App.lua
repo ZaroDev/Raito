@@ -19,7 +19,6 @@ debugdir("%{wks.location}/Assets")
 filter "system:windows"
 systemversion "latest"
 defines {"WINDOWS"}
-nuget {"directxtk12_uwp:2024.1.1.1"}
 postbuildcommands {("{COPY} \"%{cfg.buildtarget.relpath}\" \"%{wks.location}Assets\"")}
 
 filter "configurations:Debug"

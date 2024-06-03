@@ -183,10 +183,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 			glDepthFunc(GL_LESS);
-			glViewport(0, 0, buffer.Data().Width, buffer.Data().Height);
-
-			
-
 			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
 
 

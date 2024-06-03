@@ -1,7 +1,7 @@
 #version 460 core
 #extension GL_ARB_bindless_texture: require
 
-out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
 
 in vec2 TexCoords;
 
@@ -19,5 +19,6 @@ void main()
             result += texture(u_Texture, TexCoords + offset).r;
         }
     }
-    FragColor = vec4(result / (4.0 * 4.0), 0.0, 0.0, 1.0);
+    result = result / (4.0 * 4.0);
+    FragColor = vec4(vec3(result), 1.0);
 }  

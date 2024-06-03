@@ -26,8 +26,6 @@ SOFTWARE.
 #include "Renderer.h"
 #include "Shader.h"
 #include "RHI.h"
-
-#include "D3D12/D3D12RHI.h"
 #include "OpenGL/OpenGLRHI.h"
 
 
@@ -103,7 +101,7 @@ namespace Raito::Renderer
 		g_GraphicsAPI = api;
 		switch (g_GraphicsAPI)
 		{
-		case API::D3D12: D3D12::GetPlatformInterface(g_GraphicsContext); break;
+		case API::D3D12: ASSERT(false); break;
 		case API::OPENGL: OpenGL::GetPlatformInterface(g_GraphicsContext); break;
 		}
 		return true;
