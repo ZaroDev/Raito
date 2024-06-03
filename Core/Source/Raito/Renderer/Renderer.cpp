@@ -186,4 +186,24 @@ namespace Raito::Renderer
 	{
 		return c_EngineShadersPaths[static_cast<u32>(API)];
 	}
+
+	void SetSSAO(bool value)
+	{
+		g_GraphicsContext.Settings.SetSSAO(value);
+	}
+
+	void SetBloom(bool value)
+	{
+		g_GraphicsContext.Settings.SetBloom(value);
+	}
+
+	void SetParallaxMapping(bool value)
+	{
+		g_GraphicsContext.Settings.SetParallaxMapping(value);
+	}
+
+	void SetShadows(bool value)
+	{
+		g_GraphicsContext.Settings.SetShadows(value);
+	}
 }

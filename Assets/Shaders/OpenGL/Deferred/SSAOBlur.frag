@@ -6,9 +6,16 @@ layout(location = 0) out vec4 FragColor;
 in vec2 TexCoords;
 
 layout(bindless_sampler) uniform sampler2D u_Texture;
+uniform int u_Enable;
 
 void main() 
 {
+    if(u_Enable == 0)
+    {
+        FragColor = vec4(1.0);
+        return;
+    }
+
     vec2 texelSize = 1.0 / vec2(textureSize(u_Texture, 0));
     float result = 0.0;
     for (int x = -2; x < 2; ++x) 

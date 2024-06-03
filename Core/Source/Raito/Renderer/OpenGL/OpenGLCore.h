@@ -64,4 +64,7 @@ namespace Raito::Renderer::OpenGL
     void RemoveMaterial(u32 id);
 
     const Camera& GetMainCamera();
+
+    void EnableParallax(bool value);
+    bool IsParallaxEnabled();
 }

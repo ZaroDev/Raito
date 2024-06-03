@@ -38,6 +38,8 @@ namespace Raito::Renderer::OpenGL
 
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 
+		bool g_EnableParallax = true;
+
 		std::vector<OpenGLFrameBuffer>	g_Surfaces{};
 		std::vector<OpenGLMeshData>		g_Meshes{};
 		std::vector<TextureData>		g_Textures{};
@@ -420,5 +422,15 @@ namespace Raito::Renderer::OpenGL
 	const Camera& GetMainCamera()
 	{
 		return g_Camera;
+	}
+
+	void EnableParallax(bool value)
+	{
+		g_EnableParallax = value;
+	}
+
+	bool IsParallaxEnabled()
+	{
+		return g_EnableParallax;
 	}
 }

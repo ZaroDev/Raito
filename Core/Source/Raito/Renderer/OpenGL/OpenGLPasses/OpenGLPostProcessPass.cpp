@@ -11,6 +11,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 	namespace
 	{
 	
+		bool g_EnableBloom = true;
 
 		constexpr u32 c_BloomMipLevels = 3;
 		u32 g_BloomFBO;
@@ -28,6 +29,8 @@ namespace Raito::Renderer::OpenGL::PostProcess
 			GLuint Texture;
 		};
 		std::vector<BloomMip> g_BloomMipChains{};
+
+		GLint g_EnableBloomUniform;
 
 		bool InitBloomBuffer()
 		{
@@ -96,6 +99,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 				shader->Bind();
 				g_BloomTextureUniform = shader->GetUniformLocation("u_BloomTexture");
 				g_ColorTextureUniform = shader->GetUniformLocation("u_ScreenTexture");
+				g_EnableBloomUniform = shader->GetUniformLocation("u_EnableBloom");
 				shader->UnBind();
 			}
 
@@ -111,11 +115,18 @@ namespace Raito::Renderer::OpenGL::PostProcess
 		return true;
 	}
 
+	void EnableBloom(bool value)
+	{
+		g_EnableBloom = value;
+	}
+
 	void Update(const OpenGLFrameBuffer& buffer)
 	{
 		OPTICK_CATEGORY("Update post processing", Optick::Category::Rendering);
 
+
 		// Bloom
+		if(g_EnableBloom)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, g_BloomFBO);
 
@@ -178,6 +189,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 		// Render to quad
 		{
+			glClear(GL_COLOR_BUFFER_BIT);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(POST_PROCESS));
@@ -188,6 +200,8 @@ namespace Raito::Renderer::OpenGL::PostProcess
 
 			glUniformHandleui64ARB(g_ColorTextureUniform, buffer.ColorHandle());
 			glUniformHandleui64ARB(g_BloomTextureUniform, g_BloomMipChains[0].Handle);
+
+			shader->SetUniform(g_EnableBloomUniform, static_cast<i32>(g_EnableBloom));
 
 			RenderFullScreenQuad();
 

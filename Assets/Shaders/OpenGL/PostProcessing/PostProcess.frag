@@ -7,6 +7,8 @@ in vec2 TexCoords;
 layout(bindless_sampler) uniform sampler2D u_ScreenTexture;
 layout(bindless_sampler) uniform sampler2D u_BloomTexture;
 
+uniform int u_EnableBloom;
+
 vec3 aces(vec3 x) {
   const float a = 2.51;
   const float b = 0.03;
@@ -20,7 +22,9 @@ void main() {
   vec3 hdrColor = texture(u_ScreenTexture, TexCoords).rgb;
   vec3 bloomColor = texture(u_BloomTexture, TexCoords).rgb;
 
-  vec3 result = hdrColor + bloomColor;
+
+
+  vec3 result = hdrColor + (bloomColor * smoothstep(0, 1, u_EnableBloom));
   result = aces(result);
 
   FragColor = vec4(result, 1.0);

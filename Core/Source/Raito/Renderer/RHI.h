@@ -88,5 +88,12 @@ namespace Raito::Renderer
 			void(*RemoveMaterial)(u32);
 		} Materials;
 
+		struct
+		{
+			void(*SetSSAO)(bool);
+			void(*SetParallaxMapping)(bool);
+			void(*SetBloom)(bool);
+			void(*SetShadows)(bool);
+		} Settings;
 	};
 }

@@ -104,7 +104,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 		
 
 
-
 		{
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED));
 			shader->Bind();
@@ -172,6 +171,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 		return true;
 	}
 
+
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
 	{
 		auto& scene = Core::Application::Get().Scene;
@@ -212,7 +212,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 				material.SetValue("u_Projection", camera->GetProjection());
 				material.SetValue("u_Model", model);
 				material.SetValue("u_NormalMatrix", normalMatrix);
-
+				material.SetValue("u_EnableParallax", static_cast<i32>(IsParallaxEnabled()));
 				material.Bind();
 
 				glBindVertexArray(meshData.VAO);

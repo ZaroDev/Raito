@@ -16,7 +16,10 @@ namespace Editor
 		ImGui::Begin(m_Name.c_str(), &m_Open);
 
 		ImGui::Text("Textures");
+		ImGui::Separator();
 		const auto& textures = Raito::Assets::GetAllTextures();
+
+
 		for (const auto& texture : textures)
 		{
 			if (texture.second)
@@ -26,6 +29,8 @@ namespace Editor
 				ImGui::Text("%i", texture.second->RenderData.RenderId);
 			}
 			ImGui::Text("Path %s", texture.first.string().c_str());
+
+			ImGui::Separator();
 		}
 
 

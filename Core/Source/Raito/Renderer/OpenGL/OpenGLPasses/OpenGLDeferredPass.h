@@ -13,6 +13,7 @@ namespace Raito::Renderer
 namespace Raito::Renderer::OpenGL::Deferred
 {
 	bool Initialize();
+	void EnableParallax(bool value);
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer);
 
 	void Shutdown();

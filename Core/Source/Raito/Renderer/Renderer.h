@@ -197,5 +197,10 @@ namespace Raito
 		//! @param API The desired graphics API path
 		//! @return The folder name
 		NODISCARD const char* GetEngineShadersPath(API API);
+
+		void SetSSAO(bool value);
+		void SetBloom(bool value);
+		void SetParallaxMapping(bool value);
+		void SetShadows(bool value);
 	}
 }

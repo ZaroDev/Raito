@@ -14,6 +14,8 @@ namespace Raito::Renderer::OpenGL::Shadows
 		u32 g_MatricesUBO;
 		u32 g_LightFBO;
 
+		bool g_Enabled = true;
+
 		std::vector<V4> GetFrustumCornersWorldSpace(const Mat4& proj, const Mat4& view)
 		{
 			const auto inv = glm::inverse(proj * view);
@@ -191,9 +193,21 @@ namespace Raito::Renderer::OpenGL::Shadows
 		return true;
 	}
 
+	void Enable(bool value)
+	{
+		g_Enabled = value;
+	}
+
 	void Update(Camera* camera)
 	{
-	
+		if(!g_Enabled)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, g_LightFBO);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			return;
+		}
 		auto& scene = Core::Application::Get().Scene;
 		{
 			const auto lightView = scene.GetAllEntitiesWith<ECS::LightComponent>();
