@@ -15,6 +15,8 @@ namespace Raito::Renderer::OpenGL::SSAO
 		OpenGLFrameBuffer* g_FrameBuffer;
 		OpenGLFrameBuffer* g_BlurBuffer;
 
+		bool g_Enabled = true;
+
 		u32 g_NoiseTexture;
 		u64 g_NoiseHandle;
 
@@ -36,6 +38,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 		} g_SSAOUniforms;
 
 		GLint g_SSAOTextureUniform;
+		GLint g_EnableUniform;
 		GLint g_SamplesUniforms[c_KernelSize];
 
 		void FillKernel()
@@ -80,7 +83,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 			g_FrameBuffer = new OpenGLFrameBuffer(
 				FrameBufferData{
 				{
-					FrameBufferTextureFormat::RED_INTEGER,	// Position buffer
+					FrameBufferTextureFormat::RGBA16F,	// Position buffer
 				},
 				1920,
 				1080,
@@ -109,6 +112,55 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 			g_NoiseHandle = glGetTextureHandleARB(g_NoiseTexture);
 			glMakeTextureHandleResidentARB(g_NoiseHandle);
+		}
+
+		void SSAOPass(Camera* camera, const OpenGLFrameBuffer& buffer)
+		{
+			g_FrameBuffer->Bind();
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			if(!g_Enabled)
+			{
+				return;
+			}
+
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
+			shader->Bind();
+
+			for (u32 i = 0; i < c_KernelSize; i++)
+			{
+				shader->SetUniformRef(g_SamplesUniforms[i], g_SSAOKernel[i]);
+			}
+			shader->SetUniformRef(g_SSAOUniforms.Projection, camera->GetProjection());
+			shader->SetUniform(g_SSAOUniforms.Size, c_KernelSize);
+			shader->SetUniformRef(g_SSAOUniforms.View, camera->GetView());
+
+
+			glUniformHandleui64ARB(g_SSAOUniforms.Position, buffer.ColorHandle());
+			glUniformHandleui64ARB(g_SSAOUniforms.Normal, buffer.ColorHandle(1));
+			glUniformHandleui64ARB(g_SSAOUniforms.Noise, g_NoiseHandle);
+
+			RenderFullScreenQuad();
+
+			shader->UnBind();
+			g_FrameBuffer->UnBind();
+		}
+
+		void DenoisePass()
+		{
+			g_BlurBuffer->Bind();
+			glViewport(0, 0, 1920, 1080);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(SSAO_BLUR));
+			shader->Bind();
+			glUniformHandleui64ARB(g_SSAOTextureUniform, g_FrameBuffer->ColorHandle());
+			shader->SetUniform(g_EnableUniform, static_cast<i32>(g_Enabled));
+
+			RenderFullScreenQuad();
+
+			shader->UnBind();
+			g_BlurBuffer->UnBind();
 		}
 
 	}
@@ -145,51 +197,23 @@ namespace Raito::Renderer::OpenGL::SSAO
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(SSAO_BLUR));
 			shader->Bind();
 			g_SSAOTextureUniform = shader->GetUniformLocation("u_Texture");
+			g_EnableUniform = shader->GetUniformLocation("u_Enable");
 			shader->UnBind();
 		}
 		return true;
 	}
 
+	void Enable(bool value)
+	{
+		g_Enabled = value;
+	}
+
+
+
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
 	{
-		{
-			g_FrameBuffer->Bind();
-			glClear(GL_COLOR_BUFFER_BIT);
-			glViewport(0, 0, 1920, 1080);
-			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
-			shader->Bind();
-
-			for (u32 i = 0; i < c_KernelSize; i++)
-			{
-				shader->SetUniformRef(g_SamplesUniforms[i], g_SSAOKernel[i]);
-			}
-			shader->SetUniformRef(g_SSAOUniforms.Projection, camera->GetProjection());
-			shader->SetUniform(g_SSAOUniforms.Size, c_KernelSize);
-			shader->SetUniformRef(g_SSAOUniforms.View, camera->GetView());
-
-
-			glUniformHandleui64ARB(g_SSAOUniforms.Position, buffer.ColorHandle());
-			glUniformHandleui64ARB(g_SSAOUniforms.Normal, buffer.ColorHandle(1));
-			glUniformHandleui64ARB(g_SSAOUniforms.Noise, g_NoiseHandle);
-
-			RenderFullScreenQuad();
-
-			shader->UnBind();
-			g_FrameBuffer->UnBind();
-		}
-		{
-			g_BlurBuffer->Bind();
-			glClear(GL_COLOR_BUFFER_BIT);
-			glViewport(0, 0, 1920, 1080);
-			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(SSAO_BLUR));
-			shader->Bind();
-			glUniformHandleui64ARB(g_SSAOTextureUniform, g_FrameBuffer->ColorHandle());
-
-			RenderFullScreenQuad();
-
-			shader->UnBind();
-			g_BlurBuffer->UnBind();
-		}
+		SSAOPass(camera, buffer);
+		DenoisePass();
 	}
 
 	u64 GetSSAOHandle()

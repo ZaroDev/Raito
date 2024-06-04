@@ -209,7 +209,7 @@ void main(){
     m.Metalness = texture(u_GRoughMetalAO, TexCoord).g;
     m.Ambient = texture(u_SSAO, TexCoord).r;
     
-    vec3 V = normalize(u_ViewPos - FragPos);
+    vec3 V = normalize(u_ViewPos - (mat3(u_View) * FragPos));
 
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, m.Albedo, m.Metalness);

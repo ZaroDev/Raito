@@ -12,6 +12,7 @@ namespace Raito::Renderer
 namespace Raito::Renderer::OpenGL::PostProcess
 {
 	bool Initialize();
+	void EnableBloom(bool value);
 	void Update(const OpenGLFrameBuffer& buffer);
 	void Shutdown();
 }

@@ -19,6 +19,7 @@ namespace Raito::Renderer::OpenGL::Shadows
 
 
 	bool Initialize();
+	void Enable(bool value);
 	void Update(Camera* camera);
 	void Shutdown();
 	u32 GetLightSpaceMatricesUBO();

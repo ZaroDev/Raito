@@ -12,6 +12,7 @@
 #include "optick/src/optick.h"
 #include "Panels/Assets.h"
 #include "Panels/Framebuffers.h"
+#include "Panels/Settings.h"
 
 namespace Editor
 {
@@ -26,6 +27,7 @@ namespace Editor
 		m_Panels.emplace_back(std::make_unique<Hierarchy>());
 		m_Panels.emplace_back(std::make_unique<Assets>());
 		m_Panels.emplace_back(std::make_unique<Framebuffers>());
+		m_Panels.emplace_back(std::make_unique<Settings>());
 
 		Raito::Assets::ImportModel("Meshes/Bricks/bricks.gltf");
 		Raito::Assets::ImportModel("Meshes/Sponza/Sponza.gltf");

@@ -16,6 +16,7 @@ namespace Editor::ImGuiBackend::OpenGL
 		interface.Render = RenderOpenGL;
 	}
 
+
 	void InitOpenGL()
 	{
 		ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(Raito::Window::GetWindow(0).Window), true);

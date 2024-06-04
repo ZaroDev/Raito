@@ -11,6 +11,8 @@ namespace Raito::Renderer
 namespace Raito::Renderer::OpenGL::SSAO
 {
 	bool Initialize();
+	void Enable(bool value);
+
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer);
 	NODISCARD u64 GetSSAOHandle();
 	NODISCARD u32 GetSSAOAttachment();

@@ -1,14 +1,21 @@
 #version 460 core
 #extension GL_ARB_bindless_texture: require
 
-out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
 
 in vec2 TexCoords;
 
 layout(bindless_sampler) uniform sampler2D u_Texture;
+uniform int u_Enable;
 
 void main() 
 {
+    if(u_Enable == 0)
+    {
+        FragColor = vec4(1.0);
+        return;
+    }
+
     vec2 texelSize = 1.0 / vec2(textureSize(u_Texture, 0));
     float result = 0.0;
     for (int x = -2; x < 2; ++x) 
@@ -19,5 +26,6 @@ void main()
             result += texture(u_Texture, TexCoords + offset).r;
         }
     }
-    FragColor = vec4(result / (4.0 * 4.0), 0.0, 0.0, 1.0);
+    result = result / (4.0 * 4.0);
+    FragColor = vec4(vec3(result), 1.0);
 }  

@@ -104,7 +104,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 		
 
 
-
 		{
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFERRED));
 			shader->Bind();
@@ -172,6 +171,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 		return true;
 	}
 
+
 	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
 	{
 		auto& scene = Core::Application::Get().Scene;
@@ -183,10 +183,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 			glDepthFunc(GL_LESS);
-			glViewport(0, 0, buffer.Data().Width, buffer.Data().Height);
-
-			
-
 			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
 
 
@@ -216,7 +212,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 				material.SetValue("u_Projection", camera->GetProjection());
 				material.SetValue("u_Model", model);
 				material.SetValue("u_NormalMatrix", normalMatrix);
-
+				material.SetValue("u_EnableParallax", static_cast<i32>(IsParallaxEnabled()));
 				material.Bind();
 
 				glBindVertexArray(meshData.VAO);

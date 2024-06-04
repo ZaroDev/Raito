@@ -30,6 +30,8 @@ SOFTWARE.
 #include "OpenGLShaderCompiler.h"
 #include "OpenGLPasses/OpenGLDeferredPass.h"
 #include "OpenGLPasses/OpenGLSSAOPass.h"
+#include "OpenGLPasses/OpenGLPostProcessPass.h"
+#include "OpenGLPasses/OpenGLShadowPass.h"
 
 namespace Raito::Renderer::OpenGL
 {
@@ -67,5 +69,10 @@ namespace Raito::Renderer::OpenGL
 		rhi.Materials.AddMaterial = AddMaterial;
 		rhi.Materials.SetMaterialValue = SetMaterialValue;
 		rhi.Materials.RemoveMaterial = RemoveMaterial;
+
+		rhi.Settings.SetSSAO = SSAO::Enable;
+		rhi.Settings.SetBloom = PostProcess::EnableBloom;
+		rhi.Settings.SetShadows = Shadows::Enable;
+		rhi.Settings.SetParallaxMapping = EnableParallax;
 	}
 }

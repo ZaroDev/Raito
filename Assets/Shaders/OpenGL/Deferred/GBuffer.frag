@@ -15,6 +15,8 @@ layout(bindless_sampler) uniform sampler2D u_AmbientOcclusion;
 layout(bindless_sampler) uniform sampler2D u_HeightMap;
 
 
+uniform int u_EnableParallax;
+
 struct FragmentOut {   
     vec4 Albedo;
     vec3 Normal;
@@ -49,7 +51,7 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
     float height =  texture(u_HeightMap, texCoords).r;    
     vec2 p = viewDir.xy / viewDir.z * (height * 0.1);
-    return texCoords - p;
+    return texCoords - (p * float(smoothstep(0, 1, u_EnableParallax)));
 }
 
 void main() {
