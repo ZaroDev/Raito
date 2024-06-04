@@ -38,6 +38,12 @@ namespace Editor
 
 		Raito::Renderer::SetMaterialValue(0, "u_HeightMap", reinterpret_cast<ubyte*>(&tex), sizeof(tex));
 
+		// Manually position the foking brick plane: pavlito v2
+		Raito::ECS::Entity entity = Scene.FindEntityByName("Plane");
+		Raito::ECS::TransformComponent& transform = entity.GetComponent<Raito::ECS::TransformComponent>();
+		transform.Translation = glm::vec3(-2.0f, 0.9f, 0.0f);
+		transform.Rotation = Raito::Quaternion(glm::radians(glm::vec3(-90.0f, -79.0f, -179.0f)));
+
 		for (u32 i = 0; i < NUM_POINT; i++)
 		{
 			Raito::V3 position = Raito::Random::Vec3(-1.f, 1.f);
