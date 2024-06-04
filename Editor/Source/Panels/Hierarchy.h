@@ -1,5 +1,8 @@
 #pragma once
 
+#include <imgui.h>
+#include <ImGuizmo.h>
+
 #include "Panel.h"
 #include "Raito/ECS/Entity.h"
 
@@ -18,6 +21,8 @@ namespace Editor
 		void Render() override;
 
 	private:
+
+		void DrawGizmos();
 		void DrawEntityNode(Raito::ECS::Entity entity);
 		void DrawComponents(Raito::ECS::Entity entity);
 		template<typename T>
@@ -25,5 +30,7 @@ namespace Editor
 
 		Raito::ECS::Scene* m_Context;
 		Raito::ECS::Entity m_SelectionContext;
+		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::BOUNDS;
+		ImGuizmo::MODE m_GizmoMode = ImGuizmo::LOCAL;
 	};
 }

@@ -54,7 +54,9 @@ namespace Raito
 
 		void GlfwWindowSizeCallback(GLFWwindow* win, int width, int height)
 		{
-			const SysWindow* data = static_cast<SysWindow*>(glfwGetWindowUserPointer(win));
+			SysWindow* data = static_cast<SysWindow*>(glfwGetWindowUserPointer(win));
+			data->Info.Width = width;
+			data->Info.Height = height;
 			data->Surface->Surface.Resize(width, height);
 		}
 

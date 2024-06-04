@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "OpenGLDeferredPass.h"
 
+#include "OpenGLGeometryPass.h"
 #include "Raito.h"
 #include "Core/Application.h"
 #include "ECS/Components.h"
@@ -172,7 +173,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 	}
 
 
-	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
+	void Update(const Camera& camera, const OpenGLFrameBuffer& buffer)
 	{
 		auto& scene = Core::Application::Get().Scene;
 		OPTICK_CATEGORY("Update Deferred", Optick::Category::Rendering);
@@ -183,45 +184,9 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 			glDepthFunc(GL_LESS);
-			const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
+		  
+			Geometry::Update(scene, camera, buffer);
 
-
-			for (auto& entity : view)
-			{
-				const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
-				const OpenGLMeshData& meshData = GetMesh(mesh.MeshId);
-				const auto& transform = view.get<ECS::TransformComponent>(entity);
-				const Mat4 model = transform.GetTransform();
-				const V3 location = transform.Translation;
-
-				// Construct a AABB with the model translation
-				//const auto aabb = Math::AABB(meshData.AABB.GetMin() + location, meshData.AABB.GetMin() + location);
-
-
-				/*if(!camera->IsInsideFrustum(aabb))
-				{
-					continue;
-				}*/
-
-
-				const Mat3 normalMatrix = transpose(glm::inverse(Mat3(model)));
-				OpenGLMaterial& material = GetMaterial(mesh.MaterialId);
-
-
-				material.SetValue("u_View", camera->GetView());
-				material.SetValue("u_Projection", camera->GetProjection());
-				material.SetValue("u_Model", model);
-				material.SetValue("u_NormalMatrix", normalMatrix);
-				material.SetValue("u_EnableParallax", static_cast<i32>(IsParallaxEnabled()));
-				material.Bind();
-
-				glBindVertexArray(meshData.VAO);
-				glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
-				glBindVertexArray(0);
-
-				material.UnBind();
-			}
-			
 
 			g_FrameBuffer->UnBind();
 		}
@@ -355,7 +320,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 				shader->SetUniform<float>(std::string("u_ShadowMapData.CascadePlanes[" + std::to_string(i) + "].Plane").c_str(), cascadeLevels[i]);
 			}
 			shader->SetUniform(g_CascadeUniforms.CascadeCount, static_cast<i32>(cascadeLevels.size()));
-			shader->SetUniform(g_CascadeUniforms.FarPlane, camera->GetNearFar());
+			shader->SetUniform(g_CascadeUniforms.FarPlane, camera.GetNearFar());
 
 
 			g_LightCount = 0;
@@ -381,8 +346,8 @@ namespace Raito::Renderer::OpenGL::Deferred
 				}
 				g_LightCount++;
 			}
-			shader->SetUniformRef(g_CascadeUniforms.View, camera->GetView());
-			shader->SetUniformRef("u_ViewPos", camera->GetPosition());
+			shader->SetUniformRef(g_CascadeUniforms.View, camera.GetView());
+			shader->SetUniformRef("u_ViewPos", camera.GetPosition());
 
 
 			//shader->SetUniform(g_LightCountUniform, g_LightCount);

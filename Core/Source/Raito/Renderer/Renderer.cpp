@@ -34,6 +34,7 @@ namespace Raito::Renderer
 
 	namespace
 	{
+		Camera g_Camera(45.0, 0.1f, 500.0f);
 		API g_GraphicsAPI = API::NONE;
 		RHI g_GraphicsContext{};
 
@@ -187,6 +188,11 @@ namespace Raito::Renderer
 		return c_EngineShadersPaths[static_cast<u32>(API)];
 	}
 
+	Camera& GetMainCamera()
+	{
+		return g_Camera;
+	}
+
 	void SetSSAO(bool value)
 	{
 		g_GraphicsContext.Settings.SetSSAO(value);
@@ -205,5 +211,15 @@ namespace Raito::Renderer
 	void SetShadows(bool value)
 	{
 		g_GraphicsContext.Settings.SetShadows(value);
+	}
+
+	void EnableCulling(bool value)
+	{
+		g_GraphicsContext.Settings.SetFrustumCulling(value);
+	}
+
+	void EnableDebugAABB(bool value)
+	{
+		g_GraphicsContext.Settings.SetDebugAABB(value);
 	}
 }

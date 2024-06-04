@@ -6,4 +6,5 @@ IncludeDir["glad"] = "%{wks.location}/Core/Vendor/glad/include"
 IncludeDir["glm"] = "%{wks.location}/Core/Vendor/glm"
 IncludeDir["ImGui"] = "%{wks.location}/Editor/Vendor/ImGui"
 IncludeDir["assimp"] = "%{wks.location}/Core/Vendor/assimp/include"
+IncludeDir["ImGuizmo"] = "%{wks.location}/Editor/Vendor/ImGuizmo"
 

@@ -29,6 +29,7 @@ SOFTWARE.
 #include "OpenGLCore.h"
 #include "OpenGLShaderCompiler.h"
 #include "OpenGLPasses/OpenGLDeferredPass.h"
+#include "OpenGLPasses/OpenGLGeometryPass.h"
 #include "OpenGLPasses/OpenGLSSAOPass.h"
 #include "OpenGLPasses/OpenGLPostProcessPass.h"
 #include "OpenGLPasses/OpenGLShadowPass.h"
@@ -74,5 +75,7 @@ namespace Raito::Renderer::OpenGL
 		rhi.Settings.SetBloom = PostProcess::EnableBloom;
 		rhi.Settings.SetShadows = Shadows::Enable;
 		rhi.Settings.SetParallaxMapping = EnableParallax;
+		rhi.Settings.SetDebugAABB = Geometry::EnableAABBDebug;
+		rhi.Settings.SetFrustumCulling = Geometry::EnableCulling;
 	}
 }

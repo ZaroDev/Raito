@@ -29,7 +29,8 @@ SOFTWARE.
 
 #include <Core/Common.h>
 #include <glad/glad.h>
-
+#include <Raito/Renderer/OpenGL/OpenGLObjects/OpenGLFrameBuffer.h>
+#include <Raito/Renderer/Camera.h>
 #include <Raito/Math/AABB.h>
 
 #ifndef DIST

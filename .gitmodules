@@ -19,3 +19,6 @@
 	path = Core/Vendor/assimp
 	url = https://github.com/ZaroDev/assimp.git
 	ignore = dirty
+[submodule "Editor/Vendor/ImGuizmo"]
+	path = Editor/Vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

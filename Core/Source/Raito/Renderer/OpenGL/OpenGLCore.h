@@ -63,8 +63,8 @@ namespace Raito::Renderer::OpenGL
 	OpenGLMaterial& GetMaterial(u32 id);
     void RemoveMaterial(u32 id);
 
-    const Camera& GetMainCamera();
-
     void EnableParallax(bool value);
     bool IsParallaxEnabled();
+
+    void RenderCube();
 }

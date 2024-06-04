@@ -196,7 +196,7 @@ namespace Raito::Assets
 			m->Indices = indices;
 			m->Name = node->mName.C_Str();
 			m->Transform = transform;
-
+			m->CalculateAABB();
 
 			return m;
 		}

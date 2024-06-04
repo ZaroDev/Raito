@@ -3,7 +3,7 @@
 #include <Raito/Raito.h>
 
 #include <imgui.h>
-#include <imgui_internal.h>
+#include <ImGuizmo.h>
 
 #include "ImGuiBackend.h"
 #include "GLFW/glfw3.h"
@@ -73,6 +73,7 @@ namespace Editor::ImGuiEditor
 	void Begin()
 	{
 		ImGuiBackend::NewFrame();
+		ImGuizmo::BeginFrame();
 
 		// Note: Switch this to true to enable dockspace
 		static bool dockspaceOpen = true;
@@ -122,6 +123,7 @@ namespace Editor::ImGuiEditor
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
+		
 		ImGui::End();
 	}
 

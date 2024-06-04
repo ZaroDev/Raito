@@ -24,11 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include <Math/MathTypes.h>
+#include <Raito/Math/MathTypes.h>
 
 #include <Raito/Math/Frustum.h>
 
-#include "Math/AABB.h"
+#include <Raito/Math/AABB.h>
 
 namespace Raito::Renderer
 {

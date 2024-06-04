@@ -45,7 +45,7 @@ namespace Raito::Input
 		return state == GLFW_PRESS;
 	}
 
-	glm::vec2 Input::GetMousePosition()
+	V2 Input::GetMousePosition()
 	{
 		GLFWwindow* windowHandle = static_cast<GLFWwindow*>(Window::GetWindow(0).Window);
 

@@ -114,10 +114,11 @@ namespace Raito::Renderer::OpenGL::SSAO
 			glMakeTextureHandleResidentARB(g_NoiseHandle);
 		}
 
-		void SSAOPass(Camera* camera, const OpenGLFrameBuffer& buffer)
+		void SSAOPass(const Camera& camera, const OpenGLFrameBuffer& buffer)
 		{
 			g_FrameBuffer->Bind();
 			glClear(GL_COLOR_BUFFER_BIT);
+			glDisable(GL_BLEND);
 
 			if(!g_Enabled)
 			{
@@ -131,9 +132,9 @@ namespace Raito::Renderer::OpenGL::SSAO
 			{
 				shader->SetUniformRef(g_SamplesUniforms[i], g_SSAOKernel[i]);
 			}
-			shader->SetUniformRef(g_SSAOUniforms.Projection, camera->GetProjection());
+			shader->SetUniformRef(g_SSAOUniforms.Projection, camera.GetProjection());
 			shader->SetUniform(g_SSAOUniforms.Size, c_KernelSize);
-			shader->SetUniformRef(g_SSAOUniforms.View, camera->GetView());
+			shader->SetUniformRef(g_SSAOUniforms.View, camera.GetView());
 
 
 			glUniformHandleui64ARB(g_SSAOUniforms.Position, buffer.ColorHandle());
@@ -210,7 +211,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 
 
-	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
+	void Update(const Camera& camera, const OpenGLFrameBuffer& buffer)
 	{
 		SSAOPass(camera, buffer);
 		DenoisePass();

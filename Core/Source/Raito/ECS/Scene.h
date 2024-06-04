@@ -71,7 +71,7 @@ namespace Raito::ECS
 		//! Templated function for all the entities with the components given
 		//! @return A view of all the entities with the given components
 		template<typename... Components>
-		auto GetAllEntitiesWith()
+		auto GetAllEntitiesWith() const
 		{
 			return m_Registry.view<Components...>();
 		}

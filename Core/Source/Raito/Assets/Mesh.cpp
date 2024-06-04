@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace Raito::Assets
 {
+
 	Mesh::Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices)
 		: Vertices(vertex), Indices(indices)
 	{
@@ -48,25 +49,14 @@ namespace Raito::Assets
 
 	void Mesh::CalculateAABB()
 	{
-		auto min = V3{ 0.f };
-		auto max = V3{ 0.f };
+		auto min = V3{ std::numeric_limits<float>::max() };
+		auto max = V3{ std::numeric_limits<float>::min() };
 
-		float maxDist = 0;
-		float minDist = 0;
-
+		
 		for (const auto& vert : Vertices)
 		{
-			const float length = glm::length(vert.Position);
-			if (length < minDist)
-			{
-				minDist = length;
-				min = vert.Position;
-			}
-			if (length > maxDist)
-			{
-				maxDist = length;
-				max = vert.Position;
-			}
+			min = glm::min(min, vert.Position);
+			max = glm::max(max, vert.Position);
 		}
 
 		AABB = Math::AABB(min, max);

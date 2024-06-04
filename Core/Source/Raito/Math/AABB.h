@@ -108,6 +108,8 @@ namespace Raito::Math
         @see Size(), HalfDiagonal(). */
         NODISCARD V3 HalfSize() const;
 
+        NODISCARD V3 GetExtent() const;
+
     private:
 
         V3 m_Min;   ///< Minimum point.

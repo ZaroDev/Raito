@@ -46,12 +46,13 @@ namespace Raito::Assets
 
 	struct Mesh final
 	{
-	public:
 		Mesh() = default;
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
 		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices, RenderMode mode);
 		~Mesh();
-	
+
+		void CalculateAABB();
+
 		std::vector<Vertex> Vertices{};
 		std::vector<u32> Indices{};
 
@@ -63,8 +64,5 @@ namespace Raito::Assets
 
 		u32 MaterialId;
 		RenderMode RenderMode = RenderMode::TRIANGLE;
-
-	private:
-		void CalculateAABB();
 	};
 }

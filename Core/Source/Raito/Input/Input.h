@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "KeyCodes.h"
 
-#include <Math/MathTypes.h>
+#include "Raito/Math/MathTypes.h"
 
 namespace Raito::Input
 {

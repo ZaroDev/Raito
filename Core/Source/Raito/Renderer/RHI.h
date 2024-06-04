@@ -94,6 +94,8 @@ namespace Raito::Renderer
 			void(*SetParallaxMapping)(bool);
 			void(*SetBloom)(bool);
 			void(*SetShadows)(bool);
+			void(*SetDebugAABB)(bool);
+			void(*SetFrustumCulling)(bool);
 		} Settings;
 	};
 }

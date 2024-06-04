@@ -17,7 +17,7 @@ namespace Editor
 		ImGui::Checkbox("Parallax mapping", &m_ParallaxMapping);
 		ImGui::Separator();
 
-		ImGui::Text("Light effects");
+		ImGui::Text("General");
 		if(ImGui::Checkbox("SSAO", &m_SSAO))
 		{
 			Raito::Renderer::SetSSAO(m_SSAO);
@@ -28,6 +28,11 @@ namespace Editor
 			Raito::Renderer::SetShadows(m_CascadeShadowMaps);
 		}
 
+		if(ImGui::Checkbox("Frustum culling", &m_FrustumCulling))
+		{
+			Raito::Renderer::EnableCulling(m_FrustumCulling);
+		}
+
 		ImGui::Text("Post processing");
 
 		if(ImGui::Checkbox("Bloom", &m_Bloom))
@@ -35,7 +40,14 @@ namespace Editor
 			Raito::Renderer::SetBloom(m_Bloom);
 		}
 
+
 		ImGui::Separator();
+		ImGui::Text("Debug");
+
+		if(ImGui::Checkbox("Show AABB", &m_DebugAABB))
+		{
+			Raito::Renderer::EnableDebugAABB(m_DebugAABB);
+		}
 
 		ImGui::End();
 	}

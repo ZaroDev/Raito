@@ -1,13 +1,15 @@
 #version 460 core
 #extension GL_ARB_bindless_texture: require
 
-layout(bindless_sampler) uniform sampler2D u_Albedo;
-layout(location = 0) out vec4 FragColor;
+layout(location = 0) out vec4 Position;
+layout(location = 1) out vec4 Normals;
+layout(location = 2) out vec4 FragColor;
 
 in vec3 Normal;
-in vec2 TexCoord;
 in vec3 WorldPos;
 
 void main() {
-    FragColor = texture(u_Albedo, TexCoord);
+    Position = vec4(WorldPos, 1.0);
+    Normals = vec4(Normal, 1.0);
+    FragColor = vec4(0.0, 1.0, 0.0, 1.0);
 }

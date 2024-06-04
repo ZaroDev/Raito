@@ -32,6 +32,8 @@ SOFTWARE.
 #include <Raito/Core/Application.h>
 #include <Raito/Time/Time.h>
 #include <Raito/Time/ScopedTimer.h>
+#include <Raito/Input/Input.h>
+#include <Raito/Input/KeyCodes.h>
 // ECS
 #include <Raito/ECS/Scene.h>
 #include <Raito/ECS/Entity.h>
@@ -47,6 +49,7 @@ SOFTWARE.
 #include <Raito/Renderer/RHI.h>
 #include <Raito/Renderer/Renderer.h>
 #include <Raito/Renderer/Shader.h>
+#include <Raito/Renderer/Camera.h>
 
 // Window
 #include <Raito/Window/Window.h>

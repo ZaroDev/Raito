@@ -2,7 +2,6 @@
 
 #include "EditorCommon.h"
 
-#include <imgui.h>
 #include <imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -146,6 +145,52 @@ namespace Editor
 
 
 		ImGui::End();
+		DrawGizmos();
+	}
+
+	void Hierarchy::DrawGizmos()
+	{
+		if(m_SelectionContext && m_GizmoType != ImGuizmo::BOUNDS)
+		{
+			ImGuizmo::SetOrthographic(false);
+
+			const Raito::SysWindow& window = Raito::Window::GetWindow();
+
+			ImGuizmo::SetRect(0, 0, window.Info.Width, window.Info.Height);
+
+			const auto& camera = Raito::Renderer::GetMainCamera();
+			const Raito::Mat4 view = camera.GetView();
+			const Raito::Mat4 projection = camera.GetProjection();
+
+			auto& transformCmp = m_SelectionContext.GetComponent<Raito::ECS::TransformComponent>();
+			Raito::Mat4 transform = transformCmp.GetTransform();
+
+
+			const bool snap = Raito::Input::IsKeyDown(Raito::Key::LeftControl);
+			float snapValue = 0.5;
+
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+			{
+				snapValue = 45.0f;
+			}
+
+			const float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection),
+				m_GizmoType, m_GizmoMode, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
+
+			if(ImGuizmo::IsUsing())
+			{
+				Raito::V3 translation, scale;
+				Raito::Quaternion rotation;
+				Raito::Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				transformCmp.Translation = translation;
+				transformCmp.Rotation = rotation;
+				transformCmp.Scale = scale;
+			}
+		}
 	}
 
 	void Hierarchy::DrawEntityNode(Raito::ECS::Entity entity)
@@ -180,6 +225,32 @@ namespace Editor
 
 	void Hierarchy::DrawComponents(Raito::ECS::Entity entity)
 	{
+		if (ImGui::RadioButton("Translate", m_GizmoType == ImGuizmo::TRANSLATE))
+		{
+			m_GizmoType = ImGuizmo::TRANSLATE;
+		}
+		ImGui::SameLine();
+
+		if (ImGui::RadioButton("Rotate", m_GizmoType == ImGuizmo::ROTATE))
+		{
+			m_GizmoType = ImGuizmo::ROTATE;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale", m_GizmoType == ImGuizmo::SCALE))
+		{
+			m_GizmoType = ImGuizmo::SCALE;
+		}
+
+		if (ImGui::RadioButton("World", m_GizmoMode == ImGuizmo::WORLD))
+		{
+			m_GizmoMode = ImGuizmo::WORLD;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Local", m_GizmoMode == ImGuizmo::LOCAL))
+		{
+			m_GizmoMode = ImGuizmo::LOCAL;
+		}
+
 		if (entity.HasComponent<Raito::ECS::TagComponent>())
 		{
 			auto& tag = entity.GetComponent<Raito::ECS::TagComponent>().Tag;

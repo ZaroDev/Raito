@@ -4,11 +4,14 @@ cppdialect "C++20"
 targetdir "Binaries/%{cfg.buildcfg}"
 staticruntime "off"
 
-files {"Source/**.h", "Source/**.cpp"}
+files {"Source/**.h", "Source/**.cpp", "Vendor/ImGuizmo/ImGuizmo.h", "Vendor/ImGuizmo/ImGuizmo.cpp"
+ }
+
 
 includedirs {"Source", -- Include Core
 "../Core/Source", "%{IncludeDir.spdlog}", "%{IncludeDir.glm}", "%{IncludeDir.ImGui}", "%{IncludeDir.GLFW}",
-             "%{IncludeDir.assimp}"}
+             "%{IncludeDir.assimp}", "%{IncludeDir.ImGuizmo}"
+            }
 
 links {"Core", "ImGui"}
 

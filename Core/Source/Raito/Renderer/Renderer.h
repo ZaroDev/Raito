@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#include "Camera.h"
 #include "GraphicsAPI.h"
 #include "Shader.h"
 
@@ -198,9 +199,14 @@ namespace Raito
 		//! @return The folder name
 		NODISCARD const char* GetEngineShadersPath(API API);
 
+
+		NODISCARD Camera& GetMainCamera();
+
 		void SetSSAO(bool value);
 		void SetBloom(bool value);
 		void SetParallaxMapping(bool value);
 		void SetShadows(bool value);
+		void EnableCulling(bool value);
+		void EnableDebugAABB(bool value);
 	}
 }

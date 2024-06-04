@@ -6,7 +6,7 @@
 #include "OpenGLShaderCompiler.h"
 #include "GLFW/glfw3.h"
 
-#include "OpenGLObjects/OpenGLFrameBuffer.h"
+
 #include "OpenGLObjects/OpenGLShader.h"
 #include "Window/Window.h"
 
@@ -34,9 +34,8 @@ namespace Raito::Renderer::OpenGL
 {
 	namespace
 	{
-		Camera g_Camera(45.0, 0.1f, 500.0f);
-
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
+		u32 g_CubeVAO, g_CubeVBO;
 
 		bool g_EnableParallax = true;
 
@@ -124,6 +123,7 @@ namespace Raito::Renderer::OpenGL
 
 	void RenderSurface(u32 id)
 	{
+		auto& camera = GetMainCamera();
 		OPTICK_CATEGORY("Update Renderer", Optick::Category::Rendering);
 
 		glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -132,18 +132,18 @@ namespace Raito::Renderer::OpenGL
 
 		const OpenGLFrameBuffer& buffer = g_Surfaces[id];
 
-		g_Camera.OnResize(buffer.Data().Width, buffer.Data().Height);
-		g_Camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
+		camera.OnResize(buffer.Data().Width, buffer.Data().Height);
+		camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
 
 
-		Shadows::Update(&g_Camera);
+		Shadows::Update(&camera);
 
 		switch (g_Technique)
 		{
-		case LightTechnique::Forward: Forward::Update(&g_Camera, buffer); break;
-		case LightTechnique::Deferred: Deferred::Update(&g_Camera, buffer); break;
+		case LightTechnique::Forward: Forward::Update(&camera, buffer); break;
+		case LightTechnique::Deferred: Deferred::Update(camera, buffer); break;
 		}
-		Skybox::Update(&g_Camera);
+		Skybox::Update(&camera);
 		PostProcess::Update(buffer);
 	}
 
@@ -419,10 +419,6 @@ namespace Raito::Renderer::OpenGL
 		g_Materials[id] = OpenGLMaterial(-1);
 	}
 
-	const Camera& GetMainCamera()
-	{
-		return g_Camera;
-	}
 
 	void EnableParallax(bool value)
 	{
@@ -432,5 +428,76 @@ namespace Raito::Renderer::OpenGL
 	bool IsParallaxEnabled()
 	{
 		return g_EnableParallax;
+	}
+
+	void RenderCube()
+	{
+		// initialize (if necessary)
+		if (g_CubeVAO == 0)
+		{
+			float vertices[] = {
+				// back face
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+				// front face
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				// left face
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				// right face
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+				 // bottom face
+				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				  1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				 -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				 // top face
+				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				  1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				  1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+				  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				 -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+			};
+			glGenVertexArrays(1, &g_CubeVAO);
+			glGenBuffers(1, &g_CubeVBO);
+			// fill buffer
+			glBindBuffer(GL_ARRAY_BUFFER, g_CubeVBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			// link vertex attributes
+			glBindVertexArray(g_CubeVAO);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+		}
+		// render Cube
+		glBindVertexArray(g_CubeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
 	}
 }

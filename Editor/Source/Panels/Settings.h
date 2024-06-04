@@ -21,5 +21,7 @@ namespace Editor
 		bool m_ParallaxMapping = true;
 		bool m_Bloom = true;
 		bool m_CascadeShadowMaps = true;
+		bool m_FrustumCulling = true;
+		bool m_DebugAABB = false;
 	};
 }
