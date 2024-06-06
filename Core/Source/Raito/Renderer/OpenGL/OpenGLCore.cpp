@@ -26,6 +26,7 @@
 
 
 #include "Assets/Mesh.h"
+#include "OpenGLPasses/OpenGLDeferredPlus.h"
 #include "OpenGLPasses/OpenGLSkyboxPass.h"
 
 #include "optick/include/optick.h"
@@ -44,7 +45,7 @@ namespace Raito::Renderer::OpenGL
 		std::vector<TextureData>		g_Textures{};
 		std::vector<OpenGLMaterial>		g_Materials{};
 
-		LightTechnique g_Technique = LightTechnique::Deferred;
+		LightTechnique g_Technique = LightTechnique::DeferredPlus;
 
 		void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void* userParam)
 		{
@@ -114,6 +115,7 @@ namespace Raito::Renderer::OpenGL
 		Shadows::Initialize();
 		Forward::Initialize();
 		Deferred::Initialize();
+		DeferredPlus::Initialize();
 		PostProcess::Initialize();
 
 
@@ -142,6 +144,7 @@ namespace Raito::Renderer::OpenGL
 		{
 		case LightTechnique::Forward: Forward::Update(&camera, buffer); break;
 		case LightTechnique::Deferred: Deferred::Update(camera, buffer); break;
+		case LightTechnique::DeferredPlus: DeferredPlus::Update(camera, buffer); break;
 		}
 		Skybox::Update(&camera);
 		PostProcess::Update(buffer);
@@ -154,6 +157,7 @@ namespace Raito::Renderer::OpenGL
 		Shadows::Shutdown();
 		Forward::Shutdown();
 		Deferred::Shutdown();
+		DeferredPlus::Shutdown();
 		PostProcess::Shutdown();
 
 		g_Materials.clear();
@@ -239,12 +243,12 @@ namespace Raito::Renderer::OpenGL
 
 	u32 GetDeferredBufferAttachment(u32 id)
 	{
-		return Deferred::GetDeferredAttachment(id);
+		return g_Technique == LightTechnique::Deferred ? Deferred::GetDeferredAttachment(id) : DeferredPlus::GetDeferredAttachment(id);
 	}
 
 	u32 GetDeferredBufferDepth()
 	{
-		return Deferred::GetDeferredDepth();
+		return  g_Technique == LightTechnique::Deferred ?  Deferred::GetDeferredDepth() : DeferredPlus::GetDeferredDepth();
 	}
 
 

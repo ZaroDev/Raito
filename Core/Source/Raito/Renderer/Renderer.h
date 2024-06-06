@@ -115,6 +115,7 @@ namespace Raito
 		{
 			Forward = 0,
 			Deferred,
+			DeferredPlus
 		};
 
 		//! Sets the platform interface

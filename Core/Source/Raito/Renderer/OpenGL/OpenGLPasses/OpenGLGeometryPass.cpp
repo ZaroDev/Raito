@@ -38,7 +38,7 @@ namespace Raito::Renderer::OpenGL::Geometry
 			// Construct a AABB with the model translation
 			auto aabb = Math::AABB(meshData.AABB.GetMin(), meshData.AABB.GetMax());
 			aabb.Translate(location);
-			aabb.Scale(transform.Scale, transform.Translation);
+			aabb.Scale(transform.Scale);
 			if (g_EnableCulling)
 			{
 				if (!camera.IsInsideFrustum(aabb))

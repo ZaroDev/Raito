@@ -133,6 +133,15 @@ namespace Raito::Math
 		}
 	}
 
+	void AABB::Scale(const V3& scale)
+	{
+		if(!IsNull())
+		{
+			m_Min *= scale;
+			m_Max *= scale;
+		}
+	}
+
 	void AABB::Scale(const V3& s, const V3& o)
 	{
 		if (!IsNull())

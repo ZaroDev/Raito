@@ -54,6 +54,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			{ "Shadows/Depth", EngineShader::DEPTH,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT | OpenGLShaderType::GEOMETRY },
 			{ "Deferred/SSAO", EngineShader::SSAO,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT  },
 			{ "Deferred/SSAOBlur", EngineShader::SSAO_BLUR,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "DeferredPlus/DownSampleAndReproject", EngineShader::DOWN_SAMPLE_REPROJECT, OpenGLShaderType::COMPUTE },
 		};
 
 		static_assert(_countof(c_ShaderFiles) == EngineShader::ENGINE_SHADER_MAX);
@@ -152,7 +153,7 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 
 		if (data.Type & OpenGLShaderType::COMPUTE)
 		{
-			filePath.replace_extension(".geo");
+			filePath.replace_extension(".comp");
 
 			const u32 compute = CreateShader(filePath, GL_COMPUTE_SHADER);
 

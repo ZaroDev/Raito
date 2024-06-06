@@ -46,6 +46,7 @@ namespace Raito::Renderer
 		DEPTH,
 		SSAO,
 		SSAO_BLUR,
+		DOWN_SAMPLE_REPROJECT,
 		ENGINE_SHADER_MAX
 	};
 

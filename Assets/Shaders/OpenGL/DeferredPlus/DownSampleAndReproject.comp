@@ -1,0 +1,60 @@
+#version 460 core
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+layout(location = 0) uniform sampler2D depthImage;
+layout(r32f, binding = 1) uniform image2D depthOutput;
+
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
+
+uniform mat4 u_Projection;
+uniform mat4 u_View;
+
+uniform mat4 u_InvProjection;
+uniform mat4 u_InvView;
+
+void main() {
+    ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
+    mat4 viewProj = u_Projection * u_View;
+    mat4 invViewProj = inverse(viewProj);
+
+    if((texelCoord.x < SCREEN_WIDTH / 4) && (texelCoord.y < SCREEN_HEIGHT / 4))
+    {
+        const vec2 screenSize = vec2(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4);  
+        vec2 texCoord = texelCoord / screenSize;
+
+        const float offsetX = 1.0 / SCREEN_WIDTH;
+        const float offsetY = 1.0 / SCREEN_HEIGHT;
+
+        vec4 depthValues00 = texture2D(depthImage, texCoord + vec2(-offsetX, -offsetY)).xxxx;
+        float depth = max(max(max(depthValues00.x, depthValues00.y), depthValues00.z), depthValues00.w);
+
+        vec4 depthValues10 = texture2D(depthImage, texCoord + vec2(offsetX, -offsetY)).xxxx;
+        depth = max(max(max(max(depthValues10.x, depthValues10.y), depthValues10.z), depthValues10.w), depth);
+
+        vec4 depthValues01 = texture2D(depthImage, texCoord + vec2(-offsetX, offsetY)).xxxx;
+        depth = max(max(max(max(depthValues01.x, depthValues01.y), depthValues01.z), depthValues01.w), depth);
+
+        vec4 depthValues11 = texture2D(depthImage, texCoord + vec2(offsetX, offsetY)).xxxx;
+        depth = max(max(max(max(depthValues11.x, depthValues11.y), depthValues11.z), depthValues11.w), depth);
+
+        vec4 lastProjPosition = vec4(texCoord, depth, 1.0);
+        lastProjPosition.xy = (lastProjPosition.xy * 2.0) - 1.0;
+        lastProjPosition.y = -lastProjPosition.y;
+        vec4 position = lastProjPosition * invViewProj;
+        position /= position.w;
+
+        vec4 projPosition =  position * viewProj;
+        projPosition.xyz /= projPosition.w;
+        projPosition.y = -projPosition.w;
+        projPosition.xy = (projPosition.xy * 0.5) + 0.5;
+
+        float depthF = (projPosition.w < 0.0) ? depth : projPosition.z;
+
+        vec4 invDepth = vec4(clamp(1.0 - depthF, 0.0, 1.0));
+        
+        imageStore(depthOutput, texelCoord, invDepth);
+    }
+}
+ 

@@ -52,6 +52,9 @@ namespace Raito::Math
         /// Translates AABB by vector \p v.
         void Translate(const V3& v);
 
+
+        void Scale(const V3& scale);
+
         /// Scale the AABB by \p scale, centered around \p origin.
         /// \param[in]  scale  3D vector specifying scale along each axis.
         /// \param[in]  origin Origin of scaling operation. Most useful origin would

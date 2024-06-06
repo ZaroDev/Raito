@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Panel.h"
+#include <Raito/Raito.h>
 
 namespace Editor
 {
@@ -23,5 +24,6 @@ namespace Editor
 		bool m_CascadeShadowMaps = true;
 		bool m_FrustumCulling = true;
 		bool m_DebugAABB = false;
+		Raito::Renderer::LightTechnique m_Technique = Raito::Renderer::LightTechnique::DeferredPlus;
 	};
 }
