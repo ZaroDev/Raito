@@ -9,6 +9,9 @@
   - [Clone](#clone)
   - [Features](#features)
     - [SSAO](#ssao)
+    - [Parallax mapping](#parallax-mapping)
+    - [Multi pass bloom](#multi-pass-bloom)
+    - [Cascade shadow map](#cascade-shadow-map)
   - [Dependencies](#dependencies)
     - [Windows](#windows)
     - [Generating projects](#generating-projects)
@@ -38,6 +41,28 @@ If you have problems with the submodules remember to
 ## Features
 
 ### SSAO
+
+| On | Off |
+|--------|------|
+| ![image](images/ssao_on.png) | ![image](images/ssao_off.png) | 
+
+### Parallax mapping
+
+| On | Off |
+|--------|------|
+| ![image](images/parallax_on.png) | ![image](images/parallax_off.png) | 
+
+### Multi pass bloom
+
+| On | Off |
+|--------|------|
+| ![image](images/bloom_on.png) | ![image](images/bloom_off.png) | 
+
+### Cascade shadow map
+
+| On | Off |
+|--------|------|
+| ![image](images/csm_on.png) | ![image](images/csm_off.png) | 
 
 ## Dependencies
 

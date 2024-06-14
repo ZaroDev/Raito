@@ -27,6 +27,7 @@ SOFTWARE.
 #include "Camera.h"
 #include "GraphicsAPI.h"
 #include "Shader.h"
+#include "Assets/PbrMaterial.h"
 
 namespace Raito
 {
@@ -80,9 +81,11 @@ namespace Raito
 
 			// Depth/stencil
 			DEPTH24STENCIL8,
+			DEPTH32F,
 
 			// Defaults
-			Depth = DEPTH24STENCIL8
+			Depth = DEPTH24STENCIL8,
+			DepthF = DEPTH32F
 		};
 
 		struct FrameBufferTextureData
@@ -178,9 +181,9 @@ namespace Raito
 		void RemoveTexture(u32 id);
 
 		//! Creates a CPU material to then uploaded when applied to a mesh
-		//! @param shader The base shader that the material will apply the data to
+		//! @param material The PBR material used
 		//! @return The id of the material on the renderer
-		u32 AddMaterial(EngineShader shader);
+		u32 AddMaterial(const Assets::PbrMaterial& material);
 
 		//! Sets a material value using raw data
 		//! Similar to memcpy()
@@ -188,7 +191,7 @@ namespace Raito
 		//! @param name of the value to change
 		//! @param data to copy to
 		//! @param size of the data in bytes
-		void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size);
+		void SetMaterialValue(u32 id, const Assets::PbrMaterial material);
 
 		//! Removes a material from the renderer
 		//! @param id of the material
@@ -200,6 +203,10 @@ namespace Raito
 		//! @return The folder name
 		NODISCARD const char* GetEngineShadersPath(API API);
 
+
+		NODISCARD LightTechnique GetCurrentRenderType();
+
+		void SetRenderType(LightTechnique technique);
 
 		NODISCARD Camera& GetMainCamera();
 

@@ -49,49 +49,61 @@ namespace Raito::Assets
 	{
 		
 		std::vector<Model*> g_Models{};
+
 		std::unordered_map<std::filesystem::path, Texture*> g_Textures{};
 		std::unordered_map<std::string, u32> g_Materials{};
 
-		void LoadTexturesOfType(Mesh* m, const std::filesystem::path& path, aiMaterial* material, aiTextureType type)
+		void LoadTexturesOfType(Mesh* m, const std::filesystem::path& path, aiMaterial* material, aiTextureType type, PbrMaterial& pbrMaterial)
 		{
 			const u32 textureCount = material->GetTextureCount(type);
 			TextureType textureType{};
-			std::string value{};
+			Texture::TextureData* texture = nullptr;
+
 			switch (type)
 			{
 			case aiTextureType_BASE_COLOR:
-				value = "u_Albedo"; textureType = DIFFUSE;
+				textureType = DIFFUSE;
+				texture = &pbrMaterial.Albedo;
 				break;
 			case aiTextureType_NORMALS:
-				value = "u_Normal"; textureType = NORMAL;
+				textureType = NORMAL;
+				texture = &pbrMaterial.Normal;
+				break;
+			case aiTextureType_DISPLACEMENT:
+				textureType = HEIGHT;
+				texture = &pbrMaterial.HeightMap;
 				break;
 			case aiTextureType_HEIGHT:
-				value = "u_HeightMap"; textureType = HEIGHT;
+				textureType = HEIGHT;
+				texture = &pbrMaterial.HeightMap;
 				break;
 			case aiTextureType_EMISSIVE:
-				value = "u_Emissive"; textureType = EMISSIVE;
+				textureType = EMISSIVE;
+				texture = &pbrMaterial.Emissive;
 				break;
 			case aiTextureType_LIGHTMAP:
-				value = "u_AmbientOcclusion"; textureType = AMBIENT_OCCLUSION;
+				textureType = AMBIENT_OCCLUSION;
+				texture = &pbrMaterial.AmbientOcclusion;
 				break;
 			case aiTextureType_UNKNOWN:
-				value = "u_MetalRoughness"; textureType = METAL_ROUGHNESS;
+				textureType = METAL_ROUGHNESS;
+				texture = &pbrMaterial.MetalRoughness;
 				break;
 			default:
 				break;
 			}
+
 			if(textureCount == 0)
 			{
 				
 				if(textureType == METAL_ROUGHNESS || textureType == EMISSIVE || textureType == HEIGHT)
 				{
-					Texture::TextureData texture = GetBlackTexture().RenderData;
-					Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&texture), sizeof(Texture::TextureData));
+					*texture = GetBlackTexture().RenderData;
+					
 				}
 				else
 				{
-					Texture::TextureData texture = GetWhiteTexture().RenderData;
-					Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&texture), sizeof(Texture::TextureData));
+					*texture = GetWhiteTexture().RenderData;
 				}
 				return;
 			}
@@ -106,7 +118,7 @@ namespace Raito::Assets
 				p /= str.C_Str();
 				ImportTexture(p, textureType);
 
-				Renderer::SetMaterialValue(m->MaterialId, value.c_str(), reinterpret_cast<ubyte*>(&g_Textures[p]->RenderData), sizeof(g_Textures[p]->RenderData));
+				*texture = g_Textures[p]->RenderData;
 			}
 		}
 
@@ -178,16 +190,16 @@ namespace Raito::Assets
 				else
 				{
 					aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-					const u32 materialId = AddMaterial(Renderer::G_BUFFER);
+					PbrMaterial newMat;
+
+					LoadTexturesOfType(m, path, material, aiTextureType_BASE_COLOR, newMat);
+					LoadTexturesOfType(m, path, material, aiTextureType_NORMALS, newMat);
+					LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE, newMat);
+					LoadTexturesOfType(m, path, material, aiTextureType_DISPLACEMENT, newMat);
+					LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP, newMat);
+					LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN, newMat);
+					const u32 materialId = Renderer::AddMaterial(newMat);
 					m->MaterialId = materialId;
-
-					LoadTexturesOfType(m, path, material, aiTextureType_BASE_COLOR);
-					LoadTexturesOfType(m, path, material, aiTextureType_NORMALS);
-					LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE);
-					LoadTexturesOfType(m, path, material, aiTextureType_DISPLACEMENT);
-					LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP);
-					LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN);
-
 					g_Materials[materialHash] = materialId;
 				}
 			}
@@ -208,9 +220,6 @@ namespace Raito::Assets
 			{
 				transform = transform * aiMatrix4x4ToGlm(&node->mParent->mTransformation);
 			}
-
-
-
 			// process all the node's meshes (if any)
 			for (u32 i = 0; i < node->mNumMeshes; i++)
 			{
@@ -220,7 +229,6 @@ namespace Raito::Assets
 			// then do the same for each of its children
 			for (u32 i = 0; i < node->mNumChildren; i++)
 			{
-				
 				ProcessNode(path,meshes, node->mChildren[i], scene, transform);
 			}
 		}

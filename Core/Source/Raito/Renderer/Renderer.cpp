@@ -168,14 +168,14 @@ namespace Raito::Renderer
 		g_GraphicsContext.Textures.RemoveTexture(id);
 	}
 
-	u32 AddMaterial(EngineShader shader)
+	u32 AddMaterial(const Assets::PbrMaterial& material)
 	{
-		return g_GraphicsContext.Materials.AddMaterial(shader);
+		return g_GraphicsContext.Materials.AddMaterial(material);
 	}
 
-	void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size)
+	void SetMaterialValue(u32 id, const Assets::PbrMaterial material)
 	{
-		g_GraphicsContext.Materials.SetMaterialValue(id, name, data, size);
+		g_GraphicsContext.Materials.SetMaterialValue(id, material);
 	}
 
 	void RemoveMaterial(u32 id)
@@ -186,6 +186,16 @@ namespace Raito::Renderer
 	const char* GetEngineShadersPath(API API)
 	{
 		return c_EngineShadersPaths[static_cast<u32>(API)];
+	}
+
+	LightTechnique GetCurrentRenderType()
+	{
+		return g_GraphicsContext.Settings.GetTechnique();
+	}
+
+	void SetRenderType(LightTechnique technique)
+	{
+		g_GraphicsContext.Settings.SetTechnique(technique);
 	}
 
 	Camera& GetMainCamera()

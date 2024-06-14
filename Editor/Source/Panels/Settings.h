@@ -8,9 +8,7 @@ namespace Editor
 	class Settings final : public Panel
 	{
 	public:
-		Settings() : Panel("Settings")
-		{
-		}
+		Settings();
 
 		virtual ~Settings() = default;
 

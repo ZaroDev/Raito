@@ -32,7 +32,7 @@ namespace Raito::Math
 {
 	Mat4 CreateTransform(const V3& translation, const Quaternion& rotation, const V3& scale)
 	{
-		auto rot = glm::toMat4(rotation);
+		const auto rot = glm::toMat4(rotation);
 		return glm::translate(Mat4(1.0f), translation) * rot * glm::scale(Mat4(1.0f), scale);
 	}
 	void DecomposeTransform(const Mat4& m, V3& translation, Quaternion& rotation, V3& scale)

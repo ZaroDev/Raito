@@ -83,8 +83,8 @@ namespace Raito::Renderer
 
 		struct
 		{
-			u32(*AddMaterial)(EngineShader);
-			void(*SetMaterialValue)(u32, const char*, ubyte* data, size_t size);
+			u32(*AddMaterial)(const Assets::PbrMaterial& material);
+			void(*SetMaterialValue)(u32,const Assets::PbrMaterial material);
 			void(*RemoveMaterial)(u32);
 		} Materials;
 
@@ -96,6 +96,8 @@ namespace Raito::Renderer
 			void(*SetShadows)(bool);
 			void(*SetDebugAABB)(bool);
 			void(*SetFrustumCulling)(bool);
+			LightTechnique(*GetTechnique)(void);
+			void(*SetTechnique)(LightTechnique);
 		} Settings;
 	};
 }

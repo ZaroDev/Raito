@@ -1,12 +1,12 @@
 #pragma once
 #include <Raito/Renderer/OpenGL/OpenGLCommon.h>
 
-namespace Raito::Renderer::OpenGL::Skybox
+namespace Raito::Renderer::OpenGL::LightPass
 {
 	bool Initialize();
 	void Update(const Camera& camera);
+	u32 GetDirectionalSSBO();
+	u32 GetPointSSBO();
+
 	void Shutdown();
-	u32 GetIrradianceMap();
-	u32 GetPrefilterMap();
-	u64 GetBRDFLUTTMap();
 }

@@ -1,28 +1,18 @@
 #pragma once
 
-#include <Raito/Renderer/OpenGL/OpenGLCore.h>
-
-namespace Raito::Renderer
-{
-	class Camera;
-}
+#include <Raito/Renderer/OpenGL/OpenGLCommon.h>
 
 namespace Raito::Renderer::OpenGL::Shadows
 {
-	struct CascadeUniforms
-	{
-		GLint FarPlane;
-		GLint CascadeCount;
-		GLint View;
-		GLint LightDir;
-	};
 
+	
 
 	bool Initialize();
 	void Enable(bool value);
-	void Update(Camera* camera);
+	void Update(const Camera& camera);
 	void Shutdown();
-	u32 GetLightSpaceMatricesUBO();
+	u32 GetShadowMapSSBO();
+	u32 GetLightMatricesSSBO();
 	u32 GetShadowMap();
 	const std::vector<float>& GetCascadeLevels();
 }

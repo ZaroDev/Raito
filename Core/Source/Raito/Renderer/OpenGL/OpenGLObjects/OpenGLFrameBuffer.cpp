@@ -53,6 +53,7 @@ namespace Raito::Renderer::OpenGL
 			switch (format)
 			{
 			case FrameBufferTextureFormat::DEPTH24STENCIL8:  return true;
+			case FrameBufferTextureFormat::DEPTH32F: return true;
 			}
 
 			return false;
@@ -205,6 +206,11 @@ namespace Raito::Renderer::OpenGL
 			{
 			case FrameBufferTextureFormat::DEPTH24STENCIL8:
 				AttachDepthTexture(m_DepthAttachment, m_Data.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Data.Width, m_Data.Height);
+				break;
+			case FrameBufferTextureFormat::DEPTH32F:
+				AttachDepthTexture(m_DepthAttachment, m_Data.Samples, GL_DEPTH_COMPONENT32F, GL_DEPTH_ATTACHMENT, m_Data.Width, m_Data.Height);
+				break;
+			default:
 				break;
 			}
 		}

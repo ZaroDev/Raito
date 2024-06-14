@@ -11,10 +11,25 @@ namespace Raito::Renderer::OpenGL::Shadows
 	{
 		std::vector<float> g_ShadowCascadeLevels{};
 
-		u32 g_MatricesUBO;
+
+		u32 g_LightDepthMaps;
+		constexpr u32 c_DepthMapResolution = 4096;
+		u32 g_MatricesSSBO;
 		u32 g_LightFBO;
 
+		u32 g_CascadeSSBO;
+
 		bool g_Enabled = true;
+
+		constexpr size_t c_CascadeSSBOSize = sizeof(i32) + sizeof(float) + sizeof(float) * 16;
+
+		void CreateCascadeSSBO()
+		{
+			glGenBuffers(1, &g_CascadeSSBO);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_CascadeSSBO);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, c_CascadeSSBOSize, nullptr, GL_DYNAMIC_DRAW);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		}
 
 		std::vector<V4> GetFrustumCornersWorldSpace(const Mat4& proj, const Mat4& view)
 		{
@@ -106,17 +121,17 @@ namespace Raito::Renderer::OpenGL::Shadows
 		{
 			g_ShadowCascadeLevels =
 			{
-				camera.GetNearFar() / 50.0f,
-				camera.GetNearFar() / 25.0f,
-				camera.GetNearFar() / 10.0f,
-				camera.GetNearFar() / 2.0f
+				camera.GetFarPlane() / 50.0f,
+				camera.GetFarPlane() / 25.0f,
+				camera.GetFarPlane() / 10.0f,
+				camera.GetFarPlane() / 2.0f
 			};
 			std::vector<Mat4> result;
 			for (u32 i = 0; i < g_ShadowCascadeLevels.size() + 1; i++)
 			{
 				if (i == 0)
 				{
-					result.emplace_back(GetLightSpaceMatrix(camera.GetNearClip(), g_ShadowCascadeLevels[i], lightDir));
+					result.emplace_back(GetLightSpaceMatrix(camera.GetNearPlane(), g_ShadowCascadeLevels[i], lightDir));
 				}
 				else if(i < g_ShadowCascadeLevels.size())
 				{
@@ -124,7 +139,7 @@ namespace Raito::Renderer::OpenGL::Shadows
 				}
 				else
 				{
-					result.emplace_back(GetLightSpaceMatrix(g_ShadowCascadeLevels[i - 1], camera.GetNearFar(), lightDir));
+					result.emplace_back(GetLightSpaceMatrix(g_ShadowCascadeLevels[i - 1], camera.GetFarPlane(), lightDir));
 				}
 			}
 
@@ -133,15 +148,14 @@ namespace Raito::Renderer::OpenGL::Shadows
 
 		void GenerateMatricesUBO()
 		{
-			glGenBuffers(1, &g_MatricesUBO);
-			glBindBuffer(GL_UNIFORM_BUFFER, g_MatricesUBO);
-			glBufferData(GL_UNIFORM_BUFFER, sizeof(Mat4) * 16, nullptr, GL_STATIC_DRAW);
-			glBindBufferBase(GL_UNIFORM_BUFFER, 0, g_MatricesUBO);
-			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glGenBuffers(1, &g_MatricesSSBO);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_MatricesSSBO);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Mat4) * 16, nullptr, GL_STATIC_DRAW);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, g_MatricesSSBO);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		}
 
-		u32 g_LightDepthMaps;
-		constexpr u32 c_DepthMapResolution = 4096;
+
 		void GenerateLightFBO()
 		{
 			glGenFramebuffers(1, &g_LightFBO);
@@ -179,7 +193,7 @@ namespace Raito::Renderer::OpenGL::Shadows
 
 	bool Initialize()
 	{
-		const float farPlane = GetMainCamera().GetNearFar();
+		const float farPlane = GetMainCamera().GetFarPlane();
 		g_ShadowCascadeLevels =
 		{
 			farPlane / 50.0f,
@@ -189,6 +203,7 @@ namespace Raito::Renderer::OpenGL::Shadows
 		};
 		GenerateMatricesUBO();
 		GenerateLightFBO();
+		CreateCascadeSSBO();
 
 		return true;
 	}
@@ -198,7 +213,7 @@ namespace Raito::Renderer::OpenGL::Shadows
 		g_Enabled = value;
 	}
 
-	void Update(Camera* camera)
+	void Update(const Camera& camera)
 	{
 		if(!g_Enabled)
 		{
@@ -221,11 +236,20 @@ namespace Raito::Renderer::OpenGL::Shadows
 				}
 			}
 
-			const auto lightMatrices = GetLightSpaceMatrices(directionalLight, *camera);
-			glBindBuffer(GL_UNIFORM_BUFFER, g_MatricesUBO);
-			for (u32 i = 0; i < lightMatrices.size(); i++)
+			const auto lightMatrices = GetLightSpaceMatrices(directionalLight, camera);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_MatricesSSBO);
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Mat4) * lightMatrices.size(), lightMatrices.data());
+			
+
+			// Update the shadow map space buffer
 			{
-				glBufferSubData(GL_UNIFORM_BUFFER, i * sizeof(Mat4), sizeof(Mat4), &lightMatrices[i]);
+				glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_CascadeSSBO);
+				const i32 size = static_cast<i32>(g_ShadowCascadeLevels.size());
+				glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(i32), &size);
+				const float farPlane = camera.GetFarPlane();
+				glBufferSubData(GL_SHADER_STORAGE_BUFFER, sizeof(i32), sizeof(float), &farPlane);
+				glBufferSubData(GL_SHADER_STORAGE_BUFFER, sizeof(i32) + sizeof(float), sizeof(float) * g_ShadowCascadeLevels.size(), g_ShadowCascadeLevels.data());
+				glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 			}
 		}
 		{
@@ -251,25 +275,34 @@ namespace Raito::Renderer::OpenGL::Shadows
 
 				shader->SetUniformRef("u_Model", model);
 
+				glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_MatricesSSBO);
+				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, g_MatricesSSBO);
+
 				glBindVertexArray(meshData.VAO);
 				glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
 				glBindVertexArray(0);
 			}
 			glCullFace(GL_BACK);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 			shader->UnBind();
 		}
 	}
 
 	void Shutdown()
 	{
-
+		glDeleteBuffers(1, &g_CascadeSSBO);
+		glDeleteBuffers(1, &g_MatricesSSBO);
 	}
 
-	u32 GetLightSpaceMatricesUBO()
+	u32 GetShadowMapSSBO()
 	{
-		return g_MatricesUBO;
+		return g_CascadeSSBO;
+	}
+
+	u32 GetLightMatricesSSBO()
+	{
+		return g_MatricesSSBO;
 	}
 
 	u32 GetShadowMap()

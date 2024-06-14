@@ -26,6 +26,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 		constexpr u32 c_NoiseSize = 16;
 		std::vector<V3> g_SSAONoise;
 
+		u32 g_KernelSSBO;
 
 		struct SSAOUniforms
 		{
@@ -39,7 +40,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 		GLint g_SSAOTextureUniform;
 		GLint g_EnableUniform;
-		GLint g_SamplesUniforms[c_KernelSize];
+
 
 		void FillKernel()
 		{
@@ -128,10 +129,8 @@ namespace Raito::Renderer::OpenGL::SSAO
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(EngineShader::SSAO));
 			shader->Bind();
 
-			for (u32 i = 0; i < c_KernelSize; i++)
-			{
-				shader->SetUniformRef(g_SamplesUniforms[i], g_SSAOKernel[i]);
-			}
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_KernelSSBO);
+
 			shader->SetUniformRef(g_SSAOUniforms.Projection, camera.GetProjection());
 			shader->SetUniform(g_SSAOUniforms.Size, c_KernelSize);
 			shader->SetUniformRef(g_SSAOUniforms.View, camera.GetView());
@@ -144,6 +143,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 			RenderFullScreenQuad();
 
 			shader->UnBind();
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 			g_FrameBuffer->UnBind();
 		}
 
@@ -187,10 +187,6 @@ namespace Raito::Renderer::OpenGL::SSAO
 			g_SSAOUniforms.Size = shader->GetUniformLocation("u_KernelSize");
 			g_SSAOUniforms.View = shader->GetUniformLocation("u_View");
 
-			for(u32 i = 0; i < c_KernelSize; i++)
-			{
-				g_SamplesUniforms[i] = shader->GetUniformLocation("u_Samples[" + std::to_string(i) + "].Data");
-			}
 
 			shader->UnBind();
 		}
@@ -201,6 +197,11 @@ namespace Raito::Renderer::OpenGL::SSAO
 			g_EnableUniform = shader->GetUniformLocation("u_Enable");
 			shader->UnBind();
 		}
+
+		glGenBuffers(1, &g_KernelSSBO);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_KernelSSBO);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(V3) * g_SSAOKernel.size(), g_SSAOKernel.data(), GL_STATIC_READ);
+
 		return true;
 	}
 

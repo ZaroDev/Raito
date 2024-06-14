@@ -35,10 +35,11 @@ namespace Editor
 		
 		// Manually import the fking texture: pavlito
 		Raito::Assets::ImportTexture("Meshes/Bricks/bump.jpg", Raito::Assets::TextureType::HEIGHT);
-
-		Raito::Assets::Texture::TextureData tex = Raito::Assets::GetTexture("Meshes/Bricks/bump.jpg")->RenderData;
-
-		Raito::Renderer::SetMaterialValue(0, "u_HeightMap", reinterpret_cast<ubyte*>(&tex), sizeof(tex));
+		Raito::Assets::PbrMaterial mat;
+		mat.Albedo = Raito::Assets::GetTexture("Meshes/Bricks/albedo.jpg")->RenderData;
+		mat.Normal = Raito::Assets::GetTexture("Meshes/Bricks/normals.jpg")->RenderData;
+		mat.HeightMap = Raito::Assets::GetTexture("Meshes/Bricks/bump.jpg")->RenderData;
+		Raito::Renderer::SetMaterialValue(0, mat);
 
 		// Manually position the foking brick plane: pavlito v2
 		Raito::ECS::Entity entity = Scene.FindEntityByName("Plane");

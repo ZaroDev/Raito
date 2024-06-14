@@ -1,21 +1,28 @@
 #include <pch.h>
 #include "OpenGLForwardPass.h"
 
+#include "OpenGLLightPass.h"
+#include "OpenGLShadowPass.h"
+#include "OpenGLSkyboxPass.h"
 #include "Core/Application.h"
 #include "ECS/Components.h"
 #include "Renderer/Camera.h"
-#include "Renderer/OpenGL/OpenGLObjects/OpenGLMaterial.h"
+#include "Renderer/OpenGL/OpenGLCore.h"
 #include "Renderer/OpenGL/OpenGLObjects/OpenGLShader.h"
 
 namespace Raito::Renderer::OpenGL::Forward
 {
+	namespace
+	{
+		
+	}
 
 	bool Initialize()
 	{
 		return true;
 	}
 
-	void Update(Camera* camera, const OpenGLFrameBuffer& buffer)
+	void Update(const Camera& camera, const OpenGLFrameBuffer& buffer)
 	{
 		buffer.Bind();
 
@@ -23,11 +30,12 @@ namespace Raito::Renderer::OpenGL::Forward
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		// Geometry pass
 
+		const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(FORWARD));
+		shader->Bind();
+		// Geometry pass
 		auto& scene = Core::Application::Get().Scene;
 		const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
-		const auto lightView = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::LightComponent>();
 		for (auto& entity : view)
 		{
 			const ECS::MeshComponent& mesh = view.get<ECS::MeshComponent>(entity);
@@ -35,29 +43,50 @@ namespace Raito::Renderer::OpenGL::Forward
 			const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
 			const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
 
-			OpenGLMaterial& material = GetMaterial(mesh.MaterialId);
+			Assets::PbrMaterial mat = GetMaterial(mesh.MaterialId);
+
+			SetTextureOnShader("u_Albedo", *shader, mat.Albedo);
+			SetTextureOnShader("u_Normal", *shader, mat.Normal);
+			SetTextureOnShader("u_Emissive", *shader, mat.Emissive);
+			SetTextureOnShader("u_RoughMetalAO", *shader, mat.MetalRoughness);
+			SetTextureOnShader("u_SSAO", *shader, mat.AmbientOcclusion);
+			SetTextureOnShader("u_HeightMap", *shader, mat.HeightMap);
+			SetTextureOnShader("u_BRDFLUT", *shader,  { Skybox::GetBRDFLUTTMap(), 0 });
 
 
-			material.SetValue("u_ViewPos", camera->GetPosition());
-			for (auto& light : lightView)
-			{
-				material.SetValue("u_LightPosition", lightView.get<ECS::TransformComponent>(light).Translation);
-				material.SetValue("u_LightColor", lightView.get<ECS::LightComponent>(light).Color);
-			}
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D_ARRAY, Shadows::GetShadowMap());
 
-			material.SetValue("u_View", camera->GetView());
-			material.SetValue("u_Projection", camera->GetProjection());
-			material.SetValue("u_Model", model);
-			material.SetValue("u_NormalMatrix", normalMatrix);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Skybox::GetIrradianceMap());
 
-			material.Bind();
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Skybox::GetPrefilterMap());
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, Shadows::GetShadowMapSSBO());
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, Shadows::GetShadowMapSSBO());
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, Shadows::GetLightMatricesSSBO());
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, Shadows::GetLightMatricesSSBO());
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, LightPass::GetDirectionalSSBO());
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, LightPass::GetDirectionalSSBO());
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, LightPass::GetPointSSBO());
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, LightPass::GetPointSSBO());
+
+
+			shader->SetUniformRef("u_View", camera.GetView());
+			shader->SetUniformRef("u_Projection", camera.GetProjection());
+			shader->SetUniformRef("u_Model", model);
+			shader->SetUniformRef("u_NormalMatrix", normalMatrix);
+			shader->SetUniform("u_EnableParallax", static_cast<i32>(IsParallaxEnabled()));
 
 			glBindVertexArray(meshData.VAO);
-			glDrawElements(GL_TRIANGLES, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
+			glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
 			glBindVertexArray(0);
-
-			material.UnBind();
 		}
+		shader->UnBind();
 		buffer.UnBind();
 	}
 

@@ -163,7 +163,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 				glBlendFunc(GL_ONE, GL_ONE);
 				glBlendEquation(GL_FUNC_ADD);
 
-				for (u32 i = g_BloomMipChains.size() - 1; i > 0; i--)
+				for (size_t i = g_BloomMipChains.size() - 1; i > 0; i--)
 				{
 					const BloomMip& mip = g_BloomMipChains[i];
 					const BloomMip& nextMip = g_BloomMipChains[i - 1];

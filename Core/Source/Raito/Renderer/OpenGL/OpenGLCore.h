@@ -58,13 +58,21 @@ namespace Raito::Renderer::OpenGL
     u32 AddTexture(Assets::Texture* texture, ubyte* data);
     void RemoveTexture(u32 id);
 
-    u32 AddMaterial(EngineShader shader);
-    void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size);
-	OpenGLMaterial& GetMaterial(u32 id);
+    u32 AddMaterial(const Assets::PbrMaterial& material);
+    void SetMaterialValue(u32 id, const Assets::PbrMaterial newMaterial);
+	const Assets::PbrMaterial& GetMaterial(u32 id);
+
+
     void RemoveMaterial(u32 id);
 
     void EnableParallax(bool value);
     bool IsParallaxEnabled();
 
     void RenderCube();
+    void RenderCubeInstanced(u32 count);
+
+    LightTechnique GetTechnique();
+    void SetTechnique(LightTechnique technique);
+
+    void SetTextureOnShader(const char* name, const OpenGLShader& shader, const Assets::Texture::TextureData& data);
 }

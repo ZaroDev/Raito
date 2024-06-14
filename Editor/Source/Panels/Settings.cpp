@@ -5,6 +5,11 @@
 
 namespace Editor
 {
+	Settings::Settings() : Panel("Settings")
+	{
+		m_Technique = Raito::Renderer::GetCurrentRenderType();
+	}
+
 	void Settings::Update()
 	{
 	}
@@ -12,6 +17,31 @@ namespace Editor
 	void Settings::Render()
 	{
 		ImGui::Begin(m_Name.c_str(), &m_Open);
+
+		const char* types[] =
+		{
+			"Forward",
+			"Deferred",
+			"Deferred Plus"
+		};
+		static const char* currentItem = types[static_cast<int>(m_Technique)];
+		if (ImGui::BeginCombo("Render type", currentItem))
+		{
+			for (int i = 0; i < IM_ARRAYSIZE(types); i++)
+			{
+				const bool isSelected = (currentItem == types[i]);
+				if (ImGui::Selectable(types[i], isSelected))
+				{
+					currentItem = types[i];
+					m_Technique = static_cast<Raito::Renderer::LightTechnique>(i);
+					Raito::Renderer::SetRenderType(m_Technique);
+				}
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
 
 		ImGui::Text("Render effects");
 		ImGui::Checkbox("Parallax mapping", &m_ParallaxMapping);

@@ -77,5 +77,7 @@ namespace Raito::Renderer::OpenGL
 		rhi.Settings.SetParallaxMapping = EnableParallax;
 		rhi.Settings.SetDebugAABB = Geometry::EnableAABBDebug;
 		rhi.Settings.SetFrustumCulling = Geometry::EnableCulling;
+		rhi.Settings.GetTechnique = GetTechnique;
+		rhi.Settings.SetTechnique = SetTechnique;
 	}
 }

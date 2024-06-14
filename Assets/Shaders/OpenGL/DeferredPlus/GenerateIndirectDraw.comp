@@ -1,0 +1,87 @@
+#version 460 core
+#define THREAD_GROUP_SIZE 64
+layout(local_size_x = THREAD_GROUP_SIZE, local_size_y = 1, local_size_z = 1) in;
+
+
+shared uint visibleInstanceIndexCounter;
+
+struct DrawCommand{
+    uint count;
+    uint instanceCount;
+    uint firstIndex;
+    int baseVertex;
+    uint baseInstance;
+};
+
+struct MeshInfo{
+    uint materialID;
+    uint numInstances;
+    uint instanceOffset;
+    uint meshType;
+    uint meshTypeOffset;
+    uint numIndices;
+    uint firstIndex;
+};
+
+layout(std430, binding = 0) readonly buffer VisibilityBuffer{
+    uint visBuffer[];
+};
+layout(std430, binding = 1) buffer DrawCommandsBlock{
+    DrawCommand drawIndirectBuffer[];
+};
+layout(std430, binding = 2) readonly buffer MeshInfoBuffer{
+    MeshInfo meshInfos[];
+};
+layout(std430, binding = 3) buffer OccludedInstanceBuffer{
+    uint occludedInstanceIndexBuffer[];
+};
+layout(std430, binding = 4) buffer VisibleInstanceBuffer{
+    uint visibleInstanceIndexBuffer[];
+};
+
+void main(){
+    const uint groupIndex = gl_LocalInvocationIndex;
+    const uvec3 groupId = gl_WorkGroupID;
+    if(groupIndex == 0){
+        visibleInstanceIndexCounter = 0;
+    }
+    groupMemoryBarrier();
+
+    MeshInfo meshInfo = meshInfos[groupId.x];
+    for(uint i = 0; i < meshInfo.numInstances; i+= THREAD_GROUP_SIZE){
+        uint elementIndex = groupIndex + i;
+        if(elementIndex < meshInfo.numInstances){
+            uint instanceIndex = meshInfo.instanceOffset + elementIndex;
+            if(visBuffer[instanceIndex] > 0){
+                atomicAdd(visibleInstanceIndexCounter, 1);
+                uint index = visibleInstanceIndexCounter;
+                visibleInstanceIndexBuffer[meshInfo.instanceOffset + index] = instanceIndex;
+            } else {
+                // Occluded instances will be rendered as occludeees to determine false negatives
+                atomicAdd(drawIndirectBuffer[0].instanceCount, 1);
+                uint index = drawIndirectBuffer[0].instanceCount;
+                occludedInstanceIndexBuffer[index] = instanceIndex;
+            }
+        }
+    }
+
+    groupMemoryBarrier();
+
+    if(groupIndex == 0){
+        if(visibleInstanceIndexCounter > 0){
+            // Increment counter of visible meshes
+            atomicAdd(visibleInstanceIndexBuffer[meshInfo.meshType], 1);
+            uint cmdIndex = visibleInstanceIndexBuffer[meshInfo.meshType];
+            cmdIndex += meshInfo.meshTypeOffset + 1;
+
+            DrawCommand cmd;
+            cmd.count = meshInfo.numIndices;
+            cmd.instanceCount = visibleInstanceIndexCounter;
+            cmd.firstIndex = meshInfo.firstIndex;
+            cmd.baseInstance = 0;
+            cmd.baseVertex = 0;
+
+            drawIndirectBuffer[cmdIndex] = cmd;
+        }
+    }
+}

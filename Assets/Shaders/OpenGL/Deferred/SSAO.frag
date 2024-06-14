@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 #extension GL_ARB_bindless_texture: require
 
 layout(location = 0) out vec4 FragColor;
@@ -9,16 +9,15 @@ layout(bindless_sampler) uniform sampler2D u_Position;
 layout(bindless_sampler) uniform sampler2D u_Normal;
 layout(bindless_sampler) uniform sampler2D u_Noise;
 
-struct Sample{
-    vec3 Data;
-};
 
-uniform Sample u_Samples[64];
+layout(std430, binding = 0) readonly buffer Kernel{
+    vec3 samples[64];
+};
 
 // parameters (you'd probably want to use them as uniforms to more easily tweak the effect)
 uniform int u_KernelSize = 64;
-float radius = 1.0;
-float bias = 0.25;
+float radius = 0.25;
+float bias = 0.01;
 
 // tile noise texture over screen based on screen dimensions divided by noise size
 const vec2 noiseScale = vec2(1920.0/4.0, 1080.0/4.0); 
@@ -41,7 +40,7 @@ void main()
     for(int i = 0; i < u_KernelSize; ++i)
     {
         // get sample position
-        vec3 samplePos = TBN * u_Samples[i].Data; // from tangent to view-space
+        vec3 samplePos = TBN * samples[i]; // from tangent to view-space
         samplePos = fragPos.xyz + samplePos * radius; 
         
         // project sample position (to sample texture) (to get position on screen/texture)

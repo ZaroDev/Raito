@@ -27,7 +27,9 @@
 
 #include "Assets/Mesh.h"
 #include "OpenGLPasses/OpenGLDeferredPlus.h"
+#include "OpenGLPasses/OpenGLLightPass.h"
 #include "OpenGLPasses/OpenGLSkyboxPass.h"
+#include "OpenGLPasses/OpenGLSSAOPass.h"
 
 #include "optick/include/optick.h"
 
@@ -43,9 +45,9 @@ namespace Raito::Renderer::OpenGL
 		std::vector<OpenGLFrameBuffer>	g_Surfaces{};
 		std::vector<OpenGLMeshData>		g_Meshes{};
 		std::vector<TextureData>		g_Textures{};
-		std::vector<OpenGLMaterial>		g_Materials{};
+		std::vector<Assets::PbrMaterial> g_Materials{};
 
-		LightTechnique g_Technique = LightTechnique::DeferredPlus;
+		LightTechnique g_Technique = LightTechnique::Deferred;
 
 		void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void* userParam)
 		{
@@ -57,7 +59,68 @@ namespace Raito::Renderer::OpenGL
 			case GL_DEBUG_SEVERITY_NOTIFICATION: O_LOG("{0}", message); break;
 			}
 		}
-
+		void GenCube()
+		{
+			constexpr float vertices[] = {
+				// back face
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+				// front face
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				// left face
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				// right face
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+				 // bottom face
+				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				  1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				 -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				 // top face
+				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				  1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				  1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+				  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				 -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+			};
+			glGenVertexArrays(1, &g_CubeVAO);
+			glGenBuffers(1, &g_CubeVBO);
+			// fill buffer
+			glBindBuffer(GL_ARRAY_BUFFER, g_CubeVBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			// link vertex attributes
+			glBindVertexArray(g_CubeVAO);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+		}
 
 	}
 
@@ -74,6 +137,7 @@ namespace Raito::Renderer::OpenGL
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 #endif
 
+		GenCube();
 		// Enable blend and depth testing
 		if (g_Technique != LightTechnique::Deferred)
 		{
@@ -112,12 +176,13 @@ namespace Raito::Renderer::OpenGL
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 		Skybox::Initialize();
+		LightPass::Initialize();
 		Shadows::Initialize();
 		Forward::Initialize();
 		Deferred::Initialize();
 		DeferredPlus::Initialize();
 		PostProcess::Initialize();
-
+		SSAO::Initialize();
 
 
 		return true;
@@ -138,21 +203,25 @@ namespace Raito::Renderer::OpenGL
 		camera.OnUpdate(Time::GetDeltaTime() / 1000.0f);
 
 
-		Shadows::Update(&camera);
+		Shadows::Update(camera);
+		LightPass::Update(camera);
 
 		switch (g_Technique)
 		{
-		case LightTechnique::Forward: Forward::Update(&camera, buffer); break;
+		case LightTechnique::Forward: Forward::Update(camera, buffer); break;
 		case LightTechnique::Deferred: Deferred::Update(camera, buffer); break;
 		case LightTechnique::DeferredPlus: DeferredPlus::Update(camera, buffer); break;
 		}
-		Skybox::Update(&camera);
+
+		Skybox::Update(camera);
 		PostProcess::Update(buffer);
 	}
 
 	void Shutdown()
 	{
+		SSAO::Shutdown();
 		ShaderCompiler::Shutdown();
+		LightPass::Shutdown();
 		Skybox::Shutdown();
 		Shadows::Shutdown();
 		Forward::Shutdown();
@@ -402,25 +471,26 @@ namespace Raito::Renderer::OpenGL
 		g_Textures[id] = {};
 	}
 
-	u32 AddMaterial(EngineShader shaderId)
+	u32 AddMaterial(const Assets::PbrMaterial& material)
 	{
-		g_Materials.emplace_back(shaderId);
+		g_Materials.emplace_back(material);
 		return static_cast<u32>(g_Materials.size()) - 1;
 	}
 
-	void SetMaterialValue(u32 id, const char* name, ubyte* data, size_t size)
+	void SetMaterialValue(u32 id, const Assets::PbrMaterial newMaterial)
 	{
-		g_Materials[id].SetValuePtr(name, data, size);
+		g_Materials[id] = newMaterial;
 	}
 
-	OpenGLMaterial& GetMaterial(u32 id)
+
+	const Assets::PbrMaterial& GetMaterial(u32 id)
 	{
 		return g_Materials[id];
 	}
 
 	void RemoveMaterial(u32 id)
 	{
-		g_Materials[id] = OpenGLMaterial(-1);
+		g_Materials.erase(g_Materials.begin() + id);
 	}
 
 
@@ -433,73 +503,32 @@ namespace Raito::Renderer::OpenGL
 	{
 		return g_EnableParallax;
 	}
+	void RenderCubeInstanced(u32 count)
+	{
+		glBindVertexArray(g_CubeVAO);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, count);
+		glBindVertexArray(0);
+	}
+
+	LightTechnique GetTechnique()
+	{
+		return g_Technique;
+	}
+
+	void SetTechnique(LightTechnique technique)
+	{
+		g_Technique = technique;
+	}
+
+	void SetTextureOnShader(const char* name, const OpenGLShader& shader, const Assets::Texture::TextureData& data)
+	{
+		const GLint location = shader.GetUniformLocation(name);
+		glUniformHandleui64ARB(location, data.Handle);
+	}
+
 
 	void RenderCube()
 	{
-		// initialize (if necessary)
-		if (g_CubeVAO == 0)
-		{
-			float vertices[] = {
-				// back face
-				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-				 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-				-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-				// front face
-				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-				 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-				-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-				// left face
-				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-				-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-				-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-				// right face
-				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-				 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-				 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-				 // bottom face
-				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-				  1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-				  1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-				 -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-				 -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-				 // top face
-				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-				  1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-				  1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-				  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-				 -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-				 -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-			};
-			glGenVertexArrays(1, &g_CubeVAO);
-			glGenBuffers(1, &g_CubeVBO);
-			// fill buffer
-			glBindBuffer(GL_ARRAY_BUFFER, g_CubeVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-			// link vertex attributes
-			glBindVertexArray(g_CubeVAO);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
-		}
-		// render Cube
 		glBindVertexArray(g_CubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);

@@ -56,8 +56,8 @@ namespace Raito::Renderer
 		NODISCARD const V3& GetPosition() const { return m_Position; }
 		NODISCARD const V3& GetDirection() const { return m_ForwardDirection; }
 
-		NODISCARD float GetNearClip() const { return m_NearClip; }
-		NODISCARD float GetNearFar() const { return m_FarClip; }
+		NODISCARD float GetNearPlane() const { return m_NearClip; }
+		NODISCARD float GetFarPlane() const { return m_FarClip; }
 
 		NODISCARD float GetLeft() const { return m_Parameters.Left; }
 		NODISCARD float GetRight() const { return m_Parameters.Right; }

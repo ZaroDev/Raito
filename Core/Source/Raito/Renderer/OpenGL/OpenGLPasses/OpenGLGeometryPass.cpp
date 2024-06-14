@@ -23,7 +23,7 @@ namespace Raito::Renderer::OpenGL::Geometry
 		g_EnableCulling = value;
 	}
 
-	void Update(const ECS::Scene& scene, const Camera& camera, const OpenGLFrameBuffer& buffer)
+	void Update(const ECS::Scene& scene, const Camera& camera, const OpenGLFrameBuffer& buffer, OpenGLShader* shader)
 	{
 		const auto view = scene.GetAllEntitiesWith<ECS::TransformComponent, ECS::MeshComponent>();
 		for (auto& entity : view)
@@ -47,39 +47,52 @@ namespace Raito::Renderer::OpenGL::Geometry
 				}
 			}
 
-			OpenGLMaterial& material = GetMaterial(mesh.MaterialId);
-			material.SetValue("u_View", camera.GetView());
-			material.SetValue("u_Projection", camera.GetProjection());
-			material.SetValue("u_Model", model);
-			material.SetValue("u_NormalMatrix", normalMatrix);
-			material.SetValue("u_EnableParallax", static_cast<i32>(IsParallaxEnabled()));
-			material.Bind();
+
+			shader->Bind();
+
+			Assets::PbrMaterial mat = GetMaterial(mesh.MaterialId);
+
+			SetTextureOnShader("u_Albedo", *shader, mat.Albedo);
+			SetTextureOnShader("u_Normal", *shader, mat.Normal);
+			SetTextureOnShader("u_Emissive", *shader, mat.Emissive);
+			SetTextureOnShader("u_MetalRoughness", *shader, mat.MetalRoughness);
+			SetTextureOnShader("u_AmbientOcclusion", *shader, mat.AmbientOcclusion);
+			SetTextureOnShader("u_HeightMap", *shader, mat.HeightMap);
+
+			shader->SetUniformRef("u_View", camera.GetView());
+			shader->SetUniformRef("u_Projection", camera.GetProjection());
+			shader->SetUniformRef("u_Model", model);
+			shader->SetUniformRef("u_NormalMatrix", normalMatrix);
+			shader->SetUniform("u_EnableParallax", static_cast<i32>(IsParallaxEnabled()));
 
 			glBindVertexArray(meshData.VAO);
 			glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
 			glBindVertexArray(0);
 
-			material.UnBind();
+			shader->UnBind();
 
 			if(g_DebugAABB)
 			{
-				const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(DEFAULT_MESH));
-				shader->Bind();
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				Mat4 aabbModel = Mat4(1.0);
-				aabbModel = glm::translate(aabbModel,aabb.GetCenter());
-				aabbModel = glm::scale(aabbModel, aabb.GetExtent());
-
-				shader->SetUniformRef("u_Model", aabbModel);
-				shader->SetUniformRef("u_View", camera.GetView());
-				shader->SetUniformRef("u_Projection", camera.GetProjection());
-				shader->SetUniformRef("u_NormalMatrix", normalMatrix);
-
-
-				RenderCube();
-				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				shader->UnBind();
+				
 			}
 		}
+	}
+
+	void DrawDebug(const Math::AABB& aabb, const Camera& camera)
+	{
+		const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(FORWARD));
+		shader->Bind();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		Mat4 aabbModel = Mat4(1.0);
+		aabbModel = glm::translate(aabbModel, aabb.GetCenter());
+		aabbModel = glm::scale(aabbModel, aabb.GetExtent());
+
+		shader->SetUniformRef("u_Model", aabbModel);
+		shader->SetUniformRef("u_View", camera.GetView());
+		shader->SetUniformRef("u_Projection", camera.GetProjection());
+
+		RenderCube();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		shader->UnBind();
 	}
 }

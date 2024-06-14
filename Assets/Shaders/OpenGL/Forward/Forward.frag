@@ -9,18 +9,16 @@ layout(location = 1) out vec4 BrightColor;
 
 uniform sampler2DArray u_ShadowMap;
 uniform samplerCube u_IrradianceMap;
-uniform samplerCube u_PrefilterMap;
+//uniform samplerCube u_PrefilterMap;
 
 
-layout(bindless_sampler) uniform sampler2D u_GPosition;
-layout(bindless_sampler) uniform sampler2D u_GNormal;
-layout(bindless_sampler) uniform sampler2D u_GAlbedo;
-layout(bindless_sampler) uniform sampler2D u_GEmissive;
-layout(bindless_sampler) uniform sampler2D u_GRoughMetalAO;
+layout(bindless_sampler) uniform sampler2D u_Albedo;
+layout(bindless_sampler) uniform sampler2D u_Emissive;
+layout(bindless_sampler) uniform sampler2D u_RoughMetalAO;
+layout(bindless_sampler) uniform sampler2D u_Normal;
+layout(bindless_sampler) uniform sampler2D u_HeightMap;
 layout(bindless_sampler) uniform sampler2D u_SSAO;
 layout(bindless_sampler) uniform sampler2D u_BRDFLUT;
-
-
 
 struct Material {
     vec3 Albedo;
@@ -61,7 +59,16 @@ layout(std430, binding = 3) readonly buffer PointBuffer{
 uniform mat4 u_InvView;
 uniform mat4 u_View;
 uniform vec3 u_ViewPosition;
+uniform int u_EnableParallax;
+
+in vec3 WorldPos;
 in vec2 TexCoord;
+in vec3 Normal;
+in vec3 Tangent;
+in vec3 BiTangent;
+in mat4 ModelView;
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
 
 float shadowCalculationDirectional(vec3 fragPosWorldSpace, vec3 lightPos, vec3 N) {
     // select cascade layer
@@ -207,7 +214,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 } 
 
-vec3 IBLAmbientRadiance(vec3 N, vec3 V, Material m, vec3 F0){
+/*vec3 IBLAmbientRadiance(vec3 N, vec3 V, Material m, vec3 F0){
     vec3 worldN = (u_InvView * vec4(N, 0)).xyz; //World normal
     vec3 worldV = (u_InvView * vec4(V, 0)).xyz; //World view
     vec3 irradiance = texture(u_IrradianceMap, worldN).xyz;
@@ -226,29 +233,50 @@ vec3 IBLAmbientRadiance(vec3 N, vec3 V, Material m, vec3 F0){
     vec3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
 
     return (kD * diffuse + specular) * m.Ambient;
+}*/
+
+
+vec3 FromNormalMap(vec2 tex_coords){
+    mat3 TBN = mat3(Tangent, BiTangent, Normal);
+   
+    vec3 normal;
+    vec3 normalSample = texture(u_Normal, tex_coords).xyz * 2.0 - 1.0;
+    normal = TBN * normalSample;
+
+    return normalize(mat3(ModelView) * normal);
+}
+
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float height =  texture(u_HeightMap, texCoords).r;    
+    vec2 p = viewDir.xy / viewDir.z * (height * 0.1);
+    return texCoords - (p * float(smoothstep(0, 1, u_EnableParallax)));
 }
 
 void main(){
+    vec3 view_dir = normalize(TangentViewPos - TangentFragPos);
+    vec2 tex_coords = ParallaxMapping(TexCoord, view_dir);
+    
     Material m;
-    m.Albedo = pow(texture(u_GAlbedo, TexCoord).rgb, vec3(GAMMA));
-    m.Normal = normalize(texture(u_GNormal, TexCoord)).rgb;
-    m.Roughness = texture(u_GRoughMetalAO, TexCoord).r;
-    m.Metallic = texture(u_GRoughMetalAO, TexCoord).g;
-    m.Ambient = texture(u_SSAO, TexCoord).r;
+    m.Albedo = pow(texture(u_Albedo, tex_coords).rgb, vec3(GAMMA));
+    m.Normal = FromNormalMap(tex_coords);
+    m.Roughness = texture(u_RoughMetalAO, tex_coords).r;
+    m.Metallic = texture(u_RoughMetalAO, tex_coords).g;
+    m.Ambient = texture(u_SSAO, tex_coords).r;
 
-    vec3 worldPos = texture(u_GPosition, TexCoord).rgb;
-    vec3 V = normalize(u_ViewPosition - worldPos);
+   
+    vec3 V = normalize(u_ViewPosition - WorldPos);
     
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, m.Albedo, m.Metallic);
 
     vec3 Lo = vec3(0.0);
 
-    float vis = shadowCalculationDirectional(worldPos, directional.Direction, m.Normal);
-    Lo += directionalLightRadiance(directional, m, F0, worldPos, V) * (1 - vis);
+    float vis = shadowCalculationDirectional(WorldPos, directional.Direction, m.Normal);
+    Lo += directionalLightRadiance(directional, m, F0, WorldPos, V) * (1 - vis);
 
     for(int i = 0; i < pointSize; i++){
-        Lo += pointLightRadiance(point[i], m, F0, worldPos, V);
+        Lo += pointLightRadiance(point[i], m, F0, WorldPos, V);
     }
 
     vec3 kS = fresnelSchlick(max(dot(m.Normal, V), 0.0), F0);
@@ -263,5 +291,5 @@ void main(){
     color = pow(color, vec3(1.0/GAMMA)); 
 
     FragColor = vec4(color, 1.0);
-    BrightColor = pow(texture(u_GEmissive, TexCoord), vec4(GAMMA));
+    BrightColor = pow(texture(u_Emissive, TexCoord), vec4(GAMMA));
 }
