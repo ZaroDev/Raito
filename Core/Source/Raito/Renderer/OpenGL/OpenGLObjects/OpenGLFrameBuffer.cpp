@@ -107,7 +107,7 @@ namespace Raito::Renderer::OpenGL
 		{
 			if(!IsDepthFormat(data.TextureFormat))
 			{
-				m_ColorAttachmentData.emplace_back(data);
+				m_ColorAttachmentData.push_back(data);
 			}
 			else
 			{

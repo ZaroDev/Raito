@@ -58,56 +58,22 @@ namespace Raito::Renderer
 
 		Input::SetCursorMode(CursorMode::Locked);
 
+		static bool orbiting = false;
 
-		constexpr V3 upDirection(0.0f, 1.0f, 0.0f);
-		V3 rightDirection = glm::cross(m_ForwardDirection, upDirection);
+		if (Input::IsKeyDown(Key::LeftAlt)) {
+			if (!orbiting) {
+				m_TargetDist = glm::distance(m_Position, m_TargetPos);
+				orbiting = true;
+			}
 
-		float speed = 5.0f;
+			moved = OrbitCameraControls(delta, ts);
+		}
+		else {
+			orbiting = false;
 
-		// Movement
-		if (Input::IsKeyDown(KeyCode::W))
-		{
-			m_Position += m_ForwardDirection * speed * ts;
-			moved = true;
+			moved = NormalCameraControls(delta, ts);
 		}
-		else if (Input::IsKeyDown(KeyCode::S))
-		{
-			m_Position -= m_ForwardDirection * speed * ts;
-			moved = true;
-		}
-		if (Input::IsKeyDown(KeyCode::A))
-		{
-			m_Position -= rightDirection * speed * ts;
-			moved = true;
-		}
-		else if (Input::IsKeyDown(KeyCode::D))
-		{
-			m_Position += rightDirection * speed * ts;
-			moved = true;
-		}
-		if (Input::IsKeyDown(KeyCode::Q))
-		{
-			m_Position -= upDirection * speed * ts;
-			moved = true;
-		}
-		else if (Input::IsKeyDown(KeyCode::E))
-		{
-			m_Position += upDirection * speed * ts;
-			moved = true;
-		}
-
-		// Rotation
-		if (delta.x != 0.0f || delta.y != 0.0f)
-		{
-			float pitchDelta = delta.y * GetRotationSpeed();
-			float yawDelta = delta.x * GetRotationSpeed();
-
-			Quaternion q = glm::normalize(glm::cross(glm::angleAxis(-pitchDelta, rightDirection),
-				glm::angleAxis(-yawDelta, V3(0.f, 1.0f, 0.0f))));
-			m_ForwardDirection = glm::rotate(q, m_ForwardDirection);
-
-			moved = true;
-		}
+		
 
 		if (moved)
 		{
@@ -159,6 +125,86 @@ namespace Raito::Renderer
 		}
 
 		return m_Frustum.IsBoxVisible(boundingBox.GetMin(), boundingBox.GetMax());
+	}
+
+	bool Camera::NormalCameraControls(const V2& delta, float ts)
+	{
+		bool moved = false;
+
+		constexpr V3 upDirection(0.0f, 1.0f, 0.0f);
+		V3 rightDirection = glm::cross(m_ForwardDirection, upDirection);
+
+		float speed = 5.0f;
+
+		// Movement
+		if (Input::IsKeyDown(KeyCode::W))
+		{
+			m_Position += m_ForwardDirection * speed * ts;
+			moved = true;
+		}
+		else if (Input::IsKeyDown(KeyCode::S))
+		{
+			m_Position -= m_ForwardDirection * speed * ts;
+			moved = true;
+		}
+		if (Input::IsKeyDown(KeyCode::A))
+		{
+			m_Position -= rightDirection * speed * ts;
+			moved = true;
+		}
+		else if (Input::IsKeyDown(KeyCode::D))
+		{
+			m_Position += rightDirection * speed * ts;
+			moved = true;
+		}
+		if (Input::IsKeyDown(KeyCode::Q))
+		{
+			m_Position -= upDirection * speed * ts;
+			moved = true;
+		}
+		else if (Input::IsKeyDown(KeyCode::E))
+		{
+			m_Position += upDirection * speed * ts;
+			moved = true;
+		}
+
+		// Rotation
+		if (delta.x != 0.0f || delta.y != 0.0f)
+		{
+			float pitchDelta = delta.y * GetRotationSpeed();
+			float yawDelta = delta.x * GetRotationSpeed();
+
+			Quaternion q = glm::normalize(glm::cross(glm::angleAxis(-pitchDelta, rightDirection),
+				glm::angleAxis(-yawDelta, V3(0.f, 1.0f, 0.0f))));
+			m_ForwardDirection = glm::rotate(q, m_ForwardDirection);
+
+			moved = true;
+		}
+
+		return moved;
+	}
+
+	bool Camera::OrbitCameraControls(const V2& delta, float ts)
+	{
+		static float angleX = 0.0f;
+
+		bool moved = false;
+
+		// Rotation
+		if (delta.x != 0.0f || delta.y != 0.0f)
+		{
+			angleX += -delta.x * GetRotationSpeed();
+
+			// Horizontal orbit
+			m_Position.x = m_TargetPos.x + glm::sin(angleX) * m_TargetDist;
+			m_Position.z = m_TargetPos.z + glm::cos(angleX) * m_TargetDist;
+
+			m_ForwardDirection = glm::normalize(m_TargetPos - m_Position);
+
+			moved = true;
+		}
+
+		return moved;
 	}
 
 	void Camera::RecalculateProjection()

@@ -93,6 +93,7 @@ namespace Raito
 			FrameBufferTextureData() = default;
 			FrameBufferTextureData(FrameBufferTextureFormat format)
 				: TextureFormat(format) {}
+			~FrameBufferTextureData(){}
 
 			FrameBufferTextureFormat TextureFormat = FrameBufferTextureFormat::None;
 		};

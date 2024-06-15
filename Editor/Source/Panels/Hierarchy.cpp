@@ -118,7 +118,14 @@ namespace Editor
 
 	void Hierarchy::Update()
 	{
+		Raito::Renderer::Camera& cam = Raito::Renderer::GetMainCamera();
+		cam.SetCameraTarget(glm::vec3( 0.0f, 0.0f, 0.0f ));
 
+		if (m_SelectionContext) {
+			Raito::ECS::TransformComponent& tcomp = m_SelectionContext.GetComponent<Raito::ECS::TransformComponent>();
+
+			cam.SetCameraTarget(tcomp.Translation);
+		}
 	}
 
 	void Hierarchy::Render()

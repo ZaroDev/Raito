@@ -70,9 +70,14 @@ namespace Raito::Renderer
 
 		NODISCARD bool IsInsideFrustum(const Math::AABB& boundingBox) const;
 
+		NODISCARD void SetCameraTarget(const V3& target) { m_TargetPos = target; }
+
 		bool FrustumCulling = true;
 
 	private:
+		bool NormalCameraControls(const V2& delta, float ts);
+		bool OrbitCameraControls(const V2& delta, float ts);
+
 		void RecalculateProjection();
 		void RecalculateView();
 
@@ -86,6 +91,9 @@ namespace Raito::Renderer
 		float m_VerticalFOV = 45.0f;
 		float m_NearClip = 0.1f;
 		float m_FarClip = 100.0f;
+
+		V3 m_TargetPos{ 0.0f, 0.0f, 0.0f };
+		float m_TargetDist{ 0.0f };
 
 		V3 m_Position{ 0.0f, 0.0f, 0.0f };
 		V3 m_ForwardDirection{ 0.0f, 0.0f, 0.0f };
