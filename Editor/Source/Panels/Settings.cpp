@@ -44,7 +44,9 @@ namespace Editor
 		}
 
 		ImGui::Text("Render effects");
-		ImGui::Checkbox("Parallax mapping", &m_ParallaxMapping);
+		if (ImGui::Checkbox("Parallax mapping", &m_ParallaxMapping)) {
+			Raito::Renderer::SetParallaxMapping(m_ParallaxMapping);
+		}
 		ImGui::Separator();
 
 		ImGui::Text("General");
