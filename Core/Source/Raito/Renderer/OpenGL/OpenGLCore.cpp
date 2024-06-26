@@ -420,7 +420,7 @@ namespace Raito::Renderer::OpenGL
 
 			if (texture->Type == Assets::DIFFUSE)
 			{
-				internalFormat = GL_SRGB;
+				internalFormat = GL_RGB;
 			}
 			else if (texture->Type == Assets::HDR)
 			{

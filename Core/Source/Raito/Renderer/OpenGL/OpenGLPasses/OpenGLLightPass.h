@@ -7,6 +7,7 @@ namespace Raito::Renderer::OpenGL::LightPass
 	void Update(const Camera& camera);
 	u32 GetDirectionalSSBO();
 	u32 GetPointSSBO();
+	u32 GetPointSize();
 
 	void Shutdown();
 }

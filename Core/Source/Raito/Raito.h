@@ -63,5 +63,5 @@ SOFTWARE.
 // Random
 #include <Raito/Random/Random.h>
 
-#define NUM_POINT 1
-#define NUM_DIRECTIONAL 1
+constexpr u32 NUM_POINT = 1;
+constexpr u32 NUM_DIRECTIONAL = 1;

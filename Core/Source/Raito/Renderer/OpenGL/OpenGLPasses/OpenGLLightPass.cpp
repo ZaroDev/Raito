@@ -9,26 +9,13 @@ namespace Raito::Renderer::OpenGL::LightPass
 {
 	namespace
 	{
-		struct Directional
-		{
-			V3 Direction;
-			V3 Position;
-			V3 Color;
-		};
-
-		struct Point
-		{
-			V3 Position;
-			V3 Color;
-		};
-
 		constexpr u32 c_MaxLights = 1024;
-		constexpr u32 c_DirectionalSize = sizeof(Directional);
-		constexpr u32 c_PointSize = sizeof(u32) + sizeof(Point) * c_MaxLights;
+		constexpr u32 c_DirectionalSize = sizeof(Mat3);
+		constexpr u32 c_PointSize = sizeof(u32) + sizeof(Mat3) * c_MaxLights;
 		u32 g_DirectionalSSBO;
 		u32 g_PointSSBO;
 
-		std::vector<Point> g_Points;
+		std::vector<Mat4> g_Points;
 	}
 
 	bool Initialize()
@@ -54,9 +41,9 @@ namespace Raito::Renderer::OpenGL::LightPass
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_DirectionalSSBO);
 
 		u32 pointSize = 0;
-		
+
 		g_Points.clear();
-		
+
 		for (const auto& entity : view)
 		{
 			const auto& light = view.get<ECS::LightComponent>(entity);
@@ -66,17 +53,14 @@ namespace Raito::Renderer::OpenGL::LightPass
 			{
 			case ECS::LightComponent::Type::DIRECTIONAL:
 			{
-				auto dir = Directional{ light.Direction, transform.Translation, light.Color };
-				glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Directional),&dir);
+				const auto dir = Mat3(light.Direction, light.Color, V3{0.0f});
+				glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Mat3) , &dir);
 			}break;
 			case ECS::LightComponent::Type::POINT_LIGHT:
 			{
-				if(!camera.IsInsideFrustum(Math::AABB(transform.Translation, light.Radius)))
-				{
-					continue;
-				}
 				pointSize++;
-				g_Points.emplace_back(transform.Translation, light.Color);
+				const auto point = Mat3(transform.Translation, light.Color, V3{0.f});
+				g_Points.emplace_back(point);
 
 			}break;
 			case ECS::LightComponent::Type::SPOT_LIGHT:
@@ -86,12 +70,11 @@ namespace Raito::Renderer::OpenGL::LightPass
 			}
 		}
 
-		
+
 
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, g_PointSSBO);
-		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(u32), &pointSize);
-		glBufferSubData(GL_SHADER_STORAGE_BUFFER, sizeof(u32), sizeof(Point) * g_Points.size(), g_Points.data());
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Mat3) * g_Points.size(), g_Points.data());
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	}
 
@@ -105,8 +88,14 @@ namespace Raito::Renderer::OpenGL::LightPass
 		return g_PointSSBO;
 	}
 
+	u32 GetPointSize()
+	{
+		return g_Points.size();
+	}
+
 	void Shutdown()
 	{
 		glDeleteBuffers(1, &g_DirectionalSSBO);
+		g_Points.clear();
 	}
 }

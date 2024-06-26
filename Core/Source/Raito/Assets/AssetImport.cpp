@@ -69,14 +69,6 @@ namespace Raito::Assets
 				textureType = NORMAL;
 				texture = &pbrMaterial.Normal;
 				break;
-			case aiTextureType_DISPLACEMENT:
-				textureType = HEIGHT;
-				texture = &pbrMaterial.HeightMap;
-				break;
-			case aiTextureType_HEIGHT:
-				textureType = HEIGHT;
-				texture = &pbrMaterial.HeightMap;
-				break;
 			case aiTextureType_EMISSIVE:
 				textureType = EMISSIVE;
 				texture = &pbrMaterial.Emissive;
@@ -195,7 +187,6 @@ namespace Raito::Assets
 					LoadTexturesOfType(m, path, material, aiTextureType_BASE_COLOR, newMat);
 					LoadTexturesOfType(m, path, material, aiTextureType_NORMALS, newMat);
 					LoadTexturesOfType(m, path, material, aiTextureType_EMISSIVE, newMat);
-					LoadTexturesOfType(m, path, material, aiTextureType_DISPLACEMENT, newMat);
 					LoadTexturesOfType(m, path, material, aiTextureType_LIGHTMAP, newMat);
 					LoadTexturesOfType(m, path, material, aiTextureType_UNKNOWN, newMat);
 					const u32 materialId = Renderer::AddMaterial(newMat);

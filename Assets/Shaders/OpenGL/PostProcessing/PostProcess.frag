@@ -8,24 +8,20 @@ layout(bindless_sampler) uniform sampler2D u_ScreenTexture;
 layout(bindless_sampler) uniform sampler2D u_BloomTexture;
 
 uniform int u_EnableBloom;
+#define GAMMA 2.2
 
-vec3 aces(vec3 x) {
-  const float a = 2.51;
-  const float b = 0.03;
-  const float c = 2.43;
-  const float d = 0.59;
-  const float e = 0.14;
-  return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
-}
+
 
 void main() {
   vec3 hdrColor = texture(u_ScreenTexture, TexCoords).rgb;
   vec3 bloomColor = texture(u_BloomTexture, TexCoords).rgb;
 
+  vec3 imageColor = hdrColor + (bloomColor * smoothstep(0, 1, u_EnableBloom));
+  imageColor *= 0.6;
+	vec3 mapped = (imageColor * (2.51f * imageColor + 0.03f)) / (imageColor * (2.43f * imageColor + 0.59f) + 0.14f);
+	mapped = clamp(mapped, vec3(0.0), vec3(1.0));
 
+  mapped = pow(mapped, vec3(1.0 / GAMMA));
 
-  vec3 result = hdrColor + (bloomColor * smoothstep(0, 1, u_EnableBloom));
-  result = aces(result);
-
-  FragColor = vec4(result, 1.0);
+  FragColor = vec4(mapped, 1.0);
 }

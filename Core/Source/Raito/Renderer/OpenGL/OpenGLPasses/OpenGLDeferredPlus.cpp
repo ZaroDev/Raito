@@ -12,8 +12,8 @@ namespace Raito::Renderer::OpenGL::DeferredPlus
 	namespace
 	{
 		constexpr u32 g_MaxObjectBufferSize = 1000;
-		OpenGLFrameBuffer* g_FrameBuffer = nullptr;
-		OpenGLFrameBuffer* g_VisibilityBuffer = nullptr;
+		std::unique_ptr<OpenGLFrameBuffer> g_FrameBuffer = nullptr;
+		std::unique_ptr<OpenGLFrameBuffer> g_VisibilityBuffer = nullptr;
 
 		struct VisibilityBuffers
 		{
@@ -64,7 +64,7 @@ namespace Raito::Renderer::OpenGL::DeferredPlus
 
 	bool Initialize()
 	{
-		g_FrameBuffer = new  OpenGLFrameBuffer(
+		g_FrameBuffer = std::make_unique<OpenGLFrameBuffer>(
 			FrameBufferData{
 				{
 					FrameBufferTextureFormat::RGBA16F,	// Position buffer
@@ -79,7 +79,7 @@ namespace Raito::Renderer::OpenGL::DeferredPlus
 				1
 			});
 
-		g_VisibilityBuffer = new  OpenGLFrameBuffer(
+		g_VisibilityBuffer = std::make_unique<OpenGLFrameBuffer>(
 			FrameBufferData{
 				{
 					FrameBufferTextureFormat::Depth		// Depth buffer
@@ -302,7 +302,7 @@ namespace Raito::Renderer::OpenGL::DeferredPlus
 
 	void Shutdown()
 	{
-		delete g_FrameBuffer;
-		delete g_VisibilityBuffer;
+		g_FrameBuffer.release();
+		g_VisibilityBuffer.release();
 	}
 }

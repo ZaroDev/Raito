@@ -11,6 +11,5 @@ namespace Raito::Assets
 		Texture::TextureData Emissive;
 		Texture::TextureData MetalRoughness;
 		Texture::TextureData AmbientOcclusion;
-		Texture::TextureData HeightMap;
 	};
 }

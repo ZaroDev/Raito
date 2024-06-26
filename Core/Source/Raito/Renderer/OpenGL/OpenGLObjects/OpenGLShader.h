@@ -148,7 +148,7 @@ namespace Raito::Renderer::OpenGL
 	template<>
 	inline void OpenGLShader::SetUniform<u32>(u32 id, u32 value)
 	{
-		glUniform1ui(id, value);
+		glUniform1i(id, value);
 	}
 	template<>
 	inline void OpenGLShader::SetUniform<float>(u32 id, float value)

@@ -219,5 +219,7 @@ namespace Raito::Renderer::OpenGL::PostProcess
 		}
 		glDeleteFramebuffers(1, &g_BloomFBO);
 		g_BloomFBO = 0;
+
+		g_BloomMipChains.clear();
 	}
 }

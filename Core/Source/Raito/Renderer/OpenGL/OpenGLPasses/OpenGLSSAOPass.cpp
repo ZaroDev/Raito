@@ -12,8 +12,8 @@ namespace Raito::Renderer::OpenGL::SSAO
 {
 	namespace
 	{
-		OpenGLFrameBuffer* g_FrameBuffer;
-		OpenGLFrameBuffer* g_BlurBuffer;
+		std::unique_ptr<OpenGLFrameBuffer> g_FrameBuffer;
+		std::unique_ptr<OpenGLFrameBuffer> g_BlurBuffer;
 
 		bool g_Enabled = true;
 
@@ -81,7 +81,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 		void CreateBuffer()
 		{
-			g_FrameBuffer = new OpenGLFrameBuffer(
+			g_FrameBuffer = std::make_unique<OpenGLFrameBuffer>(
 				FrameBufferData{
 				{
 					FrameBufferTextureFormat::RGBA16F,	// Position buffer
@@ -90,7 +90,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 				1080,
 				1
 				});
-			g_BlurBuffer = new OpenGLFrameBuffer(
+			g_BlurBuffer = std::make_unique<OpenGLFrameBuffer>(
 				FrameBufferData{
 				{
 					FrameBufferTextureFormat::RGBA16F,	// Position buffer
@@ -230,7 +230,7 @@ namespace Raito::Renderer::OpenGL::SSAO
 
 	void Shutdown()
 	{
-		delete g_FrameBuffer;
-		delete g_BlurBuffer;
+		g_FrameBuffer.release();
+		g_BlurBuffer.release();
 	}
 }

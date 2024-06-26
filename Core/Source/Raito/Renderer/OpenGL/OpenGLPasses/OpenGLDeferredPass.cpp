@@ -68,12 +68,12 @@ namespace Raito::Renderer::OpenGL::Deferred
 		g_FrameBuffer = new  OpenGLFrameBuffer(
 			FrameBufferData{
 				{
-					FrameBufferTextureFormat::RGBA16F,	// Position buffer
-					FrameBufferTextureFormat::RGBA16F,	// Normal buffer
-					FrameBufferTextureFormat::RGBA16F,	// Albedo buffer
-					FrameBufferTextureFormat::RGBA16F,	// Emissive buffer
-					FrameBufferTextureFormat::RGBA16F,	// RougMetalAO buffer
-					FrameBufferTextureFormat::Depth		// Depth buffer
+					FrameBufferTextureFormat::RGBA16F,// Position buffer
+					FrameBufferTextureFormat::RGBA16F,// Normal buffer
+					FrameBufferTextureFormat::RGBA,	// Albedo buffer
+					FrameBufferTextureFormat::RGBA,	// Emissive buffer
+					FrameBufferTextureFormat::RGBA,	// RougMetalAO buffer
+					FrameBufferTextureFormat::Depth	// Depth buffer
 				},
 				1920,
 				1080,
@@ -188,7 +188,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 			glUniformHandleui64ARB(g_GBufferUniforms.Emissive, g_FrameBuffer->ColorHandle(3));
 			glUniformHandleui64ARB(g_GBufferUniforms.RoughMetal, g_FrameBuffer->ColorHandle(4));
 			glUniformHandleui64ARB(g_GBufferUniforms.Ambient, SSAO::GetSSAOHandle());
-			//glUniformHandleui64ARB(g_GBufferUniforms.BRDFLUTT, Skybox::GetBRDFLUTTMap());
+			glUniformHandleui64ARB(g_GBufferUniforms.BRDFLUTT, Skybox::GetBRDFLUTTMap());
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D_ARRAY, Shadows::GetShadowMap());
@@ -213,7 +213,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 			
 			shader->SetUniformRef("u_ViewPosition",camera.GetPosition());
-			//shader->SetUniformRef("u_InvView", camera.GetInverseView());
+			shader->SetUniform("u_PointSize", LightPass::GetPointSize());
 			shader->SetUniformRef("u_View", camera.GetView());
 
 

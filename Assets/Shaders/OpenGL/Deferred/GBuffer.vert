@@ -12,7 +12,7 @@ uniform mat4 u_Projection;
 uniform mat3 u_NormalMatrix;
 
 
-out vec3 WorldPos;
+out vec4 WorldPos;
 out vec3 Normal;
 out vec2 TexCoord;
 out vec3 Tangent;
@@ -26,7 +26,7 @@ out vec3 TangentFragPos;
 void main() {
     TexCoord = aTexCoord;
 
-    WorldPos = vec3(u_Model * vec4(aPos, 1.0));
+    WorldPos = u_Model * vec4(aPos, 1.0);
     Normal = u_NormalMatrix * aNormal;
 
     Tangent = aTangent;

@@ -50,7 +50,6 @@ namespace Raito::Renderer::OpenGL::Forward
 			SetTextureOnShader("u_Emissive", *shader, mat.Emissive);
 			SetTextureOnShader("u_RoughMetalAO", *shader, mat.MetalRoughness);
 			SetTextureOnShader("u_SSAO", *shader, mat.AmbientOcclusion);
-			SetTextureOnShader("u_HeightMap", *shader, mat.HeightMap);
 			SetTextureOnShader("u_BRDFLUT", *shader,  { Skybox::GetBRDFLUTTMap(), 0 });
 
 
@@ -80,7 +79,6 @@ namespace Raito::Renderer::OpenGL::Forward
 			shader->SetUniformRef("u_Projection", camera.GetProjection());
 			shader->SetUniformRef("u_Model", model);
 			shader->SetUniformRef("u_NormalMatrix", normalMatrix);
-			shader->SetUniform("u_EnableParallax", static_cast<i32>(IsParallaxEnabled()));
 
 			glBindVertexArray(meshData.VAO);
 			glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
