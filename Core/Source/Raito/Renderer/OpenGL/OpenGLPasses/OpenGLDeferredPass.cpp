@@ -229,7 +229,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 	void Shutdown()
 	{
-		SSAO::Shutdown();
+		
 
 		delete g_LightBuffer;
 		delete g_FrameBuffer;

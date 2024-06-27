@@ -47,7 +47,7 @@ namespace Raito::Assets
 {
 	namespace
 	{
-		
+
 		std::vector<Model*> g_Models{};
 
 		std::unordered_map<std::filesystem::path, Texture*> g_Textures{};
@@ -85,13 +85,13 @@ namespace Raito::Assets
 				break;
 			}
 
-			if(textureCount == 0)
+			if (textureCount == 0)
 			{
-				
-				if(textureType == METAL_ROUGHNESS || textureType == EMISSIVE || textureType == HEIGHT)
+
+				if (textureType == METAL_ROUGHNESS || textureType == EMISSIVE || textureType == HEIGHT)
 				{
 					*texture = GetBlackTexture().RenderData;
-					
+
 				}
 				else
 				{
@@ -133,7 +133,7 @@ namespace Raito::Assets
 
 			Mesh* m = new Mesh();
 
-			for(u32 i = 0; i < mesh->mNumVertices; i++)
+			for (u32 i = 0; i < mesh->mNumVertices; i++)
 			{
 				Vertex vertex;
 				vertex.Position.x = mesh->mVertices[i].x;
@@ -152,7 +152,7 @@ namespace Raito::Assets
 				vertex.BiTangent.y = mesh->mBitangents[i].y;
 				vertex.BiTangent.z = mesh->mBitangents[i].z;
 
-				if(mesh->mTextureCoords[0])
+				if (mesh->mTextureCoords[0])
 				{
 					vertex.TexCoords.x = mesh->mTextureCoords[0][i].x;
 					vertex.TexCoords.y = mesh->mTextureCoords[0][i].y;
@@ -164,18 +164,18 @@ namespace Raito::Assets
 				vertices.emplace_back(vertex);
 			}
 
-			for(u32 i = 0; i < mesh->mNumFaces; i++)
+			for (u32 i = 0; i < mesh->mNumFaces; i++)
 			{
 				const aiFace face = mesh->mFaces[i];
-				for(u32 j = 0; j < face.mNumIndices; j++)
+				for (u32 j = 0; j < face.mNumIndices; j++)
 				{
 					indices.emplace_back(face.mIndices[j]);
 				}
 			}
-			if(mesh->mMaterialIndex >= 0)
+			if (mesh->mMaterialIndex >= 0)
 			{
 				const auto materialHash = std::string(path.string() + std::to_string(mesh->mMaterialIndex));
-				if(g_Materials.contains(materialHash))
+				if (g_Materials.contains(materialHash))
 				{
 					m->MaterialId = g_Materials[materialHash];
 				}
@@ -220,7 +220,7 @@ namespace Raito::Assets
 			// then do the same for each of its children
 			for (u32 i = 0; i < node->mNumChildren; i++)
 			{
-				ProcessNode(path,meshes, node->mChildren[i], scene, transform);
+				ProcessNode(path, meshes, node->mChildren[i], scene, transform);
 			}
 		}
 	}
@@ -232,7 +232,7 @@ namespace Raito::Assets
 
 		const aiScene* scene = importer.ReadFile(filePath.string().c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
-		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			ERR("Model importer", "Assimp error {0}", importer.GetErrorString());
 			return 0;
@@ -249,7 +249,7 @@ namespace Raito::Assets
 
 	void ImportTexture(const std::filesystem::path& filePath, TextureType type)
 	{
-		if(g_Textures.contains(filePath) && g_Textures[filePath] != nullptr)
+		if (g_Textures.contains(filePath) && g_Textures[filePath] != nullptr)
 		{
 			LOG("Textures", "Texture {0} import skipped", filePath.string());
 			return;
@@ -257,16 +257,12 @@ namespace Raito::Assets
 
 		i32 width, height, nChannels;
 
-		if(type == HDR)
-		{
-			stbi_set_flip_vertically_on_load(true);
-		}
-		else
-		{
-			stbi_set_flip_vertically_on_load(false);
-		}
 
+		stbi_set_flip_vertically_on_load(false);
 		ubyte* data = stbi_load(filePath.string().c_str(), &width, &height, &nChannels, 0);
+
+
+
 
 		LOG("Textures", "Imported {0}", filePath.string());
 		auto* texture = new Texture(width, height, nChannels, data, type);
@@ -283,7 +279,7 @@ namespace Raito::Assets
 
 	Texture* GetTexture(const std::filesystem::path& filePath)
 	{
-		if(g_Textures.contains(filePath))
+		if (g_Textures.contains(filePath))
 		{
 			return g_Textures[filePath];
 		}

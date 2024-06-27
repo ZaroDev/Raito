@@ -50,7 +50,7 @@ namespace Raito::Renderer::OpenGL::Geometry
 
 			shader->Bind();
 
-			Assets::PbrMaterial mat = GetMaterial(mesh.MaterialId);
+			const Assets::PbrMaterial& mat = GetMaterial(mesh.MaterialId);
 
 			SetTextureOnShader("u_Albedo", *shader, mat.Albedo);
 			SetTextureOnShader("u_Normal", *shader, mat.Normal);

@@ -13,36 +13,16 @@ uniform mat3 u_NormalMatrix;
 
 
 out vec3 WorldPos;
+out vec2 TexCoords;
 out vec3 Normal;
-out vec2 TexCoord;
-out vec3 Tangent;
-out vec3 BiTangent;
-out vec3 ViewPos;
-out mat4 ModelView;
-
-out vec3 TangentViewPos;
-out vec3 TangentFragPos;
+out mat4 View;
 
 void main() {
-    TexCoord = aTexCoord;
+    TexCoords = aTexCoord;
 
     WorldPos = vec3(u_Model * vec4(aPos, 1.0));
     Normal = u_NormalMatrix * aNormal;
-
-    Tangent = aTangent;
-    BiTangent = aBiTangent;
-
-    ViewPos = vec3(inverse(u_View)[3]);
-
-    ModelView = u_View * u_Model;
-
-    vec3 T   = normalize(mat3(u_Model) * aTangent);
-    vec3 B   = normalize(mat3(u_Model) * aBiTangent);
-    vec3 N   = normalize(mat3(u_Model) * aNormal);
-    mat3 TBN = transpose(mat3(T, B, N));
-
-    TangentViewPos  = TBN * ViewPos;
-    TangentFragPos  = TBN * WorldPos;
+    View = u_View;
 
     gl_Position = u_Projection * u_View * vec4(WorldPos, 1.0);
 }

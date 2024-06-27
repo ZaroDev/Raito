@@ -5,6 +5,7 @@
 #include "Assets/AssetImport.h"
 #include "Renderer/OpenGL/OpenGLCore.h"
 #include "Renderer/OpenGL/OpenGLObjects/OpenGLShader.h"
+#include "stb/stb_image.h"
 
 namespace Raito::Renderer::OpenGL::Skybox
 {
@@ -45,14 +46,30 @@ namespace Raito::Renderer::OpenGL::Skybox
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, g_CaptureRBO);
 
-			Assets::ImportTexture("Textures/autumn_field_puresky_4k.hdr", Assets::HDR);
-			Assets::Texture* hdr = Assets::GetTexture("Textures/autumn_field_puresky_4k.hdr");
 
-			if(!hdr)
+			stbi_set_flip_vertically_on_load(true);
+			const char* hdrPath = "Textures/thatch_chapel_4k.hdr";
+			i32 width, height, nComponents;
+			float* data = stbi_loadf(hdrPath, &width, &height, &nComponents, 0);
+			TextureData hdrTexture;
+			if (data)
 			{
-				O_ERROR("HDR not loaded");
-				return;
+				glGenTextures(1, &hdrTexture.Id);
+				glBindTexture(GL_TEXTURE_2D, hdrTexture.Id);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+				hdrTexture.Handle = glGetTextureHandleARB(hdrTexture.Id);
+				glMakeTextureHandleResidentARB(hdrTexture.Handle);
+
+				stbi_image_free(data);
 			}
+
+
 			{
 				glGenTextures(1, &g_EnvCubemap);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, g_EnvCubemap);
@@ -70,7 +87,7 @@ namespace Raito::Renderer::OpenGL::Skybox
 				shader->Bind();
 
 				shader->SetUniformRef("u_Projection", g_CaptureProjection);
-				glUniformHandleui64ARB(shader->GetUniformLocation("u_EquirectangularMap"), hdr->RenderData.Handle);
+				glUniformHandleui64ARB(shader->GetUniformLocation("u_EquirectangularMap"), hdrTexture.Handle);
 
 				glViewport(0, 0, 512, 512);
 				glBindFramebuffer(GL_FRAMEBUFFER, g_CaptureFBO);
@@ -114,7 +131,7 @@ namespace Raito::Renderer::OpenGL::Skybox
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, g_EnvCubemap);
 
-				glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
+				glViewport(0, 0, 32, 32);
 				glBindFramebuffer(GL_FRAMEBUFFER, g_CaptureFBO);
 				for (unsigned int i = 0; i < 6; ++i)
 				{
@@ -215,10 +232,6 @@ namespace Raito::Renderer::OpenGL::Skybox
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-		CreateCaptureFramebuffer();
-		CreateIrradianceMap();
-		CreatePrefilterMap();
-		CreateBRDFLUTTMap();
 
 		{
 			const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(SKYBOX));
@@ -227,12 +240,18 @@ namespace Raito::Renderer::OpenGL::Skybox
 			shader->UnBind();
 		}
 
+		CreateCaptureFramebuffer();
+		CreateIrradianceMap();
+		CreatePrefilterMap();
+		CreateBRDFLUTTMap();
+
+		
+
 		return true;
 	}
 
 	void Update(const Camera& camera)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_BLEND);
 		glDepthFunc(GL_LEQUAL);
 		glDepthMask(GL_FALSE);
@@ -251,7 +270,6 @@ namespace Raito::Renderer::OpenGL::Skybox
 		glCullFace(GL_BACK);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
-
 	}
 
 	void Shutdown()

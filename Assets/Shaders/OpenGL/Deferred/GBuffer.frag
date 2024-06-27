@@ -15,41 +15,34 @@ layout(bindless_sampler) uniform sampler2D u_AmbientOcclusion;
 
 
 
-in vec4 WorldPos;
+in vec3 WorldPos;
 in vec3 Normal;
-in vec2 TexCoord;
-in vec3 Tangent;
-in vec3 BiTangent;
-in vec3 ViewPos;
+in vec2 TexCoords;
 in mat4 ModelView;
 
-in vec3 TangentViewPos;
-in vec3 TangentFragPos;
+vec3 fromNormalMap(){
+    vec3 tangentNormal = texture(u_Normal, TexCoords).xyz * 2.0 - 1.0;
 
-vec3 fromNormalMap(vec2 tex_coords, float lod){
-    mat3 TBN = mat3(Tangent, BiTangent, Normal);
-   
-    vec3 normal;
-    vec3 normalSample = textureLod(u_Normal, tex_coords, lod).rgb * 2.0 - 1.0;
-    normal = TBN * normalSample;
+    vec3 Q1  = dFdx(WorldPos);
+    vec3 Q2  = dFdy(WorldPos);
+    vec2 st1 = dFdx(TexCoords);
+    vec2 st2 = dFdy(TexCoords);
 
-    return normalize(mat3(ModelView) * normal);
+    vec3 N   = normalize(Normal);
+    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+    vec3 B  = -normalize(cross(N, T));
+    mat3 TBN = mat3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
 }
 
 
 void main() {
-   vec2 ddxTexCoord = dFdx(TexCoord);
-   vec2 ddyTexCoord = dFdy(TexCoord);
-   float ddxLength = length(ddxTexCoord);
-   float ddyLength = length(ddyTexCoord);
-   float derivativeLength = max(ddxLength, ddyLength);
-   float lod = log2(derivativeLength);
-
-   gPosition = WorldPos;
-   gNormal = vec4(fromNormalMap(TexCoord, lod), 1.0);
-   gAlbedo = textureLod(u_Albedo, TexCoord, lod);
-   gEmissive = textureLod(u_Emissive, TexCoord, lod);
-   gRoughMetalAO.rg = textureLod(u_MetalRoughness, TexCoord, lod).gb;
-   gRoughMetalAO.b = textureLod(u_AmbientOcclusion, TexCoord, lod).r;
+   gPosition = vec4(WorldPos, 1.0);
+   gNormal = vec4(fromNormalMap(), 1.0);
+   gAlbedo = texture(u_Albedo, TexCoords);
+   gEmissive = texture(u_Emissive, TexCoords);
+   gRoughMetalAO.rg = texture(u_MetalRoughness, TexCoords).gb;
+   gRoughMetalAO.b = texture(u_AmbientOcclusion, TexCoords).r;
    gRoughMetalAO.a = 1.0;
 }

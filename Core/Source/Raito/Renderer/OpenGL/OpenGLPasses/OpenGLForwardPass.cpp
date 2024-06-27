@@ -9,6 +9,7 @@
 #include "Renderer/Camera.h"
 #include "Renderer/OpenGL/OpenGLCore.h"
 #include "Renderer/OpenGL/OpenGLObjects/OpenGLShader.h"
+#include "OpenGLSSAOPass.h"
 
 namespace Raito::Renderer::OpenGL::Forward
 {
@@ -19,6 +20,15 @@ namespace Raito::Renderer::OpenGL::Forward
 
 	bool Initialize()
 	{
+		const auto shader = dynamic_cast<OpenGLShader*>(ShaderCompiler::GetShaderWithEngineId(FORWARD));
+		shader->Bind();
+
+		shader->SetUniform("u_ShadowMap", 0);
+		shader->SetUniform("u_IrradianceMap", 1);
+		shader->SetUniform("u_PrefilterMap", 2);
+
+
+		shader->UnBind();
 		return true;
 	}
 
@@ -43,13 +53,13 @@ namespace Raito::Renderer::OpenGL::Forward
 			const Mat4 model = view.get<ECS::TransformComponent>(entity).GetTransform();
 			const Mat3 normalMatrix = glm::transpose(glm::inverse(Mat3(model)));
 
-			Assets::PbrMaterial mat = GetMaterial(mesh.MaterialId);
+			const Assets::PbrMaterial& mat = GetMaterial(mesh.MaterialId);
 
 			SetTextureOnShader("u_Albedo", *shader, mat.Albedo);
 			SetTextureOnShader("u_Normal", *shader, mat.Normal);
 			SetTextureOnShader("u_Emissive", *shader, mat.Emissive);
-			SetTextureOnShader("u_RoughMetalAO", *shader, mat.MetalRoughness);
-			SetTextureOnShader("u_SSAO", *shader, mat.AmbientOcclusion);
+			SetTextureOnShader("u_MetalRoughness", *shader, mat.MetalRoughness);
+			SetTextureOnShader("u_SSAO", *shader, { SSAO::GetSSAOHandle(), 0 });
 			SetTextureOnShader("u_BRDFLUT", *shader,  { Skybox::GetBRDFLUTTMap(), 0 });
 
 
@@ -79,12 +89,16 @@ namespace Raito::Renderer::OpenGL::Forward
 			shader->SetUniformRef("u_Projection", camera.GetProjection());
 			shader->SetUniformRef("u_Model", model);
 			shader->SetUniformRef("u_NormalMatrix", normalMatrix);
+			shader->SetUniform("u_PointSize", LightPass::GetPointSize());
+			shader->SetUniformRef("u_ViewPos", camera.GetPosition());
 
 			glBindVertexArray(meshData.VAO);
 			glDrawElements(meshData.RenderMode, meshData.IndexCount, GL_UNSIGNED_INT, nullptr);
 			glBindVertexArray(0);
 		}
 		shader->UnBind();
+
+		Skybox::Update(camera);
 		buffer.UnBind();
 	}
 

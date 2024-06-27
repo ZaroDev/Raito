@@ -213,7 +213,6 @@ namespace Raito::Renderer::OpenGL
 		case LightTechnique::DeferredPlus: DeferredPlus::Update(camera, buffer); break;
 		}
 
-		Skybox::Update(camera);
 		PostProcess::Update(buffer);
 	}
 
@@ -317,7 +316,7 @@ namespace Raito::Renderer::OpenGL
 
 	u32 GetDeferredBufferDepth()
 	{
-		return  g_Technique == LightTechnique::Deferred ?  Deferred::GetDeferredDepth() : DeferredPlus::GetDeferredDepth();
+		return  g_Technique == LightTechnique::Deferred ? Deferred::GetDeferredDepth() : DeferredPlus::GetDeferredDepth();
 	}
 
 
@@ -401,10 +400,7 @@ namespace Raito::Renderer::OpenGL
 		glGenTextures(1, &textureData.Id);
 		glBindTexture(GL_TEXTURE_2D, textureData.Id);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
 
 		// Get the texture format based on type and components
 		GLenum format = GL_RGB, internalFormat = GL_RGB;
@@ -417,35 +413,20 @@ namespace Raito::Renderer::OpenGL
 		case 3:
 		{
 			format = internalFormat = GL_RGB;
-
-			if (texture->Type == Assets::DIFFUSE)
-			{
-				internalFormat = GL_RGB;
-			}
-			else if (texture->Type == Assets::HDR)
-			{
-				internalFormat = GL_RGB16F;
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			}
 		}break;
 		case 4:
 		{
 			format = internalFormat = GL_RGBA;
-			if (texture->Type == Assets::DIFFUSE)
-			{
-				internalFormat = GL_SRGB_ALPHA;
-			}
+		}break;
 		}
-		break;
-		}
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
+		
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->Width, texture->Height, 0, format, GL_UNSIGNED_BYTE, data);
-
-		if (texture->Type != Assets::HDR)
-		{
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		// Get and load into VRAM using bindless textures
 		// TODO: Unload textures that aren't used in the scene
