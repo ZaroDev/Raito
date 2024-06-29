@@ -21,10 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
-#include "Core/UUID.h"
+#include <Raito/Core/UUID.h>
 #include "Entt/entt.hpp"
 
+
+namespace Editor
+{
+	class Hierarchy;
+}
 
 namespace Raito::ECS
 {
@@ -65,21 +71,16 @@ namespace Raito::ECS
 		//! Templated function for all the entities with the components given
 		//! @return A view of all the entities with the given components
 		template<typename... Components>
-		auto GetAllEntitiesWith()
+		auto GetAllEntitiesWith() const
 		{
 			return m_Registry.view<Components...>();
 		}
-	private:
-		//! Entity component added templated callback
-		//! @param entity Entity that received the component
-		//! @param component The component added
-		template<typename T>
-		void OnComponentAdded(Entity entity, T& component);
 
 	private:
 		entt::registry m_Registry; /**< Scene entity registry */
 		std::unordered_map<UUID, entt::entity> m_Entities{}; /**< Registered entities map */
 
 		friend class Entity;
+		friend class Editor::Hierarchy;
 	};
 }

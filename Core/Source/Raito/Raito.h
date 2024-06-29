@@ -21,13 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 // Includes for Raito apps
 #include <Raito/Core/Log.h>
 #include <Raito/Core/BasicTypes.h>
 #include <Raito/Core/Assert.h>
 #include <Raito/Core/Common.h>
+#include <Raito/Core/UUID.h>
 #include <Raito/Core/Application.h>
+#include <Raito/Time/Time.h>
+#include <Raito/Time/ScopedTimer.h>
+#include <Raito/Input/Input.h>
+#include <Raito/Input/KeyCodes.h>
 // ECS
 #include <Raito/ECS/Scene.h>
 #include <Raito/ECS/Entity.h>
@@ -37,3 +43,25 @@ SOFTWARE.
 #include <Raito/Math/Math.h>
 
 #include <Windows.h>
+
+// Renderer
+#include <Raito/Renderer/GraphicsAPI.h>
+#include <Raito/Renderer/RHI.h>
+#include <Raito/Renderer/Renderer.h>
+#include <Raito/Renderer/Shader.h>
+#include <Raito/Renderer/Camera.h>
+
+// Window
+#include <Raito/Window/Window.h>
+
+// Assets
+#include <Raito/Assets/Mesh.h>
+#include <Raito/Assets/Model.h>
+#include <Raito/Assets/AssetImport.h>
+#include <Raito/Assets/Assets.h>
+
+// Random
+#include <Raito/Random/Random.h>
+
+constexpr u32 c_MaxPoint = 0;
+constexpr u32 c_MaxDirectional = 1;

@@ -15,7 +15,8 @@ namespace Editor
 		void OnShutdown() override;
 
 	private:
-		// Test scene
-		Raito::ECS::Scene m_Scene{};
+		bool m_HideGUI = false;
+
+		std::vector<std::unique_ptr<class Panel>> m_Panels{};
 	};
 }

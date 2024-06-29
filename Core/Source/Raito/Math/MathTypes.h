@@ -21,88 +21,67 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
-#include "Core/BasicTypes.h"
 
-#if defined(_WIN64)
-	#include <SimpleMath.h>
-#else
-	#error Math types are only supported on Windows
-#endif
+#pragma once
+#include <Raito/Core/BasicTypes.h>
+
+#include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 
 namespace Raito
 {
-	constexpr f32 Pi = 3.14159265359f; /**< Pi constant value */
-	constexpr f32 Epsilon = 1e-5f;  /**< Epsilon constant value */
+	namespace Math
+	{
+		constexpr f32 c_Pi = 3.14159265359f; /**< Pi constant value */
+		constexpr f32 c_Epsilon = 1e-5f;  /**< Epsilon constant value */
+	}
 
-#if defined(_WIN64)
 	//! 2D Vector; 32 bit floating point components
-	using v2 = DirectX::SimpleMath::Vector2;
+	using V2 = glm::vec2;
 	
-	//! 2D Vector; 32 bit floating point components aligned on a 16 byte boundary
-	using v2a = DirectX::XMFLOAT2A;
+	//! 2D Vector; 32 bit integer components 
+	using Iv2 = glm::ivec2;
 	
 	//! 3D Vector; 32 bit floating point components
-	using v3 = DirectX::SimpleMath::Vector3;
+	using V3 = glm::vec3;
 	
-	//! 3D Vector; 32 bit floating point components aligned on a 16 byte boundary
-	using v3a = DirectX::XMFLOAT3A;
+	//! 3D Vector; 32 bit integer components 
+	using Iv3 = glm::ivec3;
 	
 	//! 4D Vector; 32 bit floating point components
-	using v4 = DirectX::SimpleMath::Vector4;
+	using V4 = glm::vec4;
 	
-	//! 4D Vector; 32 bit floating point components aligned on a 16 byte boundary
-	using v4a = DirectX::XMFLOAT4A;
+	//! 4D Vector; 32 bit integer components 
+	using Iv4 = glm::ivec4;
 	
 	//! 2D Vector; 32 bit unsigned integer components
-	using u32v2 = DirectX::XMUINT2;
+	using U32V2 = glm::u32vec2;
 	
 	//! 3D Vector; 32 bit unsigned integer components
-	using u32v3 = DirectX::XMUINT3;
+	using U32V3 = glm::u32vec3;
 	
 	//! 4D Vector; 32 bit unsigned integer components
-	using u32v4 = DirectX::XMUINT4;
+	using U32V4 = glm::u32vec4;
 	
 	//! 2D Vector; 32 bit signed integer components
-	using s32v2 = DirectX::XMINT2;
+	using S32V2 = glm::i32vec2;
 	
 	//! 3D Vector; 32 bit signed integer components
-	using s32v3 = DirectX::XMINT3;
+	using S32V3 = glm::i32vec3;
 	
 	//! 4D Vector; 32 bit signed integer components
-	using s32v4 = DirectX::XMINT4;
+	using S32V4 = glm::i32vec4;
 
 	//! 3x3 Matrix: 32 bit floating point components
-	//! NOTE: DirectXMath doesn't have aligned 3x3 matrices
-	using m3x3 = DirectX::XMFLOAT3X3; 
+	using Mat3 = glm::mat3x3;
 	
-	// 4x4 Matrix (assumes right-handed cooordinates)
-	using m4x4 = DirectX::SimpleMath::Matrix;
-	
-	//! 4x4 Matrix: 32 bit floating point components aligned on a 16 byte boundary
-	using m4x4a = DirectX::XMFLOAT4X4A;
-	
-	//! Matrix type: Sixteen 32 bit floating point components aligned on a
-	//! 16 byte boundary and mapped to four hardware vector registers
-	using Matrix = DirectX::XMMATRIX;
-	
-	//! Vector intrinsic: Four 32 bit floating point components aligned on a 16 byte
-	//! boundary and mapped to hardware vector registers
-	using Vector = DirectX::XMVECTOR;
+	// 4x4 Matrix (assumes right-handed coordinates)
+	using Mat4 = glm::mat4x4;
 
-	//! Plane structure
-	using Plane = DirectX::SimpleMath::Plane;
-	
 	//! Quaternion structure
-	using Quaternion = DirectX::SimpleMath::Quaternion;
+	typedef glm::quat Quaternion;
 	
 	//! Color structure
-	using Color = DirectX::SimpleMath::Color;
-	
-	//! Rectangle structure
-	using Rectangle = DirectX::SimpleMath::Rectangle;
-	
-	//! Ray structure
-	using Ray = DirectX::SimpleMath::Ray;
-#endif
+	using Color = glm::vec4;
 }

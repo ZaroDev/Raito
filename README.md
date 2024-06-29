@@ -7,6 +7,11 @@
   - [Introduction](#introduction)
   - [Supported backends](#supported-backends)
   - [Clone](#clone)
+  - [Features](#features)
+    - [SSAO](#ssao)
+    - [Parallax mapping](#parallax-mapping)
+    - [Multi pass bloom](#multi-pass-bloom)
+    - [Cascade shadow map](#cascade-shadow-map)
   - [Dependencies](#dependencies)
     - [Windows](#windows)
     - [Generating projects](#generating-projects)
@@ -22,7 +27,7 @@ Raito aims to be a powerful rendering engine designed for creating visually stun
 
 |         | Vulkan | DX12 | OpenGL |
 |---------|--------|------| -------|
-| Windows | ✘      | ✓    | ✘     |
+| Windows | ✘      | ✘   | ✓     |
 | Linux   | ✘      | ✘    | ✘    |
 | MacOS   | ✘      | ✘    | ✘    |
 
@@ -33,6 +38,32 @@ Run ``git clone --recursive https://github.com/ZaroDev/Raito``
 If you have problems with the submodules remember to
 ``git submodule init`` and ``git submodule update --remote``
 
+## Features
+
+### SSAO
+
+| On | Off |
+|--------|------|
+| ![image](images/ssao_on.png) | ![image](images/ssao_off.png) | 
+
+### Parallax mapping
+
+| On | Off |
+|--------|------|
+| ![image](images/parallax_on.png) | ![image](images/parallax_off.png) | 
+
+### Multi pass bloom
+
+| On | Off |
+|--------|------|
+| ![image](images/bloom_on.png) | ![image](images/bloom_off.png) | 
+
+### Cascade shadow map
+
+| On | Off |
+|--------|------|
+| ![image](images/csm_on.png) | ![image](images/csm_off.png) | 
+
 ## Dependencies
 
 ### Windows
@@ -40,6 +71,7 @@ If you have problems with the submodules remember to
 Must if you want the project to build:
 
 - Visual Studio 2022
+- CMake
 
 ### Generating projects
 
@@ -54,8 +86,7 @@ Documentation is available on [Github pages](https://zarodev.github.io/Raito/)
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [GLFW](https://www.glfw.org)
 - [Premake](https://premake.github.io)
-- [DX12](https://learn.microsoft.com/en-us/windows/win32/direct3d12/directx-12-programming-guide)
-- [DirectXTK12](https://github.com/microsoft/DirectXTK12)
+- [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)
 - [Doxygen](https://www.doxygen.nl)
 
 ## License

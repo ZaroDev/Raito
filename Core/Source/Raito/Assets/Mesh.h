@@ -21,14 +21,48 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
+#include "Math/AABB.h"
+#include "Math/MathTypes.h"
 
 namespace Raito::Assets
 {
-	class Mesh
+	enum class RenderMode
 	{
-	public:
-		Mesh();
+		TRIANGLE,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN
+	};
+
+	struct Vertex
+	{
+		V3 Position;
+		V3 Normal;
+		V3 Tangent;
+		V3 BiTangent;
+		V2 TexCoords;
+	};
+
+	struct Mesh final
+	{
+		Mesh() = default;
+		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices);
+		Mesh(const std::vector<Vertex>& vertex, const std::vector<u32>& indices, RenderMode mode);
 		~Mesh();
+
+		void CalculateAABB();
+
+		std::vector<Vertex> Vertices{};
+		std::vector<u32> Indices{};
+
+		Math::AABB AABB;
+
+		Mat4 Transform;
+
+		std::string Name{};
+
+		u32 MaterialId;
+		RenderMode RenderMode = RenderMode::TRIANGLE;
 	};
 }

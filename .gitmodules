@@ -10,3 +10,15 @@
 	path = Core/Vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
 	ignore = dirty
+[submodule "Editor/Vendor/ImGui"]
+	path = Editor/Vendor/ImGui
+	url = https://github.com/ZaroDev/imgui.git
+	branch = docking
+	ignore = dirty
+[submodule "Core/Vendor/assimp"]
+	path = Core/Vendor/assimp
+	url = https://github.com/ZaroDev/assimp.git
+	ignore = dirty
+[submodule "Editor/Vendor/ImGuizmo"]
+	path = Editor/Vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

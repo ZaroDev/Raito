@@ -21,21 +21,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 
+#include "Mesh.h"
+#include "ECS/Scene.h"
 
 namespace Raito::Assets
 {
-	class Mesh;
 	class Model
 	{
 	public:
-		Model();
+		Model(const std::vector<Mesh*>& meshes);
 		~Model();
 
 	private:
-		std::vector<std::shared_ptr<Mesh>> m_Meshes{};
-
-		friend u32 ImportModel(const std::filesystem::path& filePath);
+		std::vector<u32> m_Meshes{};
 	};
 }

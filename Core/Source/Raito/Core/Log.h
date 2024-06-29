@@ -21,12 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #pragma once
 #include <string>
 
 #pragma warning(push, 0)
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
+#include <spdlog/fmt/fmt.h>
 #pragma warning(pop)
 
 namespace Raito::Core::Debug
@@ -54,7 +56,7 @@ namespace Raito::Core::Debug
 	void LogError(const std::string& title, const std::string& msg);
 }
 //! Formatting macro
-#define FMT(...) std::format(__VA_ARGS__)
+#define FMT(...) fmt::format(__VA_ARGS__)
 
 #ifndef DIST
 

@@ -7,6 +7,7 @@ Docs/rtf
 
 Editor/Logs
 packages/
+.idea/
 
 # Files
 *.vcxproj
@@ -21,4 +22,9 @@ Makefile
 packages.config
 
 # Exclude
+*.exe
+*.ini
 !Vendor/Binaries
+!Assets/Meshes/DamagedHelmet
+!Assets/Meshes/Sponza
+Assets/Meshes
