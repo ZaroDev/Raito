@@ -39,6 +39,7 @@ namespace Raito::Renderer::OpenGL
 	{
 		u32 g_FrameBufferQuadVAO, g_FrameBufferQuadVBO;
 		u32 g_CubeVAO, g_CubeVBO;
+		u32 g_SphereVAO, g_SphereIndexCount;
 
 		bool g_EnableParallax = true;
 
@@ -122,6 +123,92 @@ namespace Raito::Renderer::OpenGL
 			glBindVertexArray(0);
 		}
 
+		void GenSphere()
+		{
+			glGenVertexArrays(1, &g_SphereVAO);
+			u32 vbo, ebo;
+			glGenBuffers(1, &vbo);
+			glGenBuffers(1, &ebo);
+
+			std::vector<V3> positions;
+			std::vector<V2> uv;
+			std::vector<V3> normals;
+			std::vector<u32> indices;
+
+			constexpr u32 X_SEGMENTS = 8;
+			constexpr u32 Y_SEGMENTS = 8;
+			constexpr f32 PI = 3.14159265359f;
+			for (u32 x = 0; x <= X_SEGMENTS; ++x)
+			{
+				for (u32 y = 0; y <= Y_SEGMENTS; ++y)
+				{
+					float xSegment = (float)x / (float)X_SEGMENTS;
+					float ySegment = (float)y / (float)Y_SEGMENTS;
+					float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+					float yPos = std::cos(ySegment * PI);
+					float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+
+					positions.push_back({ xPos, yPos, zPos });
+					uv.push_back({ xSegment, ySegment });
+					normals.push_back({ xPos, yPos, zPos });
+				}
+			}
+
+			bool oddRow = false;
+			for (u32 y = 0; y < Y_SEGMENTS; ++y)
+			{
+				if (!oddRow) // even rows: y == 0, y == 2; and so on
+				{
+					for (u32 x = 0; x <= X_SEGMENTS; ++x)
+					{
+						indices.push_back(y * (X_SEGMENTS + 1) + x);
+						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+					}
+				}
+				else
+				{
+					for (i32 x = X_SEGMENTS; x >= 0; --x)
+					{
+						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+						indices.push_back(y * (X_SEGMENTS + 1) + x);
+					}
+				}
+				oddRow = !oddRow;
+			}
+			g_SphereIndexCount = static_cast<u32>(indices.size());
+
+			std::vector<f32> data;
+			for (u32 i = 0; i < positions.size(); ++i)
+			{
+				data.push_back(positions[i].x);
+				data.push_back(positions[i].y);
+				data.push_back(positions[i].z);
+				if (normals.size() > 0)
+				{
+					data.push_back(normals[i].x);
+					data.push_back(normals[i].y);
+					data.push_back(normals[i].z);
+				}
+				if (uv.size() > 0)
+				{
+					data.push_back(uv[i].x);
+					data.push_back(uv[i].y);
+				}
+			}
+			glBindVertexArray(g_SphereVAO);
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+			unsigned int stride = (3 + 2 + 3) * sizeof(float);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+		}
+
 	}
 
 	bool Initialize()
@@ -138,6 +225,7 @@ namespace Raito::Renderer::OpenGL
 #endif
 
 		GenCube();
+		GenSphere();
 		// Enable blend and depth testing
 		if (g_Technique != LightTechnique::Deferred)
 		{
@@ -204,12 +292,15 @@ namespace Raito::Renderer::OpenGL
 
 
 		Shadows::Update(camera);
-		LightPass::Update(camera);
+		if(g_Technique != LightTechnique::DeferredPlus)
+		{
+			LightPass::Update(camera);
+		}
 
 		switch (g_Technique)
 		{
 		case LightTechnique::Forward: Forward::Update(camera, buffer); break;
-		case LightTechnique::Deferred: Deferred::Update(camera, buffer); break;
+		case LightTechnique::Deferred: Deferred::Update(camera, buffer); LightPass::Update(camera); break;
 		case LightTechnique::DeferredPlus: DeferredPlus::Update(camera, buffer); break;
 		}
 
@@ -512,6 +603,20 @@ namespace Raito::Renderer::OpenGL
 	{
 		glBindVertexArray(g_CubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+
+	void RenderSphere()
+	{
+		glBindVertexArray(g_SphereVAO);
+		glDrawElements(GL_TRIANGLE_STRIP, g_SphereIndexCount, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
+
+	void RenderSphereInstanced(u32 count)
+	{
+		glBindVertexArray(g_SphereVAO);
+		glDrawElementsInstanced(GL_TRIANGLE_STRIP, g_SphereIndexCount, GL_UNSIGNED_INT, 0, count);
 		glBindVertexArray(0);
 	}
 }

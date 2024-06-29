@@ -17,8 +17,6 @@ struct MeshInfo{
     uint materialID;
     uint numInstances;
     uint instanceOffset;
-    uint meshType;
-    uint meshTypeOffset;
     uint numIndices;
     uint firstIndex;
 };
@@ -69,19 +67,7 @@ void main(){
 
     if(groupIndex == 0){
         if(visibleInstanceIndexCounter > 0){
-            // Increment counter of visible meshes
-            atomicAdd(visibleInstanceIndexBuffer[meshInfo.meshType], 1);
-            uint cmdIndex = visibleInstanceIndexBuffer[meshInfo.meshType];
-            cmdIndex += meshInfo.meshTypeOffset + 1;
-
-            DrawCommand cmd;
-            cmd.count = meshInfo.numIndices;
-            cmd.instanceCount = visibleInstanceIndexCounter;
-            cmd.firstIndex = meshInfo.firstIndex;
-            cmd.baseInstance = 0;
-            cmd.baseVertex = 0;
-
-            drawIndirectBuffer[cmdIndex] = cmd;
+    
         }
     }
 }

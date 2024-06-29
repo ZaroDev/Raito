@@ -63,5 +63,5 @@ SOFTWARE.
 // Random
 #include <Raito/Random/Random.h>
 
-constexpr u32 NUM_POINT = 512;
-constexpr u32 NUM_DIRECTIONAL = 1;
+constexpr u32 c_MaxPoint = 0;
+constexpr u32 c_MaxDirectional = 1;

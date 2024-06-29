@@ -57,15 +57,14 @@ namespace Raito::Renderer::OpenGL::Deferred
 		} g_GBufferUniforms;
 
 
-		OpenGLFrameBuffer* g_FrameBuffer = nullptr;
-		OpenGLFrameBuffer* g_LightBuffer = nullptr;
+		std::unique_ptr<OpenGLFrameBuffer> g_FrameBuffer = nullptr;
 		OpenGLShader* g_GBuffer = nullptr;
 
 	}
 
 	bool Initialize()
 	{
-		g_FrameBuffer = new  OpenGLFrameBuffer(
+		g_FrameBuffer = std::make_unique<OpenGLFrameBuffer>(
 			FrameBufferData{
 				{
 					FrameBufferTextureFormat::RGBA16F,// Position buffer
@@ -79,20 +78,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 				1080,
 				1
 			});
-
-		g_LightBuffer = new OpenGLFrameBuffer(
-			FrameBufferData{
-				{
-					FrameBufferTextureFormat::RGBA16F,	// Emissive buffer
-					FrameBufferTextureFormat::RGBA16F,	// Specular buffer
-					},
-				1920,
-				1080,
-				1
-			});
-
-		
-
 
 		{
 
@@ -229,10 +214,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 	void Shutdown()
 	{
-		
-
-		delete g_LightBuffer;
-		delete g_FrameBuffer;
 	}
 
 	u32 GetDeferredAttachment(u32 id)
@@ -242,7 +223,7 @@ namespace Raito::Renderer::OpenGL::Deferred
 
 	u32 GetLightAttachment(u32 id)
 	{
-		return g_LightBuffer->ColorAttachment(id);
+		return 0;
 	}
 
 	u32 GetDeferredDepth()

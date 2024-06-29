@@ -1,0 +1,1 @@
+Image comparison number 0 error: 20Image comparison number 1 error: 27Image comparison number 2 error: 30Image comparison number 3 error: 22

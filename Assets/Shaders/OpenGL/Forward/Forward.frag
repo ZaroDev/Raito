@@ -32,7 +32,7 @@ layout(std430, binding = 2) readonly buffer DirectionalBuffer{
     mat3 directional;
 };
 layout(std430, binding = 3) readonly buffer PointBuffer{
-    mat3 point[1024];
+    mat3 point[2048];
 };
 uniform int u_PointSize;
 uniform vec3 u_ViewPos;
@@ -89,7 +89,8 @@ float shadowCalculationDirectional(vec3 fragPosWorldSpace, vec3 lightDir, vec3 N
         return 0.0;
     }
     // calculate bias (based on depth map resolution and slope)
-    float bias = max(0.05 * (1.0 - dot(N, lightDir)), 0.005);
+    vec3 normal = normalize(N);
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
     const float biasModifier = 0.5f;
     if (layer == int(shadowMapSize)) {
         bias *= 1 / (farPlane * biasModifier);
@@ -175,7 +176,7 @@ void main() {
 
 
         // calculate per-light radiance
-        vec3 L = normalize(-directionalDir);
+        vec3 L = normalize(directionalDir);
         vec3 H = normalize(V + L);
         vec3 radiance = directionalColor;
 

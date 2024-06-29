@@ -12,6 +12,6 @@ namespace Raito::Renderer::OpenGL::Deferred
 	void Shutdown();
 
 	NODISCARD u32 GetDeferredAttachment(u32 id);
-	NODISCARD u32 GetLightAttachment(u32 id);
+
 	NODISCARD u32 GetDeferredDepth();
 }

@@ -25,6 +25,7 @@ def load_images(path):
     for img_name in os.listdir(path):
         img = cv2.imread(path + img_name)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.resize(img, (1920, 1080), interpolation = cv2.INTER_LINEAR)
         images.append(ImageC(img, path + img_name))
     return images
 

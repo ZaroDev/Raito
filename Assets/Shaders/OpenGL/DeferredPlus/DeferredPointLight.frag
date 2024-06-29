@@ -4,20 +4,21 @@
 #define PI 3.1415926
 #define GAMMA 2.2
 
-layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 FragColor;
 
 
 layout(bindless_sampler) uniform sampler2D u_GPosition;
 layout(bindless_sampler) uniform sampler2D u_GNormal;
 layout(bindless_sampler) uniform sampler2D u_GAlbedo;
-layout(bindless_sampler) uniform sampler2D u_GEmissive;
 layout(bindless_sampler) uniform sampler2D u_GRoughMetalAO;
-layout(bindless_sampler) uniform sampler2D u_SSAO;
 
-uniform int u_LightIndex;
+uniform vec2 u_ScreenSize;
+uniform vec3 u_ViewPosition;
 
-layout(std430, binding = 0) readonly buffer PointBuffer{
-    mat3 point[1024];
+in flat uint LightID;
+
+layout(std430, binding = 1) readonly buffer PointBuffer{
+    mat3 point[2048];
 };
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
@@ -83,15 +84,21 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
 } 
 
 void main(){
-    vec3 fragPos = texture(u_GPosition, TexCoords).rgb;
-    vec3 N = texture(u_GNormal, TexCoords).rgb;
-    vec3 albedo = pow(texture(u_GAlbedo, TexCoords).rgb, vec3(GAMMA));
-    float roughness = texture(u_GRoughMetalAO, TexCoords).r;
-    float metallic = texture(u_GRoughMetalAO, TexCoords).g;
-    float occlusion = texture(u_SSAO, TexCoords).b;
+    vec2 texCoords = gl_FragCoord.xy / u_ScreenSize;
 
-    vec3 lighPos = point[u_LightIndex][0];
-    vec3 lightColor = point[u_LightIndex][1];
+    vec3 fragPos = texture(u_GPosition, texCoords).rgb;
+    vec3 N = texture(u_GNormal, texCoords).rgb;
+    vec3 albedo = pow(texture(u_GAlbedo, texCoords).rgb, vec3(GAMMA));
+    float roughness = texture(u_GRoughMetalAO, texCoords).r;
+    float metallic = texture(u_GRoughMetalAO, texCoords).g;
+
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+
+    vec3 V = normalize(u_ViewPosition - fragPos);
+    
+    vec3 lighPos = point[LightID][0];
+    vec3 lightColor = point[LightID][1];
     // calculate per-light radiance
     vec3 L = normalize(lighPos - fragPos);
     vec3 H = normalize(V + L);
@@ -121,9 +128,5 @@ void main(){
             
     // scale light by NdotL
     float NdotL = max(dot(N, L), 0.0);        
-
-    // add to outgoing radiance Lo
-    Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-
-    FragColor = vec4(Lo, 1.0);
+    FragColor = vec4((kD * albedo / PI + specular) * radiance * NdotL, 1.0);
 }

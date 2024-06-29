@@ -59,6 +59,8 @@ namespace Raito::Renderer::OpenGL::ShaderCompiler
 			{ "DeferredPlus/GenerateIndirectDraw", EngineShader::DRAW_COMMAND,   OpenGLShaderType::COMPUTE },
 			{ "PBR/Prefilter", EngineShader::PREFILTER,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 			{ "PBR/BRDF", EngineShader::BRDF,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "DeferredPlus/DeferredAmbient", EngineShader::DEFERRED_AMBIENT,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
+			{ "DeferredPlus/DeferredCombine", EngineShader::DEFERRED_PLUS_COMBINE,  OpenGLShaderType::VERTEX | OpenGLShaderType::FRAGMENT },
 
 		};
 

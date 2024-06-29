@@ -12,9 +12,7 @@ uniform sampler2DArray u_ShadowMap;
 layout(bindless_sampler) uniform sampler2D u_GPosition;
 layout(bindless_sampler) uniform sampler2D u_GNormal;
 layout(bindless_sampler) uniform sampler2D u_GAlbedo;
-layout(bindless_sampler) uniform sampler2D u_GEmissive;
 layout(bindless_sampler) uniform sampler2D u_GRoughMetalAO;
-layout(bindless_sampler) uniform sampler2D u_SSAO;
 
 layout(std430, binding = 0) readonly buffer ShadowMapData{
     int shadowMapSize;
@@ -65,7 +63,8 @@ float shadowCalculationDirectional(vec3 fragPosWorldSpace, vec3 lightDir, vec3 N
         return 0.0;
     }
     // calculate bias (based on depth map resolution and slope)
-    float bias = max(0.05 * (1.0 - dot(N, lightDir)), 0.005);
+    vec3 normal = normalize(N);
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
     const float biasModifier = 0.5f;
     if (layer == int(shadowMapSize)) {
         bias *= 1 / (farPlane * biasModifier);
@@ -123,31 +122,6 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     return ggx1 * ggx2;
 }
 
-vec3 directionalLightRadiance(vec3 direction, vec3 color,vec3 viewDir, vec3 F0, vec3 normal, float roughness, float metallic, vec3 albedo){
-    vec3 fragToLightDir = normalize(-direction);
-    vec3 halfwayDir = normalize(fragToLightDir + viewDir);
-    vec3 radiance = color;
-
-    vec3 fresnel = fresnelSchlick(max(dot(halfwayDir, viewDir), 0.0), F0);
-    float normalDistributionFunction = distributionGGX(normal, halfwayDir, roughness);
-    float geometry = geometrySmith(normal, viewDir, fragToLightDir, roughness);
-
-    vec3 kSpecular = fresnel;
-    vec3 kDiffuse = vec3(1.0) - kSpecular;
-    kDiffuse *= 1.0 - metallic;
-
-    vec3 numerator = normalDistributionFunction * geometry * fresnel;
-    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, fragToLightDir), 0.0) + 0.0001;
-    vec3 specular = numerator / denominator;
-
-    float normalDotFragToLightDir = max(dot(normal, fragToLightDir), 0.0);
-    return (kDiffuse * albedo / PI + specular) * radiance * normalDotFragToLightDir;
-}
-
-
-vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-} 
 
 void main(){
     vec3 fragPos = texture(u_GPosition, TexCoords).rgb;
@@ -155,7 +129,6 @@ void main(){
     vec3 albedo = pow(texture(u_GAlbedo, TexCoords).rgb, vec3(GAMMA));
     float roughness = texture(u_GRoughMetalAO, TexCoords).r;
     float metallic = texture(u_GRoughMetalAO, TexCoords).g;
-    float occlusion = texture(u_SSAO, TexCoords).b;
 
     vec3 V = normalize(u_ViewPosition - fragPos);
     vec3 R = reflect(-V, N); 
@@ -171,7 +144,7 @@ void main(){
 
 
     // calculate per-light radiance
-    vec3 L = normalize(-directionalDir);
+    vec3 L = normalize(directionalDir);
     vec3 H = normalize(V + L);
     vec3 radiance = directionalColor;
 

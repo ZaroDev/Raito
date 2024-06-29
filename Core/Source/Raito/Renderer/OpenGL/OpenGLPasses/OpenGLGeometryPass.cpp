@@ -68,11 +68,6 @@ namespace Raito::Renderer::OpenGL::Geometry
 			glBindVertexArray(0);
 
 			shader->UnBind();
-
-			if(g_DebugAABB)
-			{
-				
-			}
 		}
 	}
 

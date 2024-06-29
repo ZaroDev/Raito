@@ -69,6 +69,8 @@ namespace Raito::Renderer::OpenGL
     bool IsParallaxEnabled();
 
     void RenderCube();
+    void RenderSphere();
+    void RenderSphereInstanced(u32 count);
     void RenderCubeInstanced(u32 count);
 
     LightTechnique GetTechnique();

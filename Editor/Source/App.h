@@ -15,7 +15,7 @@ namespace Editor
 		void OnShutdown() override;
 
 	private:
-		
+		bool m_HideGUI = false;
 
 		std::vector<std::unique_ptr<class Panel>> m_Panels{};
 	};
