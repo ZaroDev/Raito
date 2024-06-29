@@ -1,7 +1,20 @@
 var searchData=
 [
-  ['scene_0',['Scene',['../classRaito_1_1ECS_1_1Scene.html#a3aeba413e6b79e713cadfa2e9415377e',1,'Raito::ECS::Scene']]],
-  ['scopedtimer_1',['ScopedTimer',['../classRaito_1_1ScopedTimer.html#a8a69d5bc8d604f7ae78f5a194d9bd1be',1,'Raito::ScopedTimer']]],
-  ['setdeferredreleasesflags_2',['SetDeferredReleasesFlags',['../namespaceRaito_1_1Renderer_1_1D3D12_1_1Core.html#a46d55f594f4ec5019854e7dbb8f6cc3c',1,'Raito::Renderer::D3D12::Core']]],
-  ['shutdown_3',['Shutdown',['../classRaito_1_1Core_1_1Application.html#a19ffd726898f19a93fdcc55c2eb522de',1,'Raito::Core::Application::Shutdown()'],['../namespaceRaito_1_1Assets.html#a469be54a8fa35ff15896b1adc050e02e',1,'Raito::Assets::Shutdown()'],['../namespaceRaito_1_1Renderer_1_1D3D12_1_1Core.html#a8cc583f85ff1434c1a41886cdb1c2d3f',1,'Raito::Renderer::D3D12::Core::Shutdown()'],['../namespaceRaito_1_1Renderer.html#afa5250d97b85d3a0c2dcf085e539b835',1,'Raito::Renderer::Shutdown()'],['../namespaceRaito_1_1Window.html#a82bc9c23a1787bcc9082dbe7379291d0',1,'Raito::Window::Shutdown()']]]
+  ['readfile_0',['ReadFile',['../namespaceRaito_1_1FileSystem.html#a02d6166b7e2a43122c47bd2be07cf46f',1,'Raito::FileSystem']]],
+  ['removecomponent_1',['RemoveComponent',['../classRaito_1_1ECS_1_1Entity.html#ab53f703cc163f746668db04ef7605e0b',1,'Raito::ECS::Entity']]],
+  ['removematerial_2',['RemoveMaterial',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#abb27293b54de5dd1f302703804f7595c',1,'Raito::Renderer::OpenGL::RemoveMaterial()'],['../namespaceRaito_1_1Renderer.html#aa4be47cd4b4a630231519553886a5823',1,'Raito::Renderer::RemoveMaterial()']]],
+  ['removemesh_3',['RemoveMesh',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#a1260e655d3aa26a3bba3c14d40c068cc',1,'Raito::Renderer::OpenGL::RemoveMesh()'],['../namespaceRaito_1_1Renderer.html#a3d996047a8ff9d7eab7742de1590156b',1,'Raito::Renderer::RemoveMesh()']]],
+  ['removesurface_4',['RemoveSurface',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#af8df3c08bbbbf721816136e18ea40722',1,'Raito::Renderer::OpenGL::RemoveSurface()'],['../namespaceRaito_1_1Renderer.html#a18f66bd9d72f8ce55d694c5062ccbab1',1,'Raito::Renderer::RemoveSurface()']]],
+  ['removetexture_5',['RemoveTexture',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#aed82da60d602140754d7aec9ceeca25f',1,'Raito::Renderer::OpenGL::RemoveTexture()'],['../namespaceRaito_1_1Renderer.html#a847999f4445f4939a6a95ad92c1cc6a3',1,'Raito::Renderer::RemoveTexture()']]],
+  ['render_6',['Render',['../classRaito_1_1Renderer_1_1Surface.html#a2202abf8b0ebc879f55266168837781e',1,'Raito::Renderer::Surface']]],
+  ['rendercube_7',['RenderCube',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#a77b490f854be6eea199de1d1adedbacc',1,'Raito::Renderer::OpenGL']]],
+  ['rendercubeinstanced_8',['RenderCubeInstanced',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#a998d2035aa94b7227172e8cb512ef476',1,'Raito::Renderer::OpenGL']]],
+  ['renderfullscreenquad_9',['RenderFullScreenQuad',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#aa64411204e175653b5b0a1ec09018d74',1,'Raito::Renderer::OpenGL']]],
+  ['rendersphere_10',['RenderSphere',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#a892da7067d88b136d34e9c0a49bef6e3',1,'Raito::Renderer::OpenGL']]],
+  ['rendersphereinstanced_11',['RenderSphereInstanced',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#ac9f102cf1985b68ccf7bc5e79086124f',1,'Raito::Renderer::OpenGL']]],
+  ['rendersurface_12',['RenderSurface',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#adc650648ef8b8178230be49b5acceda2',1,'Raito::Renderer::OpenGL']]],
+  ['reset_13',['Reset',['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLFrameBuffer.html#a5e2be07e8d4617b32918391217300bea',1,'Raito::Renderer::OpenGL::OpenGLFrameBuffer']]],
+  ['resize_14',['Resize',['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLFrameBuffer.html#a5d668c99e43d523470d26b97d977e965',1,'Raito::Renderer::OpenGL::OpenGLFrameBuffer::Resize()'],['../classRaito_1_1Renderer_1_1Surface.html#a97ca2b73e40413392d8b01ee06250d2a',1,'Raito::Renderer::Surface::Resize()']]],
+  ['resizesurface_15',['ResizeSurface',['../namespaceRaito_1_1Renderer_1_1OpenGL.html#a97717460f28bb17aebdaf64d43c97dba',1,'Raito::Renderer::OpenGL']]],
+  ['runapp_16',['RunApp',['../namespaceRaito_1_1Core.html#a7c6c5e65a8934357fff180b367c9e348',1,'Raito::Core']]]
 ];

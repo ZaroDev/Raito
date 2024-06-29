@@ -11,5 +11,6 @@ var classRaito_1_1Core_1_1Application =
     [ "Shutdown", "classRaito_1_1Core_1_1Application.html#a19ffd726898f19a93fdcc55c2eb522de", null ],
     [ "Update", "classRaito_1_1Core_1_1Application.html#aa2b8fe503abb164b935ab90549fb7f20", null ],
     [ "RunApp", "classRaito_1_1Core_1_1Application.html#a4f8d9338a766a662f8110b5e506a9e05", null ],
-    [ "m_Running", "classRaito_1_1Core_1_1Application.html#a7efc6f00c8c8acc329a403d2528a2412", null ]
+    [ "m_Running", "classRaito_1_1Core_1_1Application.html#a7efc6f00c8c8acc329a403d2528a2412", null ],
+    [ "Scene", "classRaito_1_1Core_1_1Application.html#a29669f99c9f045c3f79b9eb70f6251a8", null ]
 ];

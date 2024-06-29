@@ -29,20 +29,24 @@ var NAVTREE =
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
+        [ "All", "namespacemembers.html", "namespacemembers_dup" ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ],
         [ "Typedefs", "namespacemembers_type.html", null ],
-        [ "Enumerations", "namespacemembers_enum.html", null ]
+        [ "Enumerations", "namespacemembers_enum.html", null ],
+        [ "Enumerator", "namespacemembers_eval.html", null ]
       ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
+        [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ],
+        [ "Enumerations", "functions_enum.html", null ],
+        [ "Enumerator", "functions_eval.html", null ],
         [ "Related Symbols", "functions_rela.html", null ]
       ] ]
     ] ],
@@ -60,8 +64,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"Application_8cpp.html",
-"classRaito_1_1ECS_1_1Scene.html#a10505383f3c04904f6ef8ea47e9fb826"
+"AABB_8cpp.html",
+"KeyCodes_8h.html#afc17e3e8d8273c38064db73bea3801bbaeffe06cc3bbfdd18fa0d95a403cd2d3f",
+"OpenGLSSAOPass_8cpp.html#a0609012fa04426f7efa0646ada0c75e0",
+"Window_8cpp.html",
+"classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLFrameBuffer.html#aa0123fc7711f1d6dd828308b2f829c1b",
+"namespaceRaito.html#abeead71b56868a6175d809cb63317310",
+"namespaceRaito_1_1Renderer.html#ac595502dc79fd760666346c55fc511a1",
+"structRaito_1_1Assets_1_1Vertex.html#aa46d0261837fbfd7d861fb872931070b",
+"structRaito_1_1Renderer_1_1RHI.html#ae58882165132b397fee0970b82846139"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

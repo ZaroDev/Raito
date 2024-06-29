@@ -1,5 +1,10 @@
 <map id="Raito::SysWindow" name="Raito::SysWindow">
-<area shape="rect" id="Node000001" title="System window structure." alt="" coords="5,94,131,120"/>
-<area shape="rect" id="Node000002" href="$structRaito_1_1WindowInfo.html" title="Window info structure." alt="" coords="5,5,131,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,47,71,94,65,94,65,47"/>
+<area shape="rect" id="Node000001" title="System window structure." alt="" coords="190,94,315,120"/>
+<area shape="rect" id="Node000003" href="$structRaito_1_1Renderer_1_1RenderSurface.html" title=" " alt="" coords="72,183,273,208"/>
+<area shape="poly" id="edge3_Node000003_Node000001" title=" " alt="" coords="187,129,171,145,166,163,170,182,165,183,161,163,166,142,183,126"/>
+<area shape="rect" id="Node000002" href="$structRaito_1_1WindowInfo.html" title="Window info structure." alt="" coords="190,5,315,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="255,47,255,94,250,94,250,47"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="204,172,221,157,235,138,245,119,249,121,239,140,225,160,208,176"/>
+<area shape="rect" id="Node000004" href="$classRaito_1_1Renderer_1_1Surface.html" title=" " alt="" coords="5,94,166,120"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="97,133,112,157,127,170,144,180,141,185,124,174,107,160,92,136"/>
 </map>

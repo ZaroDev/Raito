@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['entity_0',['Entity',['../classRaito_1_1ECS_1_1Entity.html',1,'Raito::ECS']]]
+  ['camera_0',['Camera',['../classRaito_1_1Renderer_1_1Camera.html',1,'Raito::Renderer']]],
+  ['cameraparameters_1',['CameraParameters',['../structRaito_1_1Renderer_1_1CameraParameters.html',1,'Raito::Renderer']]]
 ];

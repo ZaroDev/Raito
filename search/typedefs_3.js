@@ -1,8 +1,11 @@
 var searchData=
 [
-  ['u16_0',['u16',['../BasicTypes_8h.html#ac8008e9f99a9e3bdd6649ba6fe685975',1,'BasicTypes.h']]],
-  ['u32_1',['u32',['../BasicTypes_8h.html#a60534f57ab6a58fdf5c2e618645182e3',1,'BasicTypes.h']]],
-  ['u64_2',['u64',['../BasicTypes_8h.html#ab20682c4bd54e71fed5f159e4a0da9c9',1,'BasicTypes.h']]],
-  ['u8_3',['u8',['../BasicTypes_8h.html#ab64accf39cd9947d51611c16fd76f69a',1,'BasicTypes.h']]],
-  ['ubyte_4',['ubyte',['../BasicTypes_8h.html#a5dd4f281954ce1405c92d62a427f839a',1,'BasicTypes.h']]]
+  ['i16_0',['i16',['../BasicTypes_8h.html#a31132e0f32b7556b897bc1999af25674',1,'BasicTypes.h']]],
+  ['i32_1',['i32',['../BasicTypes_8h.html#af822872730491651ff6e354cf9bb8bfd',1,'BasicTypes.h']]],
+  ['i64_2',['i64',['../BasicTypes_8h.html#ad5a9feabc23cb10188945263a58e8b4f',1,'BasicTypes.h']]],
+  ['i8_3',['i8',['../BasicTypes_8h.html#adaa91ab4c99a4cb4a7bb4708efa80579',1,'BasicTypes.h']]],
+  ['ibyte_4',['ibyte',['../BasicTypes_8h.html#aa28ef5c3159626f1942b55333aab7296',1,'BasicTypes.h']]],
+  ['iv2_5',['Iv2',['../namespaceRaito.html#a501057f92ae78c3b2e361ebbe75dc490',1,'Raito']]],
+  ['iv3_6',['Iv3',['../namespaceRaito.html#a510ac5e5c4b261a9b6c2c2f998d2ecd4',1,'Raito']]],
+  ['iv4_7',['Iv4',['../namespaceRaito.html#a0ce53dc99cd0ea55caf7394365a62c12',1,'Raito']]]
 ];

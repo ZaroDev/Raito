@@ -1,6 +1,21 @@
 var searchData=
 [
-  ['release_0',['Release',['../namespaceRaito_1_1Renderer_1_1D3D12_1_1Core.html#a59a1eed4b90c9aada17094fdc9e23ce3',1,'Raito::Renderer::D3D12::Core']]],
-  ['removecomponent_1',['RemoveComponent',['../classRaito_1_1ECS_1_1Entity.html#ab53f703cc163f746668db04ef7605e0b',1,'Raito::ECS::Entity']]],
-  ['runapp_2',['RunApp',['../namespaceRaito_1_1Core.html#a7c6c5e65a8934357fff180b367c9e348',1,'Raito::Core']]]
+  ['oninit_0',['OnInit',['../classRaito_1_1Core_1_1Application.html#a93349d3bcb92f94f62ed3c6439fed57d',1,'Raito::Core::Application']]],
+  ['onrendergui_1',['OnRenderGUI',['../classRaito_1_1Core_1_1Application.html#af9fd537dc68dff92837976141f404af1',1,'Raito::Core::Application']]],
+  ['onresize_2',['OnResize',['../classRaito_1_1Renderer_1_1Camera.html#aadca1f007311857c681c5ccd6caea38f',1,'Raito::Renderer::Camera']]],
+  ['onshutdown_3',['OnShutdown',['../classRaito_1_1Core_1_1Application.html#a786ef45c297b4f9ca14ac31b30237783',1,'Raito::Core::Application']]],
+  ['onupdate_4',['OnUpdate',['../classRaito_1_1Core_1_1Application.html#a096e255b47a252fb6b1774d83fb174aa',1,'Raito::Core::Application::OnUpdate()'],['../classRaito_1_1Renderer_1_1Camera.html#a1b2b0f3c4e6a6c05dd92a854fba6ddf3',1,'Raito::Renderer::Camera::OnUpdate()']]],
+  ['openglframebuffer_5',['OpenGLFrameBuffer',['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLFrameBuffer.html#a43adaa34dcaffcfd756c548fef1d8824',1,'Raito::Renderer::OpenGL::OpenGLFrameBuffer::OpenGLFrameBuffer()=delete'],['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLFrameBuffer.html#ae1db2ad14b90b568c2d787914dfeacc3',1,'Raito::Renderer::OpenGL::OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferData &amp;spec)']]],
+  ['openglmaterial_6',['OpenGLMaterial',['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLMaterial.html#a981dbc230bbfb16360a4ff0ebf88a7e0',1,'Raito::Renderer::OpenGL::OpenGLMaterial::OpenGLMaterial(u32 shaderId)'],['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLMaterial.html#a59b90f43946d36217272d2d2142179aa',1,'Raito::Renderer::OpenGL::OpenGLMaterial::OpenGLMaterial(OpenGLMaterial const &amp;rhs)'],['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLMaterial.html#a7c1e265047d53f10d8e36f38dd199067',1,'Raito::Renderer::OpenGL::OpenGLMaterial::OpenGLMaterial(OpenGLMaterial &amp;&amp;rhs) noexcept']]],
+  ['openglshader_7',['OpenGLShader',['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLShader.html#a1f27fd2e8b2d4b6727ba0b81f179d7f0',1,'Raito::Renderer::OpenGL::OpenGLShader']]],
+  ['operator_20bool_8',['operator bool',['../classRaito_1_1ECS_1_1Entity.html#a3de38c135224185f5442fdfd4d7599ee',1,'Raito::ECS::Entity']]],
+  ['operator_20entt_3a_3aentity_9',['entity',['../classRaito_1_1ECS_1_1Entity.html#ac9caf2f9a581388e771b8b080fd3162b',1,'Raito::ECS::Entity']]],
+  ['operator_20u64_10',['operator u64',['../classRaito_1_1UUID.html#a46bf0cd74c8867e9f6fb479cf1256cf7',1,'Raito::UUID']]],
+  ['operator_20uint32_5ft_11',['operator uint32_t',['../classRaito_1_1ECS_1_1Entity.html#a32e79b116d779011e12a2c3519b6d7cf',1,'Raito::ECS::Entity']]],
+  ['operator_21_3d_12',['operator!=',['../classRaito_1_1ECS_1_1Entity.html#afce1e209230a57124839028a0c24d68a',1,'Raito::ECS::Entity']]],
+  ['operator_28_29_13',['operator()',['../structstd_1_1hash_3_01Raito_1_1UUID_01_4.html#aa7968752e7f0ee44a7bb4c70dbf163c4',1,'std::hash&lt; Raito::UUID &gt;']]],
+  ['operator_3c_3c_14',['operator&lt;&lt;',['../namespaceRaito.html#a6e47ca950b013c7dbe7971d3ca417bae',1,'Raito::operator&lt;&lt;(std::ostream &amp;os, KeyCode keyCode)'],['../namespaceRaito.html#a920b821badc73529c12b27c90aaf8538',1,'Raito::operator&lt;&lt;(std::ostream &amp;os, MouseButton button)']]],
+  ['operator_3d_15',['operator=',['../structRaito_1_1Renderer_1_1OpenGL_1_1UniformValue.html#a9131547c33995d01a36565e2de7194e0',1,'Raito::Renderer::OpenGL::UniformValue::operator=(UniformValue const &amp;rhs)'],['../structRaito_1_1Renderer_1_1OpenGL_1_1UniformValue.html#a8fc508ef135ea39795b95415b43c7cb7',1,'Raito::Renderer::OpenGL::UniformValue::operator=(UniformValue &amp;&amp;rhs) noexcept'],['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLMaterial.html#afeb6835ec37502bace58876837bf0193',1,'Raito::Renderer::OpenGL::OpenGLMaterial::operator=(const OpenGLMaterial &amp;rhs)'],['../classRaito_1_1Renderer_1_1OpenGL_1_1OpenGLMaterial.html#af3b8655200b0d615c628ff2786ecaf68',1,'Raito::Renderer::OpenGL::OpenGLMaterial::operator=(OpenGLMaterial &amp;&amp;rhs) noexcept']]],
+  ['operator_3d_3d_16',['operator==',['../classRaito_1_1ECS_1_1Entity.html#adf904deb86a15f6cac0d41b3ff6f990b',1,'Raito::ECS::Entity']]],
+  ['overlaps_17',['Overlaps',['../classRaito_1_1Math_1_1AABB.html#a80426ff71ac29b7473df91a8bbb18d68',1,'Raito::Math::AABB']]]
 ];

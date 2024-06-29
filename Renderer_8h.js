@@ -1,12 +1,50 @@
 var Renderer_8h =
 [
-    [ "API", "Renderer_8h.html#a4f17759b065dd6b89ee631c6785ae877", [
-      [ "NONE", "Renderer_8h.html#a4f17759b065dd6b89ee631c6785ae877ab50339a10e1de285ac99d4c3990b8693", null ],
-      [ "D3D12", "Renderer_8h.html#a4f17759b065dd6b89ee631c6785ae877afac777d230cd7175697748a8c5260df6", null ],
-      [ "OPENGL", "Renderer_8h.html#a4f17759b065dd6b89ee631c6785ae877ac0ad831a34c4633bee584066cfcc5040", null ],
-      [ "VULKAN", "Renderer_8h.html#a4f17759b065dd6b89ee631c6785ae877ac60cacb57b9e78f018a9d973bee2f801", null ],
-      [ "COUNT", "Renderer_8h.html#a4f17759b065dd6b89ee631c6785ae877a4905ac9d6a22bdfc1ae096094ce6248d", null ]
+    [ "Raito::Renderer::Surface", "classRaito_1_1Renderer_1_1Surface.html", "classRaito_1_1Renderer_1_1Surface" ],
+    [ "Raito::Renderer::RenderSurface", "structRaito_1_1Renderer_1_1RenderSurface.html", "structRaito_1_1Renderer_1_1RenderSurface" ],
+    [ "Raito::Renderer::FrameBufferTextureData", "structRaito_1_1Renderer_1_1FrameBufferTextureData.html", "structRaito_1_1Renderer_1_1FrameBufferTextureData" ],
+    [ "Raito::Renderer::FrameBufferAttachmentData", "structRaito_1_1Renderer_1_1FrameBufferAttachmentData.html", "structRaito_1_1Renderer_1_1FrameBufferAttachmentData" ],
+    [ "Raito::Renderer::FrameBufferData", "structRaito_1_1Renderer_1_1FrameBufferData.html", "structRaito_1_1Renderer_1_1FrameBufferData" ],
+    [ "FrameBufferTextureFormat", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13", [
+      [ "None", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13a6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "RGBA8", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13ab4b279046a02077466fa26cabb00c642", null ],
+      [ "RGBA16F", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13aa29d843695056f9c171a9eb702d6910a", null ],
+      [ "RGBA", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13aea3495a278957dc58165e48a8945469f", null ],
+      [ "RED_INTEGER", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13a2849effb989cbdcfb4b9eb143fd826aa", null ],
+      [ "DEPTH24STENCIL8", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13a7ca3e26e4e5c35e4408bd49c1e32e9a3", null ],
+      [ "DEPTH32F", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13a19f22a1cbc2e2733484acbf9fc1bb4cd", null ],
+      [ "Depth", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13a675056ad1441b6375b2c5abd48c27ef1", null ],
+      [ "DepthF", "Renderer_8h.html#ab930b0d5b607cf91067998afdcd2bd13ac79cc7b758d585161bb975eb161938a9", null ]
     ] ],
-    [ "Initialize", "Renderer_8h.html#adfe99aa75d69292e4ad118b12b554b13", null ],
+    [ "LightTechnique", "Renderer_8h.html#ac76d4286280a30e5f70f2accc7453194", [
+      [ "Forward", "Renderer_8h.html#ac76d4286280a30e5f70f2accc7453194a67d2f6740a8eaebf4d5c6f79be8da481", null ],
+      [ "Deferred", "Renderer_8h.html#ac76d4286280a30e5f70f2accc7453194a4ed71db54748b36eeb398876b0c747ac", null ],
+      [ "DeferredPlus", "Renderer_8h.html#ac76d4286280a30e5f70f2accc7453194a860b77a6fc94d4064ab165dfc162192d", null ]
+    ] ],
+    [ "AddMaterial", "Renderer_8h.html#a16a5770abfcb31a5555e3f3f8cbfb86b", null ],
+    [ "AddMesh", "Renderer_8h.html#ac595502dc79fd760666346c55fc511a1", null ],
+    [ "AddTexture", "Renderer_8h.html#aab358269c637b25664dda9a822d9a52e", null ],
+    [ "CompileShader", "Renderer_8h.html#abe9230ecf63f884968ab2ab46e691b31", null ],
+    [ "CreateSurface", "Renderer_8h.html#abee81e14b241e3f85f88c33d4f8bbc22", null ],
+    [ "EnableCulling", "Renderer_8h.html#a39b700964cc384755af132eb4dc9c95b", null ],
+    [ "EnableDebugAABB", "Renderer_8h.html#ab1b3d48e91ceaf76c62bcc9fea732cd7", null ],
+    [ "GetAllShaders", "Renderer_8h.html#ab2ca10317f539ebf1ab03d4a5e8552b5", null ],
+    [ "GetCurrentAPI", "Renderer_8h.html#ade1fc4aca48ff6ab4c872de001e5dcd9", null ],
+    [ "GetCurrentRenderType", "Renderer_8h.html#afabc7f8dfa48ad81e99db668435aa440", null ],
+    [ "GetEngineShadersPath", "Renderer_8h.html#a52da441a1f9aea4e6502af178596ff16", null ],
+    [ "GetFileData", "Renderer_8h.html#a4569b38059ee5a7df62fc74d9089241c", null ],
+    [ "GetMainCamera", "Renderer_8h.html#a837bc41a0563d5cf6caa083d9cf6402e", null ],
+    [ "Initialize", "Renderer_8h.html#a93a598163e518652a779d99b08546d47", null ],
+    [ "RemoveMaterial", "Renderer_8h.html#aa4be47cd4b4a630231519553886a5823", null ],
+    [ "RemoveMesh", "Renderer_8h.html#a3d996047a8ff9d7eab7742de1590156b", null ],
+    [ "RemoveSurface", "Renderer_8h.html#a18f66bd9d72f8ce55d694c5062ccbab1", null ],
+    [ "RemoveTexture", "Renderer_8h.html#a847999f4445f4939a6a95ad92c1cc6a3", null ],
+    [ "SetBloom", "Renderer_8h.html#ae3726c111d4b82d598f1c93cced052d7", null ],
+    [ "SetMaterialValue", "Renderer_8h.html#a378c6fee494cb3a3c222ff6981ada04e", null ],
+    [ "SetParallaxMapping", "Renderer_8h.html#a420560b27b7541837eed368f79bec541", null ],
+    [ "SetPlatformInterface", "Renderer_8h.html#a2e42ae9f21ef382e9521407ed27e2236", null ],
+    [ "SetRenderType", "Renderer_8h.html#af876daf3e12e8c0ae638b5fd071102d7", null ],
+    [ "SetShadows", "Renderer_8h.html#afa2636b7e434eac62373655a7b5efd6f", null ],
+    [ "SetSSAO", "Renderer_8h.html#ac7e3487084ddfbf7a6598214c2113d68", null ],
     [ "Shutdown", "Renderer_8h.html#afa5250d97b85d3a0c2dcf085e539b835", null ]
 ];

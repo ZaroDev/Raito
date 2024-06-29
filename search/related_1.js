@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['importmodel_0',['ImportModel',['../classRaito_1_1Assets_1_1Model.html#a9c203fc6430c355e0b1d8dc9415268e1',1,'Raito::Assets::Model']]]
+  ['runapp_0',['RunApp',['../classRaito_1_1Core_1_1Application.html#a4f8d9338a766a662f8110b5e506a9e05',1,'Raito::Core::Application']]]
 ];
